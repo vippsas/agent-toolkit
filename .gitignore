@@ -1,0 +1,65 @@
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+Thumbs.db
+desktop.ini
+
+# Editors / IDEs
+.idea/
+*.iml
+.vscode/
+.fleet/
+.zed/
+*.swp
+*.swo
+*~
+.netrwhist
+.history/
+nbproject/
+*.sublime-workspace
+*.sublime-project
+
+# AI agent local state
+.claude/worktrees/
+.claude/jobs/
+.claude/settings.local.json
+.claude/shell-snapshots/
+.claude/todos/
+.claude/statsig/
+.aider*
+.cursor/rules/local/
+.codeium/
+.windsurf/
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+
+# Python (mkdocs / techdocs tooling)
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+
+# mkdocs / techdocs build output
+site/
+techdocs/
+
+# Node
+node_modules/
+npm-debug.log*
+yarn-error.log*
+
+# Logs & temp
+*.log
+tmp/
+.tmp/
