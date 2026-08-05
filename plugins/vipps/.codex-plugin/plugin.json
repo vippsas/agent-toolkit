@@ -1,0 +1,20 @@
+{
+  "name": "vipps",
+  "description": "Vipps MobilePay plugin for Codex to help with payment integrations including best practices and API guidance.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Vipps MobilePay",
+    "url": "https://vippsmobilepay.com"
+  },
+  "homepage": "https://developer.vippsmobilepay.com",
+  "repository": "https://github.com/vippsas/agent-toolkit",
+  "license": "MIT",
+  "keywords": ["vipps", "mobilepay", "payments", "api"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Vipps MobilePay",
+    "shortDescription": "Vipps MobilePay payment integration guidance and API help.",
+    "logo": "./assets/logo.svg",
+    "brandColor": "#FF5B24"
+  }
+}
