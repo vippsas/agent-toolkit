@@ -63,6 +63,22 @@ def inline_urls() -> dict[str, set[str]]:
     return out
 
 
+def repo_paths(sources: dict) -> set[str]:
+    """Convert declared site paths to paths in the documentation repository.
+
+    The published `.md` is generated from `.mdx` at build time, so `/docs/x.md`
+    on the site is `docs/x.mdx` in vippsas/vipps-developer-docs. `/llms.txt` is
+    generated from the sidebar and has no source file, so it is skipped.
+    """
+    out = set()
+    for paths in sources["skills"].values():
+        for path in paths:
+            if not path.endswith(".md"):
+                continue
+            out.add(path.lstrip("/")[: -len(".md")] + ".mdx")
+    return out
+
+
 def normalize(url: str) -> str:
     """A directory-style doc link and its raw Markdown file are the same page.
 
@@ -129,7 +145,17 @@ def check_urls(sources: dict) -> list[str]:
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--offline", action="store_true", help="skip the HTTP checks")
+    parser.add_argument(
+        "--print-repo-paths",
+        action="store_true",
+        help="print the declared pages as paths in the documentation repository, one per line",
+    )
     args = parser.parse_args()
+
+    if args.print_repo_paths:
+        for path in sorted(repo_paths(load_sources())):
+            print(path)
+        return 0
 
     problems = check_declarations(load_sources())
     if not args.offline:

@@ -1,26 +1,38 @@
 name: Review skill accuracy
 
-# The skills summarize developer.vippsmobilepay.com, so they go stale when an API
-# changes. check-sources.yml catches pages that disappear. This catches the harder
-# case: the page still exists, but a value in it changed and the skill still states
-# the old one.
+# The skills summarize documentation that lives in vippsas/vipps-developer-docs and
+# changes without touching this repository. check-sources.yml catches pages that
+# disappear. This catches the harder case: the page still exists, but a value in it
+# changed and the skill still states the old one.
 #
-# It never pushes to main. It opens a draft pull request for a human to judge.
+# It runs here and reaches into the documentation repository read-only, so there is
+# nothing to install or duplicate on the other side. It opens a draft pull request in
+# this repository and never pushes to main.
 #
-# Requires the ANTHROPIC_API_KEY secret. Without it the job reports a notice and
-# exits successfully, so the repository does not accumulate red runs before the
-# secret is provisioned.
+# Credentials, in order of preference. Each is optional and the job degrades instead
+# of failing:
+#
+#   ANTHROPIC_API_KEY           Required. Without it the job reports a notice and passes.
+#   APP_ID + APP_PRIVATE_KEY    A GitHub App with Contents: read on the documentation
+#                               repository. Preferred: org owned, short lived tokens.
+#   DOCS_REPO_TOKEN             Fine-grained PAT with Contents: read, as an alternative.
+#
+# With neither the App nor the PAT it still works: it reads the published Markdown from
+# the public documentation site instead. That path cannot diff, so every declared page
+# is in scope and each run costs more.
 
 on:
   schedule:
-    # 07:00 UTC on the first of each month.
-    - cron: "0 7 1 * *"
+    # Mondays, 07:00 UTC. Cheap, because a run with no changed source page skips the
+    # model entirely.
+    - cron: "0 7 * * 1"
   workflow_dispatch:
     inputs:
-      skills:
-        description: "Skills to review, comma separated. Empty means all of them."
+      force_full_review:
+        description: "Review every declared page, ignoring the last reviewed commit"
+        type: boolean
         required: false
-        default: ""
+        default: false
 
 permissions:
   contents: write
@@ -33,6 +45,9 @@ concurrency:
 jobs:
   review:
     runs-on: ubuntu-latest
+    env:
+      APP_ID: ${{ secrets.APP_ID }}
+      DOCS_REPO_TOKEN: ${{ secrets.DOCS_REPO_TOKEN }}
     steps:
       - name: Check for the API key
         id: guard
@@ -49,53 +64,127 @@ jobs:
       - uses: actions/checkout@v4
         if: steps.guard.outputs.configured == 'true'
 
-      - uses: anthropics/claude-code-action@v1
+      - uses: actions/setup-python@v5
         if: steps.guard.outputs.configured == 'true'
+        with:
+          python-version: "3.12"
+
+      - name: Mint a token for the documentation repository
+        id: app_token
+        if: steps.guard.outputs.configured == 'true' && env.APP_ID != ''
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: vippsas
+          repositories: vipps-developer-docs
+
+      - name: Check out the documentation repository
+        id: docs_checkout
+        if: steps.guard.outputs.configured == 'true' && (steps.app_token.outputs.token != '' || env.DOCS_REPO_TOKEN != '')
+        continue-on-error: true
+        uses: actions/checkout@v4
+        with:
+          repository: vippsas/vipps-developer-docs
+          ref: main
+          # Full history: the review diffs against the commit last reviewed.
+          fetch-depth: 0
+          path: docs-repo
+          persist-credentials: false
+          token: ${{ steps.app_token.outputs.token || secrets.DOCS_REPO_TOKEN }}
+
+      - name: Work out what to review
+        id: scope
+        if: steps.guard.outputs.configured == 'true'
+        run: |
+          set -euo pipefail
+          if [ -d docs-repo/.git ]; then
+            echo "mode=repo" >> "$GITHUB_OUTPUT"
+            if [ "${{ inputs.force_full_review }}" = "true" ]; then
+              BASE=""
+            else
+              BASE=$(python -c "import json; print(json.load(open('plugins/vipps/sources.json'))['reviewed_commit'] or '')")
+            fi
+            python scripts/changed_sources.py --docs-repo docs-repo --base "$BASE" | tee scope.txt
+            python scripts/changed_sources.py --docs-repo docs-repo --base "$BASE" --json > scope.json
+            SCOPE=$(python -c "import json; print(json.load(open('scope.json'))['scope'])")
+            HEAD=$(python -c "import json; print(json.load(open('scope.json'))['head'])")
+          else
+            echo "mode=site" >> "$GITHUB_OUTPUT"
+            echo "::notice title=No documentation checkout::Reviewing against the published site. Add the App or DOCS_REPO_TOKEN secret to enable diffing."
+            {
+              echo "No checkout of the documentation repository is available, so nothing can be diffed."
+              echo "Every declared page is in scope, and they must be read from the published site."
+            } | tee scope.txt
+            SCOPE=all
+            HEAD=""
+          fi
+          echo "head=$HEAD" >> "$GITHUB_OUTPUT"
+          if [ "$SCOPE" = "none" ]; then
+            echo "needs_review=false" >> "$GITHUB_OUTPUT"
+            echo "::notice title=Nothing to review::No declared documentation page changed since the last review."
+          else
+            echo "needs_review=true" >> "$GITHUB_OUTPUT"
+          fi
+          cat scope.txt >> "$GITHUB_STEP_SUMMARY"
+
+      - uses: anthropics/claude-code-action@v1
+        if: steps.guard.outputs.configured == 'true' && steps.scope.outputs.needs_review == 'true'
         with:
           anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
           github_token: ${{ secrets.GITHUB_TOKEN }}
           claude_args: --model claude-sonnet-5
           prompt: |
-            You are auditing the Vipps MobilePay agent skills in this repository for factual drift
-            against the published documentation. Requested skills: "${{ inputs.skills }}" (empty means all).
+            You are auditing the Vipps MobilePay agent skills in this repository for factual drift against
+            the documentation they summarize. Work only in this repository; the documentation is read-only
+            input.
 
-            The skills restate facts from developer.vippsmobilepay.com. Your job is to find places where
-            the documentation now says something different, and to fix only those places.
+            Start by reading `scope.txt` in the working directory. It tells you which skills are in scope
+            and, when a diff was possible, exactly which source pages changed. Review only what it lists.
 
-            Steps:
+            Where to read the documentation from:
 
-            1. Read `plugins/vipps/sources.json`. It maps each skill to the documentation pages its
-               content is derived from.
-            2. For each skill in scope, fetch its declared pages. Every page is raw Markdown: the URL is
-               the site value plus the path, for example
-               https://developer.vippsmobilepay.com/docs/APIs/epayment-api/quick-start.md
-            3. Compare the checkable claims in `plugins/vipps/skills/<skill>/SKILL.md` and its
-               `references/*.md` against those pages. Concentrate on things that change and that break an
-               integration when wrong:
-               - endpoint paths, HTTP methods, and required fields
-               - enum values: payment states, charge states, agreement statuses, user flows, scopes
-               - numbers: limits, minimums and maximums, deadlines, retry windows, token lifetimes,
-                 rate limits, timeouts
-               - error codes and their meanings
-               - which features need separate approval or activation
-            4. Ignore wording, tone, ordering, and formatting. A difference in phrasing is not drift.
+            - Mode is "${{ steps.scope.outputs.mode }}".
+            - If "repo": the documentation is checked out at `docs-repo/`. Read the `.mdx` sources there.
+              `git -C docs-repo diff <base>..HEAD -- <path>` shows exactly what changed, which is usually
+              faster and more reliable than re-reading a whole page. API specifications under
+              `docs-repo/generated-specs/` and the partials in `docs-repo/docs/_common/` are authoritative
+              for field names, enums, and minimum amounts.
+            - If "site": fetch the published Markdown instead. The URL is the `site` value in
+              `plugins/vipps/sources.json` plus the declared path, for example
+              https://developer.vippsmobilepay.com/docs/APIs/epayment-api/quick-start.md
+
+            What counts as drift. Concentrate on things that break an integration when wrong:
+
+            - endpoint paths, HTTP methods, and required fields
+            - enum values: payment states, charge states, agreement statuses, user flows, scopes
+            - numbers: limits, minimums and maximums, deadlines, retry windows, token lifetimes, rate
+              limits, timeouts
+            - error codes and their meanings
+            - which features need separate approval or activation
+
+            Ignore wording, tone, ordering, and formatting. A difference in phrasing is not drift.
 
             Rules:
 
-            - Change nothing outside `plugins/vipps/`.
-            - Only state what a fetched page supports. Never fill a gap from memory. If the documentation
-              is ambiguous or contradicts itself, keep the existing hedge rather than picking a side.
-            - Keep edits minimal and in the surrounding style: short sentences, lines wrapped at about
-              120 characters, American English, and no "&" in prose.
-            - If a page moved, update both the skill link and `plugins/vipps/sources.json`.
+            - Change nothing outside `plugins/vipps/`. Never commit `scope.txt`, `scope.json`, or
+              `docs-repo/`.
+            - Only state what a source you read supports. Never fill a gap from memory. If the
+              documentation is ambiguous or contradicts itself, keep the existing hedge rather than
+              picking a side.
+            - Keep edits minimal and in the surrounding style: short sentences, lines wrapped at about 120
+              characters, American English, and no "&" in prose.
+            - If a page moved, update the skill link and `plugins/vipps/sources.json` together.
+            - If you took a fact from a page that is not declared in `sources.json`, declare it.
             - Run `python scripts/check_sources.py` before finishing and make sure it passes.
 
             Outcome:
 
-            - If you found nothing, make no changes and say clearly that the skills match the
-              documentation. Do not open a pull request.
-            - If you found real drift, commit to a new branch named `skill-accuracy/<yyyy-mm-dd>` and open
-              a **draft** pull request. Title it plainly, for example
-              "Update recurring skill for changed charge limits". In the body, list each change as: the
-              file, what the skill said, what the documentation says now, and the source URL. Add a short
+            - If nothing drifted, make no changes, open nothing, and say plainly that the skills match the
+              documentation.
+            - If something drifted, fix it, set `reviewed_commit` in `plugins/vipps/sources.json` to
+              "${{ steps.scope.outputs.head }}" when that value is not empty, commit to a branch named
+              `skill-accuracy/<yyyy-mm-dd>`, and open a **draft** pull request. Title it plainly, for
+              example "Update recurring skill for changed charge limits". In the body, list each change as:
+              the file, what the skill said, what the documentation says now, and the source. Add a short
               note about anything you were unsure about, so the reviewer knows where to look hardest.

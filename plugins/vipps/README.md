@@ -69,10 +69,24 @@ python scripts/check_sources.py --offline   # declarations only
 It runs on pull requests that touch `plugins/`, on push to `main`, and every Monday. The scheduled run is the one that
 matters, since the documentation moves independently of this repository.
 
-**The monthly accuracy review** (`.github/workflows/review-skill-accuracy.yml`) reads the declared pages and compares
-the numbers, enums, endpoints, and error codes against what each skill claims. It opens a draft pull request when it
-finds a difference and does nothing when it does not. It needs the `ANTHROPIC_API_KEY` secret, and skips with a notice
-when that is absent. Treat its output as a lead to verify, not as a fact: review the cited page before merging.
+**The weekly accuracy review** (`.github/workflows/review-skill-accuracy.yml`) compares the numbers, enums, endpoints,
+and error codes in each skill against the pages it declares. It opens a draft pull request when it finds a difference
+and does nothing when it does not. It runs entirely in this repository and reaches into
+`vippsas/vipps-developer-docs` read-only, so there is nothing to install or duplicate on that side.
+
+Given read access to that repository it diffs `reviewed_commit` against `main`, reviews only the pages that changed, and
+skips the model altogether when nothing did — which is what makes a weekly schedule cheap. Grant that access with
+either a GitHub App (`APP_ID` and `APP_PRIVATE_KEY`, preferred: organization owned, short-lived tokens) or a
+fine-grained token with `Contents: read` (`DOCS_REPO_TOKEN`).
+
+With neither, it still works: it reads the published Markdown from the public documentation site. That path cannot
+diff, so every declared page is in scope and each run costs more.
+
+`reviewed_commit` only advances when a review opens a pull request. A run that finds nothing leaves it alone, so the
+next run re-reads the same window. That is deliberate: it can waste tokens, but it can never skip a page. Bump it by
+hand if you have confirmed a clean run.
+
+Treat the output as a lead to verify, not as a fact. Read the cited page before merging anything it proposes.
 
 ## Maintaining it
 

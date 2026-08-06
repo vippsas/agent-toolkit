@@ -1,13 +1,19 @@
 {
   "$comment": [
-    "Provenance for the vipps skills. Each skill lists the documentation pages its content is derived from,",
-    "as paths on https://developer.vippsmobilepay.com. This is a superset of the links written inline in the",
-    "skills: a page belongs here if the skill asserts facts from it, whether or not it links to it.",
-    "scripts/check_sources.py verifies every path resolves and that inline links are declared here.",
-    "The scheduled accuracy review reads these pages to decide whether a skill has gone stale."
+    "Provenance for the vipps skills. Each skill lists the documentation pages its content is derived from.",
+    "Paths are site paths on developer.vippsmobilepay.com, which is what an agent fetches at runtime.",
+    "The same page in the source repository is the path with the leading slash removed and .md swapped",
+    "for .mdx: /docs/APIs/epayment-api/quick-start.md is docs/APIs/epayment-api/quick-start.mdx in",
+    "vippsas/vipps-developer-docs. scripts/check_sources.py --print-repo-paths does that conversion.",
+    "The published .md is generated from the .mdx at build time, so the repository is ahead of the site",
+    "and is the better source when reviewing accuracy: it can be diffed, and it keeps content that the",
+    "raw Markdown generator strips. The site is the right target for link checking."
   ],
   "site": "https://developer.vippsmobilepay.com",
   "index": "/llms.txt",
+  "docs_repo": "vippsas/vipps-developer-docs",
+  "docs_repo_branch": "main",
+  "reviewed_commit": "846eb70c16c974b4c6f74c82e8671900fefc12a6",
   "skills": {
     "best-practices": [
       "/docs/APIs/README.md",
