@@ -17,7 +17,7 @@ to the skill for the API you picked.
 | Skill | Read it for |
 | ----- | ----------- |
 | `epayment` | One-time payments: web, app, in-store, QR, Express, capture, refund |
-| `recurring` | Subscriptions and metered billing: agreements and charges |
+| `recurring` | Subscriptions and metered billing: agreements and charges, capture, refund |
 | `login` | Identifying users, sign-up, profile data, customer club, point-of-sale login |
 | `webhooks` | Real-time events and how to verify them. Needed by all three above |
 | `test-and-go-live` | Test environment, test users, force approve, checklists for production |
