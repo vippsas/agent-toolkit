@@ -21,11 +21,11 @@ claude plugin install vipps@agent-toolkit
 
 ### Cursor
 
-Add this repository as a plugin marketplace in Cursor, then install the `vipps` plugin. See the [Cursor plugin docs](https://cursor.com/docs).
+Add this repository as a plugin marketplace in Cursor, then install the `vipps` plugin. See the [Cursor plugin docs](https://cursor.com/docs/plugins).
 
 ### Codex
 
-Add this repository as a plugin marketplace in Codex, then install the `vipps` plugin. See the [Codex plugin docs](https://developers.openai.com/codex).
+Add this repository as a plugin marketplace in Codex, then install the `vipps` plugin. See the [Codex plugin docs](https://learn.chatgpt.com/docs/skills-and-plugins).
 
 ## Repository layout
 
