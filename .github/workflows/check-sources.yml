@@ -1,0 +1,38 @@
+name: Check skill sources
+
+# The skills restate facts from developer.vippsmobilepay.com. This does not check
+# whether those facts are still true - that is the accuracy review - but it does catch
+# the cheapest failure: a page the skills cite has moved or been removed.
+
+on:
+  pull_request:
+    paths:
+      - "plugins/**"
+      - "scripts/check_sources.py"
+      - ".github/workflows/check-sources.yml"
+  push:
+    branches: [main]
+    paths:
+      - "plugins/**"
+      - "scripts/check_sources.py"
+  schedule:
+    # Mondays, 06:00 UTC. Documentation changes without touching this repository,
+    # so the scheduled run is the one that actually catches drift.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check-sources:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Check declared sources and cited URLs
+        run: python scripts/check_sources.py

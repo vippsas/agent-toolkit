@@ -1,0 +1,95 @@
+{
+  "$comment": [
+    "Provenance for the vipps skills. Each skill lists the documentation pages its content is derived from,",
+    "as paths on https://developer.vippsmobilepay.com. This is a superset of the links written inline in the",
+    "skills: a page belongs here if the skill asserts facts from it, whether or not it links to it.",
+    "scripts/check_sources.py verifies every path resolves and that inline links are declared here.",
+    "The scheduled accuracy review reads these pages to decide whether a skill has gone stale."
+  ],
+  "site": "https://developer.vippsmobilepay.com",
+  "index": "/llms.txt",
+  "skills": {
+    "best-practices": [
+      "/docs/APIs/README.md",
+      "/docs/APIs/access-token-api/README.md",
+      "/docs/APIs/access-token-api/standard-authentication.md",
+      "/docs/APIs/epayment-api/quick-start.md",
+      "/docs/APIs/product-mapping.md",
+      "/docs/getting-started.md",
+      "/docs/knowledge-base/api-keys.md",
+      "/docs/knowledge-base/http-headers.md",
+      "/docs/knowledge-base/polling-guidelines.md",
+      "/docs/knowledge-base/postman.md",
+      "/docs/knowledge-base/servers.md",
+      "/docs/plugins/README.md"
+    ],
+    "epayment": [
+      "/docs/APIs/epayment-api/api-guide/concepts.md",
+      "/docs/APIs/epayment-api/api-guide/errors.md",
+      "/docs/APIs/epayment-api/api-guide/features/README.md",
+      "/docs/APIs/epayment-api/api-guide/features/block-payment-sources.md",
+      "/docs/APIs/epayment-api/api-guide/features/customer-present-payments.md",
+      "/docs/APIs/epayment-api/api-guide/features/express.md",
+      "/docs/APIs/epayment-api/api-guide/features/long-living-payments.md",
+      "/docs/APIs/epayment-api/api-guide/features/metadata.md",
+      "/docs/APIs/epayment-api/api-guide/features/minimum-user-age.md",
+      "/docs/APIs/epayment-api/api-guide/features/profile-sharing.md",
+      "/docs/APIs/epayment-api/api-guide/features/qr-payments.md",
+      "/docs/APIs/epayment-api/api-guide/operations/cancel.md",
+      "/docs/APIs/epayment-api/api-guide/operations/capture.md",
+      "/docs/APIs/epayment-api/api-guide/operations/create.md",
+      "/docs/APIs/epayment-api/api-guide/operations/force-approve.md",
+      "/docs/APIs/epayment-api/api-guide/operations/get_event_log.md",
+      "/docs/APIs/epayment-api/api-guide/operations/get_info.md",
+      "/docs/APIs/epayment-api/api-guide/operations/refund.md",
+      "/docs/APIs/epayment-api/api-guide/webhooks.md",
+      "/docs/APIs/epayment-api/checklist.md",
+      "/docs/APIs/epayment-api/quick-start.md",
+      "/docs/knowledge-base/design-guidelines.md",
+      "/docs/knowledge-base/errors.md",
+      "/docs/knowledge-base/landing-page.md",
+      "/docs/knowledge-base/orderid.md",
+      "/docs/knowledge-base/redirects.md",
+      "/docs/knowledge-base/reserve-and-capture.md"
+    ],
+    "recurring": [
+      "/docs/APIs/recurring-api/recurring-api-checklist.md",
+      "/docs/APIs/recurring-api/recurring-api-faq.md",
+      "/docs/APIs/recurring-api/recurring-api-guide.md",
+      "/docs/APIs/recurring-api/recurring-api-problems.md",
+      "/docs/APIs/recurring-api/recurring-api-quick-start.md",
+      "/docs/knowledge-base/reserve-and-capture.md"
+    ],
+    "login": [
+      "/docs/APIs/login-api/api-guide/browser-flow-integration.md",
+      "/docs/APIs/login-api/api-guide/collecting-consents.md",
+      "/docs/APIs/login-api/api-guide/core-concepts.md",
+      "/docs/APIs/login-api/api-guide/important-information.md",
+      "/docs/APIs/login-api/api-guide/merchant-initiated-login-integration.md",
+      "/docs/APIs/login-api/api-guide/mobile-app-flows/README.md",
+      "/docs/APIs/login-api/api-guide/overview.md",
+      "/docs/APIs/login-api/api-guide/user-info.md",
+      "/docs/APIs/login-api/api-guide/webhooks.md",
+      "/docs/APIs/login-api/how-it-works/merchant-initiated-login-howitworks.md",
+      "/docs/APIs/login-api/login-api-checklist.md",
+      "/docs/APIs/login-api/login-api-quick-start.md",
+      "/docs/knowledge-base/buttons.md"
+    ],
+    "webhooks": [
+      "/docs/APIs/webhooks-api/api-guide.md",
+      "/docs/APIs/webhooks-api/events.md",
+      "/docs/APIs/webhooks-api/quick-start.md",
+      "/docs/APIs/webhooks-api/request-authentication.md",
+      "/docs/knowledge-base/servers.md"
+    ],
+    "test-and-go-live": [
+      "/docs/APIs/epayment-api/checklist.md",
+      "/docs/APIs/login-api/login-api-checklist.md",
+      "/docs/APIs/recurring-api/recurring-api-checklist.md",
+      "/docs/getting-started.md",
+      "/docs/knowledge-base/postman.md",
+      "/docs/knowledge-base/test-environment.md",
+      "/docs/partner/partner-checklist.md"
+    ]
+  }
+}

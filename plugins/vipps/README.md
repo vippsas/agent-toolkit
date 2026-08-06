@@ -48,9 +48,35 @@ An agent should need one skill for a task, not all six. So:
   to its path, and [`/llms.txt`](https://developer.vippsmobilepay.com/llms.txt) indexes all of them, so the skills point
   there rather than duplicating the whole documentation set.
 
+## Keeping it honest
+
+The skills restate facts from the developer documentation, which lives in another repository and changes without
+touching this one. Nothing here is generated from it, so there is no copy to sync: what can go wrong is that a fact
+stops being true. Three things guard against that.
+
+**`sources.json`** declares which documentation pages each skill is derived from. It is a superset of the links written
+inside the skills: a page belongs there if the skill asserts facts from it, whether or not it links to it. Add to it
+whenever you take a fact from a new page.
+
+**`scripts/check_sources.py`** verifies that every declared and cited page still resolves, and that no skill links to a
+page it has not declared. Standard library only:
+
+```bash
+python scripts/check_sources.py            # includes the HTTP checks
+python scripts/check_sources.py --offline   # declarations only
+```
+
+It runs on pull requests that touch `plugins/`, on push to `main`, and every Monday. The scheduled run is the one that
+matters, since the documentation moves independently of this repository.
+
+**The monthly accuracy review** (`.github/workflows/review-skill-accuracy.yml`) reads the declared pages and compares
+the numbers, enums, endpoints, and error codes against what each skill claims. It opens a draft pull request when it
+finds a difference and does nothing when it does not. It needs the `ANTHROPIC_API_KEY` secret, and skips with a notice
+when that is absent. Treat its output as a lead to verify, not as a fact: review the cited page before merging.
+
 ## Maintaining it
 
-The skills restate facts from the developer documentation, so they go stale when the APIs change. When editing:
+When editing:
 
 - Check the claim against the doc page before writing it. The API rejects invented field names, and a confidently wrong
   skill is worse than no skill.
