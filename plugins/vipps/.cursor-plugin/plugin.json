@@ -1,8 +1,8 @@
 {
   "name": "vipps",
   "displayName": "Vipps MobilePay",
-  "description": "Vipps MobilePay plugin for Cursor to help with payment integrations including best practices and API guidance.",
-  "version": "0.1.0",
+  "description": "Vipps MobilePay plugin for Cursor: pick the right API, then implement ePayment, Recurring, or Login correctly, with webhooks, testing, and go-live requirements.",
+  "version": "0.2.0",
   "author": {
     "name": "Vipps MobilePay",
     "url": "https://vippsmobilepay.com"
@@ -11,6 +11,6 @@
   "repository": "https://github.com/vippsas/agent-toolkit",
   "license": "MIT",
   "category": "developer-tools",
-  "keywords": ["vipps", "mobilepay", "payments", "api"],
+  "keywords": ["vipps", "mobilepay", "payments", "api", "epayment", "recurring", "login", "subscriptions", "webhooks"],
   "skills": "./skills/"
 }

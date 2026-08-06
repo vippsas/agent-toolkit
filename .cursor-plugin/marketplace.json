@@ -11,7 +11,7 @@
     {
       "name": "vipps",
       "source": "./plugins/vipps",
-      "description": "Vipps MobilePay plugin for Cursor to help with payment integrations including best practices and API guidance."
+      "description": "Vipps MobilePay plugin for Cursor: pick the right API, then implement ePayment, Recurring, or Login correctly, with webhooks, testing, and go-live requirements."
     }
   ]
 }

@@ -8,7 +8,19 @@ A plugin marketplace hosting installable agent plugins for Vipps MobilePay. The 
 
 | Plugin | Description |
 | --- | --- |
-| [`vipps`](plugins/vipps) | Payment integration guidance, best practices, and API help |
+| [`vipps`](plugins/vipps) | Pick the right API, then implement it: payments, subscriptions, login, webhooks, and going live |
+
+The `vipps` plugin ships one skill per goal, so an agent loads what the task needs instead of the whole documentation
+set:
+
+| Skill | Covers |
+| --- | --- |
+| `best-practices` | Entry point. Which API to use, platform basics, the rules that prevent broken integrations |
+| `epayment` | One-time payments: web, app, in-store, QR, Express, capture, refund |
+| `recurring` | Subscriptions and metered billing: agreements and charges |
+| `login` | Identity, profile data, customer club sign-up |
+| `webhooks` | Registration and HMAC verification, used by all of the above |
+| `test-and-go-live` | Test environment, force approve, checklists |
 
 ## Installation
 
