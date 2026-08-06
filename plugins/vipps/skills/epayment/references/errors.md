@@ -75,7 +75,7 @@ These are account or product problems. No amount of code changes them; the merch
 
 | Code | Title | What to do |
 | ---- | ----- | ---------- |
-| 6010 | Amount too small | Minimum is NOK 100 øre, DKK 1 øre, EUR 1 cent |
+| 6010 | Amount too small | Minimum is NOK 300 øre, DKK 1 øre, EUR 1 cent |
 | 6020 | Attempted refund before reservation | Check the event log |
 | 6030 | Cancel period expired | Cancel is possible within 180 days of reservation, and inside the capture deadline |
 | 6040 | Cannot cancel a captured payment | Refund instead |

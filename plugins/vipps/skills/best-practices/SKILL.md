@@ -108,7 +108,7 @@ Vipps-System-Plugin-Version: 4.5.6
   capped at 30 characters each. They are how support traces a failing request.
 
 **Amounts.** Always integers in minor units: øre for NOK and DKK, cents for EUR. `49900` is 499.00 NOK. Decimals are
-rejected. Minimum per payment is NOK 100 øre, DKK 1 øre, EUR 1 cent. The currency must match the sales unit's market;
+rejected. Minimum per payment is NOK 300 øre, DKK 1 øre, EUR 1 cent. The currency must match the sales unit's market;
 a Danish sales unit charges DKK.
 
 **Phone numbers.** MSISDN format, country code plus subscriber number, no `+` and no spaces: `4712345678`.
