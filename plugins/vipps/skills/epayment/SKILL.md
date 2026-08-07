@@ -57,7 +57,7 @@ Required fields:
 
 | Field | Notes |
 | ----- | ----- |
-| `amount` | `{ currency, value }`. `value` in minor units, integer. Minimum NOK 100 øre, DKK 1 øre, EUR 1 cent |
+| `amount` | `{ currency, value }`. `value` in minor units, integer. Minimum NOK 400 øre, DKK 1 øre, EUR 1 cent |
 | `paymentMethod.type` | `WALLET` for the app (normal), `CARD` for a freestanding card form |
 | `reference` | Your ID for the payment. Unique per MSN. Must match `^[a-zA-Z0-9-]{8,64}$` |
 | `userFlow` | `WEB_REDIRECT` unless you have a specific reason. See below |
