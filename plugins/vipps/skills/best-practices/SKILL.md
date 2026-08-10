@@ -82,9 +82,9 @@ curl -X POST 'https://apitest.vipps.no/accesstoken/get' \
 --data ''
 ```
 
-The response carries `access_token` and `expires_in`. The token is valid for 1 hour in test and 24 hours in
-production. Cache it and reuse it for its full life. Do not fetch a token per request. Multiple valid tokens may be
-held at once.
+The response carries `access_token` and `expires_in`, the validity period in seconds. The token is valid for 1 hour
+in test and 24 hours in production. Cache it and reuse it for its full life. Do not fetch a token per request.
+Multiple valid tokens may be held at once.
 
 **Headers.** Send these on API calls:
 
@@ -161,6 +161,3 @@ Ask only what changes the code, and ask it early:
 
 If the user cannot answer the environment question yet, build against test with the values read from configuration,
 never hardcoded.
-
-
-test
