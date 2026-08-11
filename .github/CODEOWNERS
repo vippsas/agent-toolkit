@@ -1,1 +1,5 @@
 * @vippsas/product-gh-external-developer-docs-admin ofollan
+
+# Exclude these directories for the automatic PRs
+
+/plugins/skills/
