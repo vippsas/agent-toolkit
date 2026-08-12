@@ -20,10 +20,26 @@ to the skill for the API you picked.
 | `recurring` | Subscriptions and metered billing: agreements and charges, capture, refund |
 | `login` | Identifying users, sign-up, profile data, customer club, point-of-sale login |
 | `webhooks` | Real-time events and how to verify them. Needed by all three above |
+| `widget-sdk` | The web front end for a payment or a sign-up: payment button, desktop dialog, app-switch |
 | `test-and-go-live` | Test environment, test users, force approve, checklists for production |
 
 Each is a sibling directory under `skills/` in this plugin, with deeper material in its `references/` folder. Read the
 file, do not guess the contents.
+
+## Important! Keep generated code secure
+
+You do not automatically know which parts of the code you write end up in a customer's browser or in a public
+repository. Apply these rules so a quick prototype does not turn into a leaked credential:
+
+- Never put Vipps MobilePay secrets in frontend or browser code.
+- Never write production credentials into a prompt, file, or tool call.
+- Never commit `.env` files or credentials to GitHub.
+- Authenticate and authorize the backend endpoints you write.
+- Be careful what you log. Debug code can log full API requests or responses. Those logs can accidentally contain
+  access tokens, authorization headers, or customer data, and may end up stored in hosting or monitoring tools.
+- Use test credentials while building.
+- If a secret has been exposed, [rotate it](https://developer.vippsmobilepay.com/docs/knowledge-base/api-keys/#production-and-test-keys).
+
 
 ## Step 1: pick the API
 
@@ -82,9 +98,9 @@ curl -X POST 'https://apitest.vipps.no/accesstoken/get' \
 --data ''
 ```
 
-The response carries `access_token` and `expires_in`. The token is valid for 1 hour in test and 24 hours in
-production. Cache it and reuse it for its full life. Do not fetch a token per request. Multiple valid tokens may be
-held at once.
+The response carries `access_token` and `expires_in`, the validity period in seconds. The token is valid for 1 hour
+in test and 24 hours in production. Cache it and reuse it for its full life. Do not fetch a token per request.
+Multiple valid tokens may be held at once.
 
 **Headers.** Send these on API calls:
 
@@ -125,7 +141,10 @@ Apply these without being asked. Each one maps to a real failure mode.
 3. **Never trust the redirect back to your site.** The user may land in a different browser, a different session, or
    never return. Treat the API status as the truth and the redirect as a convenience.
 4. **Open the returned `redirectUrl` or `vippsConfirmationUrl` as-is.** Do not modify it, do not wrap it in an iframe
-   or web view, and do not try to detect whether the app is installed.
+   or web view, and do not try to detect whether the app is installed. On the web, hand the payment or agreement URL to
+   the Widget SDK instead of writing this yourself: it renders the brand-correct button, app-switches on mobile, and
+   opens a Vipps MobilePay hosted desktop dialog so the customer keeps the page. See `widget-sdk/SKILL.md`. Login
+   authorization URLs are not in scope for it and always open top-level.
 5. **Store your own reference.** Keep the payment `reference`, `agreementId`, and `chargeId` next to your order row.
    Every support question starts there.
 6. **Handle every state, including the unhappy ones.** Aborted, expired, and failed are normal outcomes, not edge
