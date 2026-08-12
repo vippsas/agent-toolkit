@@ -1,7 +1,7 @@
 {
   "name": "vipps",
   "description": "Vipps MobilePay plugin for Codex: pick the right API, then implement ePayment, Recurring, or Login correctly, with webhooks, testing, and go-live requirements.",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "author": {
     "name": "Vipps MobilePay",
     "url": "https://vippsmobilepay.com"
