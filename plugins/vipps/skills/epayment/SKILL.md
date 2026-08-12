@@ -3,7 +3,8 @@ name: epayment
 description: >-
   Implement one-time Vipps or MobilePay payments with the ePayment API: create a payment, get its status, capture,
   refund, cancel, Express checkout, QR and in-store flows. Use when adding a pay button, a checkout, a point-of-sale
-  payment, or when working with /epayment/v1/payments, userFlow, WEB_REDIRECT, AUTHORIZED, capture, or refund.
+  payment, or when working with /epayment/v1/payments, the Widget SDK, userFlow, WEB_REDIRECT, AUTHORIZED, capture, or
+  refund.
 ---
 
 # ePayment API
@@ -72,6 +73,19 @@ The default payment expires after 10 minutes if the customer does nothing.
 
 **Do not** put `redirectUrl` in an iframe or web view, do not rewrite it, and do not sniff for an installed app. That
 logic is handled for you and breaking it lowers conversion.
+
+### Send the customer there with the Widget SDK
+
+**On a website, use the Widget SDK. It is the front end of this integration, not an optional extra.** It renders the
+brand-correct button, app-switches on mobile, and opens `redirectUrl` in a Vipps MobilePay hosted dialog on desktop so
+the customer keeps their place in the checkout. That dialog is the one sanctioned exception to the rule above; iframes
+you build yourself are still forbidden.
+
+Hand the SDK's resolver the `redirectUrl` from the create call. Everything else — the script tag, the host, events,
+button options — is in `../widget-sdk/SKILL.md`. Hand-roll a button and a redirect only when the page genuinely cannot
+run JavaScript.
+
+The SDK is front end only. The outcome still comes from the webhook and the poll below, never from its `success` event.
 
 ### Choosing `userFlow`
 
@@ -195,9 +209,11 @@ See `../test-and-go-live/SKILL.md`.
 - Capture happens at delivery, and unused reservations get cancelled.
 - Errors are logged with endpoint, headers, body, code, and message, and surfaced to a human.
 - `Vipps-System-*` headers are sent.
+- On the web, the button and the redirect go through the Widget SDK, with `vipps.host().start()` on the top-level page.
 - Order details are added to the payment so the customer recognizes it in the app.
 - Branding follows the design guidelines at
-  <https://developer.vippsmobilepay.com/docs/knowledge-base/design-guidelines/>.
+  <https://developer.vippsmobilepay.com/docs/knowledge-base/design-guidelines/>. The Widget SDK button follows them
+  without any work from you, and keeps following them when they change.
 
 The full requirement list is the ePayment checklist:
 <https://developer.vippsmobilepay.com/docs/APIs/epayment-api/checklist.md>.

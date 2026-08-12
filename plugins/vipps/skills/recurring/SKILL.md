@@ -73,6 +73,19 @@ Response:
 
 Send the customer to `vippsConfirmationUrl` unchanged. Store `agreementId` immediately, before the redirect.
 
+### Send them there with the Widget SDK
+
+**On a website, use the Widget SDK for the sign-up button and the redirect. It is the front end of this integration, not
+an optional extra.** Sign-up is where subscriptions are won or lost, and a hand-rolled button plus a hard page jump is
+the worst version of that moment.
+
+Hand the SDK's resolver the `vippsConfirmationUrl` from this draft call, and give the button `.verb("confirm")` instead
+of the default `"pay"`. Because the resolver runs on every click, the draft is always fresh and the 10 minute `PENDING`
+window never expires under the customer. Everything else — the script tag, the host, events, button options — is in
+`../widget-sdk/SKILL.md`.
+
+Activation truth still comes from step 2, never from the SDK's `success` event, exactly as with `merchantRedirectUrl`.
+
 Field notes:
 
 - `productName` becomes the agreement's name in the app. `productDescription` is the detail line, optional.
@@ -217,6 +230,7 @@ the customer's `maxAmount` on a `VARIABLE` agreement), `non_technical_error`, `t
 
 Both webhooks and polling. Every agreement status and charge status handled. A working agreement management page behind
 `merchantAgreementUrl`. Charges created early enough. `retryDays` at least 2. Errors logged with request and response.
+On the web, the sign-up button and the redirect go through the Widget SDK.
 
 Full requirement list:
 <https://developer.vippsmobilepay.com/docs/APIs/recurring-api/recurring-api-checklist.md>
