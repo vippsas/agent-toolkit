@@ -45,7 +45,7 @@ require the test user to be properly registered in the test app first.
 
 | API | Call | Body |
 | --- | ---- | ---- |
-| ePayment | `POST /epayment/v1/payments/{reference}/approve` | `{ "customer": { "phoneNumber": "4712345678" } }`, or `token` from the create response |
+| ePayment | `POST /epayment/v1/test/payments/{reference}/approve` | `{ "customer": { "phoneNumber": "4712345678" } }`, or `token` from the create response |
 | Recurring | `PATCH /recurring/v3/agreements/{agreementId}/accept` | `{ "phoneNumber": "4712345678" }` |
 
 Express payments cannot be force approved. If force approve returns HTTP 500, the test user's card has probably expired:
