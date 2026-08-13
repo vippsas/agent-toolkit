@@ -139,4 +139,4 @@ Norwegian sales units get error 5010.
 At a physical point of sale, always send `"customerInteraction": "CUSTOMER_PRESENT"`. It changes risk handling and is a
 requirement for in-store integrations, not an optimization.
 
-Full pages: <https://developer.vippsmobilepay.com/docs/APIs/epayment-api/api-guide/features/>
+Full pages: <https://developer.vippsmobilepay.com/docs/APIs/epayment-api/api-guide/features/README.md>
