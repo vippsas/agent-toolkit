@@ -11,7 +11,9 @@ description: >-
 
 One-time payments for Vipps and MobilePay, online and in person. Base path `/epayment/v1`.
 
-Read `../best-practices/SKILL.md` first for servers, keys, access tokens, headers, and minor units. This skill assumes them.
+Read `../best-practices/SKILL.md` first for servers, keys, access tokens, headers, and minor units. Read
+`../payment-lifecycle/SKILL.md` for capture deadlines, cancel, refund, timeouts, and `reference` formatting: those
+rules are the same for every payment API and are not repeated here.
 
 ## The shape of the integration
 
@@ -69,7 +71,8 @@ The response contains `redirectUrl` and your `reference`. Send the customer to `
 the app installed, the operating system app-switches straight into it. Elsewhere the landing page opens and the
 customer types their phone number.
 
-The default payment expires after 10 minutes if the customer does nothing.
+The default payment expires after 10 minutes if the customer does nothing. See `../payment-lifecycle/SKILL.md` before
+you build anything that cancels the order on your own timer.
 
 **Do not** put `redirectUrl` in an iframe or web view, do not rewrite it, and do not sniff for an installed app. That
 logic is handled for you and breaking it lowers conversion.
@@ -153,14 +156,8 @@ Full history is at `GET /epayment/v1/payments/{reference}/events`. Use it for su
 { "modificationAmount": { "currency": "NOK", "value": 49900 } }
 ```
 
-Partial captures are allowed: call it repeatedly, up to the authorized amount.
-
-The rules are legal, not just technical:
-
-- Capture **as soon as** the product or service is delivered. Some banks release the reservation after a few days.
-- Do **not** capture before delivery.
-- Uncaptured reservations are cancelled automatically after the capture deadline, and money never reaches the merchant.
-- If part of the amount will not be captured, cancel the remainder so the customer gets the funds back.
+Partial captures are allowed: call it repeatedly, up to the authorized amount. See `../payment-lifecycle/SKILL.md` for
+capture deadlines, why a late capture can fail, and why the reserved amount must cover shipping added at capture time.
 
 ## 4. Cancel and refund
 
@@ -170,8 +167,8 @@ The rules are legal, not just technical:
 | Partly captured, rest will not ship | `POST .../cancel` releases the uncaptured remainder |
 | Already captured | `POST .../refund` with `modificationAmount` |
 
-Cancel works within 180 days of reservation, refund within 365 days. Refunds may be partial and repeated up to the
-captured amount. A captured payment cannot be cancelled: error 6040.
+A captured payment cannot be cancelled: error 6040. For the capture deadline, the refund window, and where a refund
+lands by market, see `../payment-lifecycle/SKILL.md`.
 
 ## Errors
 
@@ -212,7 +209,7 @@ See `../test-and-go-live/SKILL.md`.
 - On the web, the button and the redirect go through the Widget SDK, with `vipps.host().start()` on the top-level page.
 - Order details are added to the payment so the customer recognizes it in the app.
 - Branding follows the design guidelines at
-  <https://developer.vippsmobilepay.com/docs/knowledge-base/design-guidelines/>. The Widget SDK button follows them
+  <https://developer.vippsmobilepay.com/docs/knowledge-base/design-guidelines.md>. The Widget SDK button follows them
   without any work from you, and keeps following them when they change.
 
 The full requirement list is the ePayment checklist:

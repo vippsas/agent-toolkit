@@ -21,6 +21,7 @@ to the skill for the API you picked.
 | `login` | Identifying users, sign-up, profile data, customer club, point-of-sale login |
 | `webhooks` | Real-time events and how to verify them. Needed by all three above |
 | `widget-sdk` | The web front end for a payment or a sign-up: payment button, desktop dialog, app-switch |
+| `payment-lifecycle` | Capture deadlines, cancel, refund, timeouts, and `orderId`/`reference` rules shared by ePayment and Recurring |
 | `test-and-go-live` | Test environment, test users, force approve, checklists for production |
 
 Each is a sibling directory under `skills/` in this plugin, with deeper material in its `references/` folder. Read the
@@ -38,7 +39,7 @@ repository. Apply these rules so a quick prototype does not turn into a leaked c
 - Be careful what you log. Debug code can log full API requests or responses. Those logs can accidentally contain
   access tokens, authorization headers, or customer data, and may end up stored in hosting or monitoring tools.
 - Use test credentials while building.
-- If a secret has been exposed, [rotate it](https://developer.vippsmobilepay.com/docs/knowledge-base/api-keys/#production-and-test-keys).
+- If a secret has been exposed, [rotate it](https://developer.vippsmobilepay.com/docs/knowledge-base/api-keys.md#production-and-test-keys).
 
 
 ## Step 1: pick the API
@@ -55,14 +56,15 @@ Start from what the user wants to happen, not from the product name.
 | Customer signs up or logs in with their wallet identity | **Login API** | OIDC authorization code flow |
 | Staff enrolls a customer in a club from a till or call center | **Login API**, merchant-initiated (CIBA) | Not allowed in browsers or apps |
 | The system needs status updates without polling hard | **Webhooks API** | Always in addition to polling, never instead |
-| Accounting needs settlements, fees, payouts | **Report API** | Out of scope for this plugin |
-| Accounting needs order lines and VAT | **Sales API** | Out of scope for this plugin |
+| Customer makes a single or recurring donation | **Donations API** | Not covered here, see <https://developer.vippsmobilepay.com/docs/APIs/donations-api/README.md> |
+| Accounting needs settlements, fees, payouts | **Report API** | Not covered here, see <https://developer.vippsmobilepay.com/docs/APIs/report-api/README.md> |
+| Accounting needs order lines and VAT | **Sales API** | Not covered here, see <https://developer.vippsmobilepay.com/docs/APIs/sales-api/README.md> |
 
 Rules that decide the answer for you:
 
 - **Check for a ready-made plugin first.** If the system is Shopify, WooCommerce, Magento, Shopware, PrestaShop,
   Drupal, Wix, WordPress, or Optimizely, an official plugin exists and no API code should be written. See
-  <https://developer.vippsmobilepay.com/docs/plugins/>.
+  <https://developer.vippsmobilepay.com/docs/plugins/README.md>.
 - **Recurring is not ePayment repeated.** Do not build subscriptions by storing a token and re-charging through
   ePayment. That is not supported. Use the Recurring API.
 - **Login is not needed to get profile data during a purchase.** Profile sharing on the payment is fewer moving parts.
@@ -163,7 +165,7 @@ Every documentation page ships as raw Markdown for agents. Fetch these instead o
 - Any page as Markdown: append `.md` to the doc path, for example
   <https://developer.vippsmobilepay.com/docs/APIs/epayment-api/quick-start.md>
 - Rendered API specifications: `/api/epayment`, `/api/recurring`, `/api/login`, `/api/access-token`, `/api/webhooks`
-- Postman collections: <https://developer.vippsmobilepay.com/docs/knowledge-base/postman/>
+- Postman collections: <https://developer.vippsmobilepay.com/docs/knowledge-base/postman.md>
 
 When a detail is not in these skills, fetch the raw Markdown page rather than inventing a field name. The API rejects
 unknown fields.

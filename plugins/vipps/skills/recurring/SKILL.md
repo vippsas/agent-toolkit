@@ -11,7 +11,9 @@ description: >-
 
 Subscriptions and repeat billing for Vipps and MobilePay. Base path `/recurring/v3`.
 
-Read `../best-practices/SKILL.md` first for servers, keys, access tokens, headers, and minor units.
+Read `../best-practices/SKILL.md` first for servers, keys, access tokens, headers, and minor units. Read
+`../payment-lifecycle/SKILL.md` for capture deadlines, cancel, refund, timeouts, and `orderId` formatting: those rules
+are the same for every payment API and are not repeated here.
 
 ## Two things exist: agreements and charges
 
@@ -154,8 +156,9 @@ Rules that the API enforces:
   earlier.
 - `retryDays` is capped at 14. Use at least 2. `retryDays: 0` means one attempt and then `FAILED`.
 - `description` is at most 45 characters. The app shows it under the `productName` title.
-- `orderId` replaces the generated `chargeId` and must be unique per MSN. Use your own stable ID so retries and
-  reconciliation line up. `externalId` is a separate, looser field used only in settlement reports.
+- `orderId` replaces the generated `chargeId`. Use your own stable ID so retries and reconciliation line up; see
+  `../payment-lifecycle/SKILL.md` for the formatting rules. `externalId` is a separate, looser field used only in
+  settlement reports.
 - For `LEGACY` pricing the charges inside one interval may total at most 5 times the agreement price.
 
 To bill a batch, `POST /recurring/v3/agreements/charges` takes up to 2 000 charges in one request. Failures come back
@@ -202,8 +205,8 @@ the customer's `maxAmount` on a `VARIABLE` agreement), `non_technical_error`, `t
 | Refund a charged amount | `POST /agreements/{id}/charges/{chargeId}/refund` |
 | End the subscription | `PATCH /agreements/{id}` with `{"status": "STOPPED"}` |
 
-- Partial capture is supported. Cancel any reserved remainder you will not take.
-- Refunds are allowed up to 365 days after capture.
+- Partial capture is supported. Cancel any reserved remainder you will not take; see `../payment-lifecycle/SKILL.md`
+  for capture deadlines and the refund window.
 - There is **no pause status**. To pause, simply create no charges and say so in the agreement description. Do not use
   `STOPPED` as a pause: it is irreversible.
 - Stop at the end of the paid period, not the moment the customer asks. While the agreement is `ACTIVE` you can still
