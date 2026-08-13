@@ -65,8 +65,8 @@ Partial refunds are allowed, repeated, until the captured amount is used up.
 
 ## Timeouts
 
-By default a customer has 10 minutes to act on a payment or agreement request: 5 minutes to open it in the app, 5
-more to approve it. After that it expires (`EXPIRED` on a payment, `EXPIRED` on an agreement still `PENDING`).
+By default a customer has 10 minutes to act on a payment or agreement request. After that it expires (`EXPIRED` on a
+payment, `EXPIRED` on an agreement still `PENDING`).
 
 **Do not cancel the order in your own system before that window has closed, or before you have an `EXPIRED` webhook
 or poll result.** Cancelling early creates a race: the customer approves in the app moments after your system already

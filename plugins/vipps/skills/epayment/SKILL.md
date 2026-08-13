@@ -193,7 +193,7 @@ The full table is in `references/errors.md`.
 
 ## Testing
 
-`POST /epayment/v1/payments/{reference}/approve` approves a payment without touching the app. Test environment only.
+`POST /epayment/v1/test/payments/{reference}/approve` approves a payment without touching the app. Test environment only.
 The test user must have approved at least one payment manually in the app first, and Express is not supported.
 
 Specific amounts trigger specific failures in test: `151` insufficient funds, `186` expired card, `187` invalid card.
