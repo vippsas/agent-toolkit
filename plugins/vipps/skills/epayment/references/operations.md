@@ -13,7 +13,7 @@ All requests carry `Authorization: Bearer`, `Ocp-Apim-Subscription-Key`, `Mercha
 | Capture | `POST /payments/{reference}/capture` | Yes | 5 per minute |
 | Refund | `POST /payments/{reference}/refund` | Yes | 5 per minute |
 | Cancel | `POST /payments/{reference}/cancel` | Recommended | 5 per minute |
-| Force approve (test only) | `POST /payments/{reference}/approve` | No | |
+| Force approve (test only) | `POST /test/payments/{reference}/approve` | No | |
 
 ## Create payment
 
@@ -118,7 +118,7 @@ No body needed. Cancel releases every not-yet-captured krone or øre at once, an
 
 ## Force approve, test environment only
 
-`POST /payments/{reference}/approve` confirms a payment without the app, for automated tests. The body takes either the
+`POST /test/payments/{reference}/approve` confirms a payment without the app, for automated tests. The body takes either the
 customer, or the token from the create response:
 
 ```json

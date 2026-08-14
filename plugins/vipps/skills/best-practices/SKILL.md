@@ -165,10 +165,17 @@ Every documentation page ships as raw Markdown for agents. Fetch these instead o
 - Any page as Markdown: append `.md` to the doc path, for example
   <https://developer.vippsmobilepay.com/docs/APIs/epayment-api/quick-start.md>
 - Rendered API specifications: `/api/epayment`, `/api/recurring`, `/api/login`, `/api/access-token`, `/api/webhooks`
-- Postman collections: <https://developer.vippsmobilepay.com/docs/knowledge-base/postman.md>
+- Full list of APIs, including ones not covered by these skills (QR, Userinfo, Order Management, Management, Report,
+  Sales, Donations, PSP solutions, Agentic commerce, legacy Checkout and eCom):
+  <https://developer.vippsmobilepay.com/docs/APIs/README.md>
+- Becoming a partner, partner keys, and partner onboarding questions, which these skills do not cover:
+  <https://developer.vippsmobilepay.com/docs/partner/README.md>
 
 When a detail is not in these skills, fetch the raw Markdown page rather than inventing a field name. The API rejects
 unknown fields.
+
+These skills can be wrong or out of date. Verify anything that looks off against the pages above, and report the
+mistake at <https://github.com/vippsas/agent-toolkit/issues>.
 
 ## What to ask the user before writing code
 
