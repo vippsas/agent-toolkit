@@ -28,8 +28,11 @@ The resolver is handed the payment URL from the create call, which for the ePaym
 The SDK exposes a global `window.vipps` object.
 
 ```html
-<script src="https://cdn.vippsmobilepay.com/js/widget-sdk/vipps-widget.js"></script>
+<script src="https://cdn.vippsmobilepay.com/js/widget-sdk/vipps-widget.js" data-vipps-widget-sdk></script>
 ```
+
+The `data-vipps-widget-sdk` attribute is recommended. It helps the SDK find its own script tag later, when it needs
+to inject styles or load the button component.
 
 ## Quick start
 
@@ -162,6 +165,7 @@ finish loading.
 | `.verb(value)` | `"pay"`, `"login"`, `"register"`, `"continue"`, `"confirm"`, `"donate"`, `"express"`, `"buy"`. Default `"pay"` |
 | `.variant(value)` | `"primary"`, `"dark"`, `"light"`. Default `"primary"` |
 | `.type(value)` | `"button"` or `"submit"`. Default `"button"` |
+| `.branded(value)` | Toggle the brand logo inside the label. Default `true` |
 | `.compact(value)` | Compact, logo-only layout. Default `false` |
 | `.rounded(value)` | Fully rounded corners. Default `true` |
 | `.stretched(value)` | Full-width layout. Default `false` |
@@ -201,6 +205,22 @@ vipps
     // Handle payment initiation
   });
 ```
+
+## Content security policy and cookie consent
+
+If the embedding page uses a Content Security Policy, allowlist `https://cdn.vippsmobilepay.com` for `script-src` and
+the market's payment domain (for example `https://pay.vipps.no`) for `frame-src`. Do not pin the script with a hashed
+CSP source or Subresource Integrity, since the CDN script changes without notice. If CSP blocks framing, the SDK
+degrades gracefully: the dialog closes and redirects to the payment URL, or the button falls back to an on-page
+web component.
+
+The SDK itself stores nothing on the visitor's device. Cross-site "remember me" personalization and analytics are
+consent-relevant behaviors on the Vipps origin; call `vipps.consent({ rememberMe, analytics })` to reflect the
+visitor's cookie consent choice. `rememberMe` defaults to off until explicitly enabled; `analytics` and on-page
+personalization default to on until consent is set, to preserve historic behavior.
+
+See <https://developer.vippsmobilepay.com/docs/knowledge-base/widget.md#content-security-policy> and
+<https://developer.vippsmobilepay.com/docs/knowledge-base/widget.md#cookie-consent-and-gdpr> for full details.
 
 ## Before calling it done
 
