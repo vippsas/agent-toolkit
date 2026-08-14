@@ -81,17 +81,26 @@ These hold for every API here.
 **Servers.** Test `https://apitest.vipps.no`. Production `https://api.vipps.no`. Same hosts for all markets and both
 brands. Separate credentials per environment. HTTPS with TLS 1.2 or higher.
 
-**Credentials.** Keys belong to a *sales unit*, not to a company. A merchant with several sales units has several key
-sets. Each set is:
+**Credentials, or API keys.** *API keys* is the docs' umbrella term for every credential type: sales unit keys (the
+normal case, below), partner keys, and specialty keys for accounting and Donations. This skill only covers sales
+unit keys and partner keys, the ones ePayment, Recurring, Login, and Webhooks use. If a key doesn't match the
+shape below, it may be one of the other types: see
+<https://developer.vippsmobilepay.com/docs/knowledge-base/api-keys.md>.
+
+Keys belong to a *sales unit*, not to a company. A merchant with several sales units has several key sets. Each
+set is:
 
 - `client_id` and `client_secret`
-- `Ocp-Apim-Subscription-Key`
-- `merchantSerialNumber` (MSN), the sales unit's ID
+- `Ocp-Apim-Subscription-Key` (a primary and a secondary, interchangeable, so one can be rotated without downtime)
+- `merchantSerialNumber` (MSN) — not itself an API key, but required on most requests, and the sales unit's ID
 
 Merchants find them in the business portal at <https://portal.vippsmobilepay.com>. Partners use partner keys, which
-work in production only and make the `Merchant-Serial-Number` header mandatory.
+work in production only and make the `Merchant-Serial-Number` header mandatory, since one partner key set can act on
+behalf of many merchants.
 
-**Access token.** Every call needs a Bearer token from the Access Token API. The keys go in headers, the body is empty:
+**Access token.** Every call needs a Bearer token, exchanged for the key values above through the Access Token
+API's *standard authentication* flow (the one sales unit keys and partner keys use). The keys go in headers, the
+body is empty:
 
 ```bash
 curl -X POST 'https://apitest.vipps.no/accesstoken/get' \
@@ -105,6 +114,11 @@ curl -X POST 'https://apitest.vipps.no/accesstoken/get' \
 The response carries `access_token` and `expires_in`, the validity period in seconds. The token is valid for 1 hour
 in test and 24 hours in production. Cache it and reuse it for its full life. Do not fetch a token per request.
 Multiple valid tokens may be held at once.
+
+Accounting keys and Donations merchant-level keys use a different, *specialized authentication* flow with only
+`client_id` and `client_secret`, no `Ocp-Apim-Subscription-Key`. Out of scope here: see
+<https://developer.vippsmobilepay.com/docs/APIs/access-token-api/specialized-authentication.md> if one of those
+turns up.
 
 **Headers.** Send these on API calls:
 

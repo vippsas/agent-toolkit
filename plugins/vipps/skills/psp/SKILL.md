@@ -25,7 +25,9 @@ tells Vipps MobilePay the outcome. Settlement is between the PSP and the merchan
 
 - PSP keys are their own credential set, not interchangeable with regular merchant or partner keys. Get them
   from your PSP Partner Manager, who also issues your `Psp-Id`.
-- Send `Psp-Id` on every request, in addition to the usual headers from `../best-practices/SKILL.md`.
+- Send `Psp-Id` on every ePayment, Recurring, and webhook request, in addition to the usual headers from
+  `../best-practices/SKILL.md`. It does not go on the `POST /accesstoken/get` call itself — only `client_id`,
+  `client_secret`, and `Ocp-Apim-Subscription-Key` do.
 - `Merchant-Serial-Number` is the *merchant's* MSN, the sales unit being acted on behalf of, never the PSP's own.
   This is the easiest header to get wrong.
 - Onboarding a merchant and getting their MSN is a separate job, the PSP Merchant API, not covered by this skill.
@@ -176,6 +178,11 @@ callback with the same `authorizationAttemptId` and a fresh cryptogram. Respond 
 
 Always process the card using the `cardType` from the callback, never assume it from `allowedCardTypes` — this
 matters for co-branded Visa/Dankort cards and PSD2 strong customer authentication.
+
+## Webhooks
+
+PSPs need webhooks the same way a direct merchant does, plus the partner/PSP-wide registration that covers every
+sales unit at once. See `../webhooks/SKILL.md` for both.
 
 ## Don't use these
 
