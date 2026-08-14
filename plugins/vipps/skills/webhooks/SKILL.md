@@ -43,8 +43,12 @@ action, and keep the `id` so you can delete it later.
 | List registrations | `GET /webhooks/v1/webhooks` |
 | Delete a registration | `DELETE /webhooks/v1/webhooks/{id}` |
 
-Limits: 25 registrations per event type per MSN, except QR, which allows 1. Partners can register with partner keys and
-no `Merchant-Serial-Number` to cover every sales unit they manage, including future ones, against an independent quota.
+Two registration types, each with its own 25-per-event-type limit (1 for QR), never sharing a bucket:
+
+- **Sales unit webhook**: has a `Merchant-Serial-Number`, applies to that one sales unit.
+- **Partner/PSP webhook**: a partner or PSP registers with their own keys. If they want a webhook for a single sales unit,
+  they add `Merchant-Serial-Number` to the API request. If they want a webhook
+  that covers every sales unit they manage, including future ones, they omit the `Merchant-Serial-Number` from the webhook registration API request.
 
 ## 2. Verify every delivery
 
