@@ -15,6 +15,8 @@ Read `../best-practices/SKILL.md` first for servers, keys, access tokens, header
 `../payment-lifecycle/SKILL.md` for capture deadlines, cancel, refund, timeouts, and `reference` formatting: those
 rules are the same for every payment API and are not repeated here.
 
+Building as a PSP with card passthrough? See `../psp/SKILL.md` for the `CARD_PASSTHROUGH` delta.
+
 ## The shape of the integration
 
 Four things to build. Nothing works without all four.

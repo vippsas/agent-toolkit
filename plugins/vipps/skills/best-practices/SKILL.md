@@ -23,6 +23,7 @@ to the skill for the API you picked.
 | `widget-sdk` | The web front end for a payment or a sign-up: payment button, desktop dialog, app-switch |
 | `payment-lifecycle` | Capture deadlines, cancel, refund, timeouts, and `orderId`/`reference` rules shared by ePayment and Recurring |
 | `test-and-go-live` | Test environment, test users, force approve, checklists for production |
+| `psp` | Card passthrough for Payment Service Providers acting on behalf of merchants, for payments and subscriptions |
 
 Each is a sibling directory under `skills/` in this plugin, with deeper material in its `references/` folder. Read the
 file, do not guess the contents.
@@ -56,6 +57,7 @@ Start from what the user wants to happen, not from the product name.
 | Customer signs up or logs in with their wallet identity | **Login API** | OIDC authorization code flow |
 | Staff enrolls a customer in a club from a till or call center | **Login API**, merchant-initiated (CIBA) | Not allowed in browsers or apps |
 | The system needs status updates without polling hard | **Webhooks API** | Always in addition to polling, never instead |
+| I am a PSP integrating card passthrough for my merchants | **ePayment PSP API** or **Recurring PSP API** | See the `psp` skill |
 | Customer makes a single or recurring donation | **Donations API** | Not covered here, see <https://developer.vippsmobilepay.com/docs/APIs/donations-api/README.md> |
 | Accounting needs settlements, fees, payouts | **Report API** | Not covered here, see <https://developer.vippsmobilepay.com/docs/APIs/report-api/README.md> |
 | Accounting needs order lines and VAT | **Sales API** | Not covered here, see <https://developer.vippsmobilepay.com/docs/APIs/sales-api/README.md> |
