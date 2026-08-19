@@ -53,6 +53,7 @@ misspelled, every payment counts as the same one and you will hit HTTP 429 immed
 | 4130 | Metadata value length exceeded | |
 | 4140 | Missing required parameter | The named field is required for this flow |
 | 4150 | Reference exists, or refund idempotency conflict | Either the `reference` is taken, or a retry body changed |
+| 4160 | Invalid payment method type | `paymentMethod.type` is not valid for `CardPassthrough` |
 
 ## Merchant configuration
 
@@ -98,6 +99,9 @@ These are account or product problems. No amount of code changes them; the merch
 | 6210 | Payment cannot be refunded | Wrong state |
 | 6220 | Refund period expired | Refund is possible within 365 days of reservation |
 | 6230 | Payment is already reserved | The reference has already been authorized |
+| 6250 | Cannot cancel processing payment | The payment is being processed. Retry the cancel later |
+| 6260 | Funds unavailable | The bank or card network released the reservation early. Funds may become available later, or contact the customer to retry |
+| 6280 | Capture failed, please try again later | Retry the capture with the same idempotency key after a short wait |
 
 ## Users
 
