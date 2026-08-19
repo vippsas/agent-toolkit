@@ -185,6 +185,8 @@ RFC 7807 bodies with a `traceId`, plus a numeric code in `extraDetails` for doma
 | 6080 | Cannot capture before reservation | The customer has not approved yet. Check the state |
 | 6090 | Capture amount too high | Total captures exceed the authorized amount |
 | 6100 | Capture period expired | Reservation is gone. Nothing to do |
+| 6260 | Funds unavailable | Bank released the reservation early. Retry later or contact the customer |
+| 6280 | Capture failed, please try again later | Retry the capture with the same idempotency key |
 | 5040 | Invalid currency for merchant | Currency must match the sales unit's market |
 | 5060 | Bank account not verified | Merchant setup, not code |
 | 7010 | Customer not found | The phone number has no eligible user, or fails `minimumUserAge` |

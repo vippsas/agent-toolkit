@@ -19,18 +19,23 @@ A reservation that is not captured in time is automatically cancelled.
 | Market | Deadline |
 | ------ | -------- |
 | Norway | 180 days |
-| Denmark, Finland | 14 days. Contact the KAM or customer service for more time |
+| Denmark, Finland | 14 days by default. Newer sales units, or sales units approved for late capture, may have a longer limit, up to 180 days. Contact the KAM or customer service to check or request this |
+
+Attempting to capture a payment after its deadline returns HTTP 400 with the relevant error details.
 
 Within that deadline, the card network's own guarantee is usually shorter:
 
 - **Visa**: reservations usually last 5-7 days. Capture within 7 days and Visa guarantees the capture succeeds.
 - **Mastercard**: reservations are valid for 30 days, and Mastercard guarantees a capture within that window.
 
-**Capturing after the card network's window has passed is not "the same payment, later."** The bank has released the
-hold, so the capture becomes a new charge attempt. If the customer's account no longer has the funds, it fails. If it
-does, the charge can, in rare cases, succeed and put the account negative. This is the most common cause of failed
-captures for merchants shipping physical goods: capture immediately before dispatch, verify `capturedAmount` in the
-response, and only then hand the goods to the carrier.
+**These deadlines are outer limits, not guarantees.** The customer's bank, card issuer, Klarna, or other payment
+provider can release the reservation earlier, so capturing after the card network's window has passed is not "the
+same payment, later." The bank has released the hold, so the capture becomes a new charge attempt. If the customer's
+account no longer has the funds, it fails. If it does, the charge can, in rare cases, succeed and put the account
+negative. This is the most common cause of failed captures for merchants shipping physical goods: capture
+immediately before dispatch, verify `capturedAmount` in the response, and only then hand the goods to the carrier.
+The ePayment API also exposes a `captureGuaranteedUntil` field on the payment resource and in the `authorized`
+webhook, giving the exact date a successful capture is guaranteed for that payment.
 
 Capture must never happen before the product or service is delivered. That is a regulatory requirement, not a style
 choice.

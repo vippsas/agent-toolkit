@@ -71,12 +71,17 @@ Open `redirectUrl` with the platform's normal URL opening, unchanged. Never in a
   "paymentMethod": { "type": "WALLET" },
   "profile": {},
   "pspReference": "37c34d8c-2649-448e-864b-060d5d93e4c4",
-  "reference": "acme-shop-123-1234589"
+  "reference": "acme-shop-123-1234589",
+  "captureGuaranteedUntil": "2026-09-01T07:53:44.812+00:00"
 }
 ```
 
 `aggregate` is the only reliable source for how much has been captured, refunded, or cancelled, because `state` stops
 changing at `AUTHORIZED`. Reconcile against `aggregate`, not against your own assumption of what your last call did.
+
+`captureGuaranteedUntil` is the date a successful capture is guaranteed for this payment. It can be earlier than the
+market's [capture deadline](../../payment-lifecycle/SKILL.md#capture-deadlines) if the bank or card network releases
+the reservation early; the same field is also included in the `epayments.payment.authorized.v1` webhook payload.
 
 With Express or profile sharing and customer consent, the response also carries `userDetails`, `shippingDetails`, and
 `profile.sub`. With `metadata` on the create request, it comes back here too.
@@ -99,6 +104,9 @@ event that fired. They intentionally differ.
 - An idempotent retry must send an identical body, or you get error 4010.
 - Some sales units are configured so partial capture is refused: error 6140.
 - After a partial capture, cancel the rest.
+- If the reservation was released early (error `6260`, `Funds unavailable`) or the capture otherwise fails
+  transiently (error `6280`), do not send the goods; retry with the same idempotency key or contact the customer.
+  See `../../payment-lifecycle/SKILL.md#capture-deadlines`.
 
 ## Refund
 
