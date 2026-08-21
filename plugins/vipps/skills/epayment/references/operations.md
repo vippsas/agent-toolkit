@@ -80,7 +80,7 @@ Open `redirectUrl` with the platform's normal URL opening, unchanged. Never in a
 changing at `AUTHORIZED`. Reconcile against `aggregate`, not against your own assumption of what your last call did.
 
 `captureGuaranteedUntil` is the date a successful capture is guaranteed for this payment. It can be earlier than the
-market's [capture deadline](../../payment-lifecycle/SKILL.md#capture-deadlines) if the bank or card network releases
+market's [capture deadline](../../payment-lifecycle/SKILL.md#capture-attempt-deadlines) if the bank or card network releases
 the reservation early; the same field is also included in the `epayments.payment.authorized.v1` webhook payload.
 
 With Express or profile sharing and customer consent, the response also carries `userDetails`, `shippingDetails`, and
@@ -106,7 +106,7 @@ event that fired. They intentionally differ.
 - After a partial capture, cancel the rest.
 - If the reservation was released early (error `6260`, `Funds unavailable`) or the capture otherwise fails
   transiently (error `6280`), do not send the goods; retry with the same idempotency key or contact the customer.
-  See `../../payment-lifecycle/SKILL.md#capture-deadlines`.
+  See `../../payment-lifecycle/SKILL.md#capture-attempt-deadlines`.
 
 ## Refund
 
