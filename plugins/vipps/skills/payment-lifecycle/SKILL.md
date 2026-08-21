@@ -12,21 +12,30 @@ These rules come from the underlying card and wallet mechanics, not from one API
 same way to the ePayment API and the Recurring API (and to the legacy eCom API). Read `epayment/SKILL.md` or
 `recurring/SKILL.md` for the endpoints; read this for the deadlines and behavior around them.
 
-## Capture deadlines
+## Capture attempt deadlines
 
 A reservation that is not captured in time is automatically cancelled.
 
 | Market | Deadline |
 | ------ | -------- |
 | Norway | 180 days |
-| Denmark, Finland | 14 days by default. Newer sales units, or sales units approved for late capture, may have a longer limit, up to 180 days. Contact the KAM or customer service to check or request this |
+| Denmark, Finland | 14 days by default, unless [late capture](#late-capture-for-mobilepay-sales-units) is activated (up to 180 days) |
 
 Attempting to capture a payment after its deadline returns HTTP 400 with the relevant error details.
 
-Within that deadline, the card network's own guarantee is usually shorter:
+Within that deadline, the card network's or payment method's own guarantee is usually shorter:
 
-- **Visa**: reservations usually last 5-7 days. Capture within 7 days and Visa guarantees the capture succeeds.
-- **Mastercard**: reservations are valid for 30 days, and Mastercard guarantees a capture within that window.
+- **Visa**: reservations usually last 5-7 days (5 days for Visa Electron); banks may release after 4-7 days. Capture
+  within 7 days and Visa guarantees the capture succeeds.
+- **Mastercard**: reservations are valid for 30 days, but banks may release earlier. Mastercard guarantees a capture
+  within that window.
+- **BankAxept** (Norway): 7 days, a hard limit.
+
+### Late capture for MobilePay sales units
+
+This feature must be approved for the sales unit on a case-by-case basis, and requires a legitimate business need,
+typically online retail where goods are delivered later and capture must happen later too. Contact the KAM or
+customer service to request it. Captures between 15 and 180 days after reservation are not guaranteed to succeed.
 
 **These deadlines are outer limits, not guarantees.** The customer's bank, card issuer, Klarna, or other payment
 provider can release the reservation earlier, so capturing after the card network's window has passed is not "the
@@ -52,7 +61,7 @@ Cancel releases whatever part of the reservation you will not capture. Do this a
 it, for the customer's sake and because carrying an unresolved reservation past its natural point causes support
 contacts. It is also a compliance point, see [Payment rules](#terms-and-conditions-acceptance) below.
 
-Cancel is subject to the same [capture deadlines](#capture-deadlines): a cancel attempt on a payment or charge past
+Cancel is subject to the same [capture deadlines](#capture-attempt-deadlines): a cancel attempt on a payment or charge past
 its deadline returns HTTP 400, because the reservation is already gone.
 
 ## Refund
