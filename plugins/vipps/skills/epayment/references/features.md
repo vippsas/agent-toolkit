@@ -26,7 +26,7 @@ Address and delivery choice happen inside the app, so the customer can buy from 
 Three things are required together:
 
 1. `paymentMethod.type` set to `WALLET`.
-2. `profile.scope` set to exactly `"name address email phoneNumber"`. Not fewer values, not more. Anything else fails.
+2. `profile.scope` must include `address`.
 3. `shipping` with either `fixedOptions` or `dynamicOptions`, never both.
 
 ### Fixed options

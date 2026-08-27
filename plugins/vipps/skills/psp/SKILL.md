@@ -75,7 +75,7 @@ After the card callback, use the normal ePayment capture, refund, and cancel cal
 ### Express for PSPs
 
 Same as direct Express (`../epayment/references/features.md`), delivered through card passthrough: add
-`profile.scope: "name address email phoneNumber"` and `shipping` to the `CARD_PASSTHROUGH` create request above.
+`profile.scope` (must include `address`) and `shipping` to the `CARD_PASSTHROUGH` create request above.
 The merchant's sales unit must be approved for Express first. Retrieve `shippingDetails` and `userDetails` from
 `GET /epayment/v1/payments/{reference}` (with `Psp-Id`) or the webhook, same shape as direct Express.
 
