@@ -26,7 +26,7 @@ Address and delivery choice happen inside the app, so the customer can buy from 
 Three things are required together:
 
 1. `paymentMethod.type` set to `WALLET`.
-2. `profile.scope` must include `address`.
+2. `profile.scope` set to `address`.
 3. `shipping` with either `fixedOptions` or `dynamicOptions`, never both.
 
 ### Fixed options
@@ -86,8 +86,8 @@ customer. Verify `callbackAuthorizationToken` on every call. Callbacks arrive fr
 ### Getting the result
 
 `GET /epayment/v1/payments/{reference}` returns `shippingDetails` with `address`, `shippingCost`, `shippingOptionId`,
-`shippingOptionName`, plus `userDetails` with `email`, `firstName`, `lastName`, `mobileNumber`, `addresses`. Capture the
-full amount including shipping.
+`shippingOptionName`, plus `userDetails` containing whatever profile information the customer consented to share.
+Capture the full amount including shipping.
 
 ### Limits and branding
 
