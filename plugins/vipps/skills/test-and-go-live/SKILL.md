@@ -36,7 +36,9 @@ not registered redirect URIs, not webhook registrations.
 
 Never use a test phone number against production. Those numbers may belong to real people.
 
-Available in test: Access Token, ePayment, Recurring, Login, Userinfo, Webhooks, QR, Checkout, eCom, PSP APIs.
+Available in test: Access Token, ePayment, Recurring, Login, Userinfo, Webhooks, QR, Checkout, eCom, ePayment PSP API,
+Recurring PSP API. MobilePay Online has its own separate sandbox with separate credentials and endpoints; the Vipps PSP
+API is legacy and not part of this list.
 
 ## Skipping the app: force approve
 
