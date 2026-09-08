@@ -1,6 +1,6 @@
 {
-  "name": "vipps",
-  "description": "Renamed. Install vipps-developer@agent-toolkit instead.",
+  "name": "vipps-developer",
+  "description": "Vipps MobilePay plugin for Codex: pick the right API, then implement ePayment, Recurring, or Login correctly, with webhooks, testing, and go-live requirements.",
   "version": "1.12.0",
   "author": {
     "name": "Vipps MobilePay",
@@ -12,8 +12,8 @@
   "keywords": ["vipps", "mobilepay", "payments", "api", "epayment", "recurring", "login", "subscriptions", "webhooks"],
   "skills": "./skills/",
   "interface": {
-    "displayName": "Vipps MobilePay (renamed)",
-    "shortDescription": "Renamed. Install vipps-developer@agent-toolkit instead.",
+    "displayName": "Vipps MobilePay Developer",
+    "shortDescription": "Vipps MobilePay payment integration guidance and API help.",
     "logo": "./assets/logo.svg",
     "brandColor": "#FF5B24"
   }

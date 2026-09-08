@@ -1,4 +1,4 @@
-<img src="plugins/vipps/assets/logo.svg" alt="Vipps MobilePay" width="64">
+<img src="plugins/vipps-developer/assets/logo.svg" alt="Vipps MobilePay" width="64">
 
 # Agent Toolkit for Vipps MobilePay
 
@@ -8,9 +8,10 @@ A plugin marketplace hosting installable agent plugins for Vipps MobilePay. The 
 
 | Plugin | Description |
 | --- | --- |
-| [`vipps`](plugins/vipps) | Pick the right API, then implement it: payments, subscriptions, login, webhooks, and going live |
+| [`vipps-developer`](plugins/vipps-developer) | Pick the right API, then implement it: payments, subscriptions, login, webhooks, and going live |
+| [`vipps`](plugins/vipps) | Renamed to `vipps-developer`. Kept so an agent still on the old name says so |
 
-The `vipps` plugin ships one skill per goal, so an agent loads what the task needs instead of the whole documentation
+The `vipps-developer` plugin ships one skill per goal, so an agent loads what the task needs instead of the whole documentation
 set:
 
 | Skill | Covers |
@@ -28,16 +29,16 @@ set:
 
 ```bash
 claude plugin marketplace add vippsas/agent-toolkit
-claude plugin install vipps@agent-toolkit
+claude plugin install vipps-developer@agent-toolkit
 ```
 
 ### Cursor
 
-Add this repository as a plugin marketplace in Cursor, then install the `vipps` plugin. See the [Cursor plugin docs](https://cursor.com/docs).
+Add this repository as a plugin marketplace in Cursor, then install the `vipps-developer` plugin. See the [Cursor plugin docs](https://cursor.com/docs).
 
 ### Codex
 
-Add this repository as a plugin marketplace in Codex, then install the `vipps` plugin. See the [Codex plugin docs](https://developers.openai.com/codex).
+Add this repository as a plugin marketplace in Codex, then install the `vipps-developer` plugin. See the [Codex plugin docs](https://developers.openai.com/codex).
 
 ## Repository layout
 

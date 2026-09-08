@@ -9,9 +9,14 @@
   },
   "plugins": [
     {
+      "name": "vipps-developer",
+      "source": "./plugins/vipps-developer",
+      "description": "Vipps MobilePay plugin for Cursor: pick the right API, then implement ePayment, Recurring, or Login correctly, with webhooks, testing, and go-live requirements."
+    },
+    {
       "name": "vipps",
       "source": "./plugins/vipps",
-      "description": "Vipps MobilePay plugin for Cursor: pick the right API, then implement ePayment, Recurring, or Login correctly, with webhooks, testing, and go-live requirements."
+      "description": "Renamed. Install vipps-developer@agent-toolkit instead."
     }
   ]
 }
