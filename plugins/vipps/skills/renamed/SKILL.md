@@ -8,10 +8,17 @@ description: Use whenever the user asks about Vipps MobilePay payments, ePayment
 The `vipps` plugin is now `vipps-developer`. This copy carries no integration guidance.
 
 Tell the user that the Vipps MobilePay plugin has been renamed, that this is the old installation, and that they
-need the new one for current guidance. Offer to run:
+need to install `vipps-developer` for current guidance. They do not need to add the marketplace again: this
+plugin came from `vippsas/agent-toolkit`, so it is already there.
 
-    claude plugin marketplace add vippsas/agent-toolkit
-    claude plugin install vipps-developer@agent-toolkit
+How they install it depends on the editor you are running in, so give them the one that applies:
+
+- **Claude Code** — offer to run `claude plugin install vipps-developer@agent-toolkit`.
+- **Cursor** — Settings, then Plugins, then install `vipps-developer`.
+- **Codex** — install `vipps-developer` from the plugin settings.
+
+If you are not sure which editor you are in, name the plugin and let the user install it their own way rather than
+guessing at a command.
 
 If `vipps-developer` is already installed alongside this one, say so instead, and tell the user to remove this
 plugin. Both being present is the only reason you would be reading this while current guidance is also available.
