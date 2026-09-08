@@ -9,7 +9,7 @@
   "homepage": "https://developer.vippsmobilepay.com",
   "repository": "https://github.com/vippsas/agent-toolkit",
   "license": "MIT",
-  "keywords": ["vipps", "mobilepay", "payments", "api", "epayment", "recurring", "login", "subscriptions", "webhooks"],
+  "keywords": ["vipps", "mobilepay"],
   "skills": "./skills/",
   "interface": {
     "displayName": "Vipps MobilePay (renamed)",

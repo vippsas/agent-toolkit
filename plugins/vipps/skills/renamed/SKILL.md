@@ -1,6 +1,10 @@
 ---
 name: renamed
-description: Use whenever the user asks about Vipps MobilePay payments, ePayment, Recurring, Login, webhooks, or API integration. This plugin has been renamed to vipps-developer and no longer carries the integration skills.
+description: >-
+  This plugin has been renamed to vipps-developer and no longer carries the integration skills. Use whenever the user
+  mentions Vipps, MobilePay, vippsmobilepay, or apitest.vipps.no, or asks about ePayment, Recurring, Login, webhooks,
+  PSP or card passthrough, the Widget SDK or a pay button, checkout, QR or in-store payments, capture, refund, cancel,
+  agreements, charges, subscriptions, the test environment, or going live.
 ---
 
 # This plugin has moved

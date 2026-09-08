@@ -11,6 +11,6 @@
   "repository": "https://github.com/vippsas/agent-toolkit",
   "license": "MIT",
   "category": "developer-tools",
-  "keywords": ["vipps", "mobilepay", "payments", "api", "epayment", "recurring", "login", "subscriptions", "webhooks"],
+  "keywords": ["vipps", "mobilepay"],
   "skills": "./skills/"
 }
