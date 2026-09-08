@@ -1,7 +1,7 @@
 {
-  "name": "vipps",
-  "displayName": "Vipps MobilePay (renamed)",
-  "description": "Renamed. Install vipps-developer@agent-toolkit instead.",
+  "name": "vipps-developer",
+  "displayName": "Vipps MobilePay Developer",
+  "description": "Vipps MobilePay plugin for Claude: pick the right API, then implement ePayment, Recurring, or Login correctly, with webhooks, testing, and go-live requirements.",
   "version": "1.12.0",
   "author": {
     "name": "Vipps MobilePay",

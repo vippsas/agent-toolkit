@@ -9,8 +9,8 @@
   },
   "plugins": [
     {
-      "name": "vipps",
-      "source": "./plugins/vipps",
+      "name": "vipps-developer",
+      "source": "./plugins/vipps-developer",
       "description": "Vipps MobilePay plugin for Claude: pick the right API, then implement ePayment, Recurring, or Login correctly, with webhooks, testing, and go-live requirements.",
       "author": {
         "name": "Vipps MobilePay",
@@ -20,6 +20,19 @@
       "license": "MIT",
       "category": "development",
       "keywords": ["vipps", "mobilepay", "payments", "api", "epayment", "recurring", "login", "subscriptions", "webhooks"]
+    },
+    {
+      "name": "vipps",
+      "source": "./plugins/vipps",
+      "description": "Renamed. Install vipps-developer@agent-toolkit instead.",
+      "author": {
+        "name": "Vipps MobilePay",
+        "url": "https://vippsmobilepay.com"
+      },
+      "homepage": "https://developer.vippsmobilepay.com",
+      "license": "MIT",
+      "category": "development",
+      "keywords": ["vipps", "mobilepay"]
     }
   ]
 }
