@@ -48,17 +48,12 @@ An agent should need one skill for a task, not all six. So:
   to its path, and [`/llms.txt`](https://developer.vippsmobilepay.com/llms.txt) indexes all of them, so the skills point
   there rather than duplicating the whole documentation set.
 
-## Maintaining it
+## Changing a skill
 
-The skills restate facts from the developer documentation, so they go stale when the APIs change. When editing:
+The skills are generated. An automated workflow copies them in from the Vipps MobilePay developer documentation and
+replaces this whole `skills/` directory on every run, so an edit made here is undone at the next sync and never
+reaches the documentation it disagrees with.
 
-- Check the claim against the doc page before writing it. The API rejects invented field names, and a confidently wrong
-  skill is worse than no skill.
-- Keep the source of truth in the documentation. These files are a summary with judgment attached, not a second manual.
-- Watch the things that differ between APIs and are easy to get backwards: ePayment amounts are
-  `{ currency, value }` objects while Recurring amounts are plain integers; Login has its own OAuth token endpoint and
-  does not use the Access Token API; Userinfo must not receive `Ocp-Apim-Subscription-Key`.
-- Front matter descriptions are what a host matches against a user's prompt. They should name the concrete terms
-  someone would actually type, including endpoint paths and error-adjacent words.
-- A skill's `name` must match its directory name.
-- Bump `version` in all three plugin manifests together, and keep the marketplace manifests at the repo root in step.
+Found something wrong, missing, or out of date?
+[Open an issue](https://github.com/vippsas/agent-toolkit/issues/new). Name the skill and the claim. If you know it,
+link the page on [developer.vippsmobilepay.com](https://developer.vippsmobilepay.com) that it disagrees with.
