@@ -121,8 +121,9 @@ Charges are PSP-initiated, batched, and use dedicated v4 endpoints, not the v3 o
 
 The batch request is a plain array of charge items (same `type`, `amount`, `description`, `chargeId`,
 `agreementId`, `transactionType` fields as `../recurring/references/charges.md`, plus `due` and `retryDays` for
-`RECURRING` items). The response splits into `successfulCharges`, `failedCharges`, and `retryableCharges`; retry
-only the last one, with the same `agreementId` and `chargeId`.
+`RECURRING` items). `description` is optional here; if omitted, the charge description falls back to the
+agreement's `productName`. The response splits into `successfulCharges`, `failedCharges`, and `retryableCharges`;
+retry only the last one, with the same `agreementId` and `chargeId`.
 
 Card data delivery differs by charge type:
 
