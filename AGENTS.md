@@ -24,9 +24,10 @@ How to write an entry:
 
 ## The skills are generated
 
-Everything under `plugins/*/skills/` is generated from the Vipps MobilePay developer documentation and copied in by
-an automated workflow. **Do not edit a skill here** - the next sync overwrites it. Fix it in the documentation
-instead, and the change arrives with its own release.
+Everything under `plugins/*/skills/` is generated from the Vipps MobilePay developer documentation and copied in by an
+automated workflow. **Do not edit a skill here** - the next sync overwrites it. If the user asks you to change one, tell
+them what [Changing a skill](plugins/vipps-developer/README.md#changing-a-skill) says, and offer to make the same edit
+in the documentation instead.
 
 That workflow also writes the changelog entry for the release it creates, so an automated pull request already has
 one. Check that it reads as a description of the change and improve it if it does not.
