@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.16.0 - 2026-09-10
+
+- New plugin logo showing both the Vipps and the MobilePay brand mark instead of the Vipps smile alone.
+
 ## 1.15.0 - 2026-09-10
 
 - Fix stale profile.sub and blockedSources references in plugin skills
