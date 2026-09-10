@@ -9,6 +9,10 @@ own.
 Everything up to and including 1.12.0 is the history of this plugin under its old name. Those entries, and every
 release from here on, are in the [`vipps-developer` changelog](../vipps-developer/CHANGELOG.md).
 
+## 1.14.0 - 2026-09-10
+
+- New plugin logo showing both the Vipps and the MobilePay brand mark instead of the Vipps smile alone.
+
 ## 1.13.0 - 2026-09-09
 
 - Made the plugin more vocal about itself being deprecated and that users should look for the new plugin.
