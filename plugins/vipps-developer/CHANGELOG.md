@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.15.0 - 2026-09-10
+
+- Fix stale profile.sub and blockedSources references in plugin skills
+
 ## 1.14.0 - 2026-09-10
 
 - Add plugin skills for the remaining public APIs

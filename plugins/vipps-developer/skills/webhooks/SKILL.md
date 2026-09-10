@@ -133,7 +133,7 @@ ePayment, and the same shape for every ePayment event with only `name` changing:
 - Check `success`. A delivered event is not automatically a successful operation.
 - `idempotencyKey` is not always present, for example on `CANCELLED`.
 - `pspReference` here is the event's, which differs from the one in API responses. That is by design.
-- With profile sharing, `userDetails` and `profile.sub` ride along on `epayments.payment.authorized.v1`.
+- With profile sharing, `userDetails` and `sub` ride along on `epayments.payment.authorized.v1`.
 - Each API sets its own payload shape. Check the event page for Recurring, Login, and QR rather than assuming this one.
 
 Treat the payload as a signal, not as the truth. For anything that moves money, read the resource back:
