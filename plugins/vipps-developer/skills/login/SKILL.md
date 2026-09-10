@@ -29,6 +29,11 @@ not the platform Access Token API.
 
 Merchant-initiated login is **not allowed** on web pages or inside apps. Use the browser flow there.
 
+**Login's userinfo endpoint is not the Userinfo API.** Here it is `GET /vipps-userinfo-api/userinfo/` with no `sub`,
+authorized with the *user's* access token. The Userinfo API's `GET /vipps-userinfo-api/userinfo/{sub}` takes a `sub`
+and your merchant token, and is for consent given during a payment or agreement. Same path prefix, different endpoint.
+See the profile table in `../best-practices/SKILL.md` and `../userinfo/SKILL.md`.
+
 ## Before writing code
 
 1. The sales unit must be set up for Login in the business portal, including the **exact** redirect URI. A trailing

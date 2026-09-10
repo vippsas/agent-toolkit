@@ -3,7 +3,8 @@ name: best-practices
 description: >-
   Pick the right Vipps MobilePay API and add it to an existing system. Use when the user mentions Vipps, MobilePay,
   vippsmobilepay, apitest.vipps.no, ePayment, Recurring, Login, agreements, charges, MSN, sales unit,
-  Ocp-Apim-Subscription-Key, or asks how to take payments, run subscriptions, or log users in with Vipps or MobilePay.
+  Ocp-Apim-Subscription-Key, or asks how to take payments, run subscriptions, log users in, show QR codes, collect
+  donations, or pull settlement and sales reports with Vipps or MobilePay.
 ---
 
 # Vipps MobilePay integrations
@@ -13,6 +14,8 @@ both brands: same keys, same authentication, same error format.
 
 This skill is the entry point. It answers "which API?" and gives the platform facts every integration needs. Then go
 to the skill for the API you picked.
+
+Payments and identity:
 
 | Skill | Read it for |
 | ----- | ----------- |
@@ -24,6 +27,25 @@ to the skill for the API you picked.
 | `payment-lifecycle` | Capture deadlines, cancel, refund, timeouts, and `orderId`/`reference` rules shared by ePayment and Recurring |
 | `test-and-go-live` | Test environment, test users, force approve, checklists for production |
 | `psp` | Card passthrough for Payment Service Providers acting on behalf of merchants, for payments and subscriptions |
+
+Used alongside a payment:
+
+| Skill | Read it for |
+| ----- | ----------- |
+| `access-token` | Both token flows, which keys use which, caching, and the HTTP 401 that starts every integration |
+| `qr` | QR at a physical point of sale: which of the four flows to use, and the printed redirect and callback codes |
+| `userinfo` | The customer's full profile, when the payment or agreement response does not already carry enough |
+| `order-management` | Putting a receipt, order lines, and a link into the customer's app after they paid |
+
+Money out and administration:
+
+| Skill | Read it for |
+| ----- | ----------- |
+| `settlement` | How captured payments become a bank transfer: frequency, timing, net versus gross, and what to match on |
+| `report` | The API behind it: ledgers, entry types, feeds and paging, and pulling the settlement data |
+| `sales` | Order lines and VAT for Vippsnummer and mPOS, for accounting partners. Pairs with `report` |
+| `donations` | Donation payment reports, recurring donation agreements, donation links and QR codes |
+| `management` | Looking up merchants and sales units, and prefilling a product order to onboard a merchant |
 
 Each is a sibling directory under `skills/` in this plugin, with deeper material in its `references/` folder. Read the
 file, do not guess the contents.
@@ -58,9 +80,15 @@ Start from what the user wants to happen, not from the product name.
 | Staff enrolls a customer in a club from a till or call center | **Login API**, merchant-initiated (CIBA) | Not allowed in browsers or apps |
 | The system needs status updates without polling hard | **Webhooks API** | Always in addition to polling, never instead |
 | I am a PSP integrating card passthrough for my merchants | **ePayment PSP API** or **Recurring PSP API** | See the `psp` skill |
-| Customer makes a single or recurring donation | **Donations API** | Not covered here, see <https://developer.vippsmobilepay.com/docs/APIs/donations-api/README.md> |
-| Accounting needs settlements, fees, payouts | **Report API** | Not covered here, see <https://developer.vippsmobilepay.com/docs/APIs/report-api/README.md> |
-| Accounting needs order lines and VAT | **Sales API** | Not covered here, see <https://developer.vippsmobilepay.com/docs/APIs/sales-api/README.md> |
+| Customer scans, or is scanned, at a physical point of sale | **ePayment API** | One-time payment QR and personal QR are built in. See the `qr` skill |
+| A printed QR code: poster, sticker, vending machine | **QR API** | Merchant redirect and merchant callback codes. See the `qr` skill |
+| A payment needs the customer's profile in more detail than `userDetails` carries | **Userinfo API** | See the `userinfo` skill. Profile sharing on the payment, not a login |
+| The app should show a receipt or a tracking link after paying | **Order Management API** | See the `order-management` skill. ePayment writes receipts itself, but cannot read them back |
+| Customer makes a single or recurring donation | **Donations API** | See the `donations` skill |
+| Accounting needs settlements, fees, payouts | **Report API** | See the `report` skill, and `settlement` for how payouts work |
+| "When do we get the money?", or a bank transfer that needs explaining | No API call | See the `settlement` skill |
+| Accounting needs order lines and VAT | **Sales API** | See the `sales` skill. Vippsnummer and mPOS only |
+| Onboarding merchants, or looking up their sales units | **Management API** | See the `management` skill |
 
 Rules that decide the answer for you:
 
@@ -70,9 +98,34 @@ Rules that decide the answer for you:
 - **Recurring is not ePayment repeated.** Do not build subscriptions by storing a token and re-charging through
   ePayment. That is not supported. Use the Recurring API.
 - **Login is not needed to get profile data during a purchase.** Profile sharing on the payment is fewer moving parts.
+  See "Getting the customer's profile" below.
 - **eCom API and Checkout API are legacy.** Never pick them for new work. Migrate to ePayment.
 - One-time payments and subscriptions can share a sales unit, but Recurring needs its own product activation and extra
   compliance checks. Confirm the sales unit has Recurring before writing code against it.
+
+### Getting the customer's profile
+
+Name, address, email, phone number, and birth date are always **consented to as part of something else**: a payment, an
+agreement, or a log-in. You never ask for a profile on its own. Where you then read it depends on which of those three
+the consent came from, and the three are not interchangeable:
+
+| Consent came from | Ask with | Read the profile from | Authorized with |
+| ----------------- | -------- | --------------------- | --------------- |
+| An **ePayment** payment | `profile.scope` on `createPayment` | `userDetails` on `GET /epayment/v1/payments/{reference}`, and on the `epayments.payment.authorized.v1` webhook | Your merchant access token |
+| A **Recurring** agreement, or a legacy **eCom** payment | `scope` on the draft agreement or payment | `GET /vipps-userinfo-api/userinfo/{sub}`, with the `sub` the agreement or payment returns | Your merchant access token |
+| A **Login** session | Profile scopes on the authorize URL | `GET /vipps-userinfo-api/userinfo/`, **no `sub`** | The **user's** access token from the OIDC flow |
+
+Two traps live in that table:
+
+- **The last two rows are different endpoints**, despite the shared path prefix. One takes a `sub` and your merchant
+  token; the other takes neither. Sending a merchant token to the Login endpoint, or a `sub` to it, does not work.
+  A stray `Ocp-Apim-Subscription-Key` on either is an HTTP 401.
+- **Row one needs no Userinfo call at all.** ePayment hands you `userDetails` directly. Only go to
+  `GET /vipps-userinfo-api/userinfo/{sub}` from a payment when you need something `userDetails` does not carry: `nin`,
+  the `email_verified` and `phone_number_verified` flags, the `formatted` address string, or `other_addresses`.
+
+Scopes and consent rules are shared across all three, including the 7-day window and the all-or-nothing consent screen.
+`gender` is Login only. See `userinfo/SKILL.md` for the fields and `login/SKILL.md` for the flow.
 
 ## Step 2: platform facts
 
@@ -82,9 +135,9 @@ These hold for every API here.
 brands. Separate credentials per environment. HTTPS with TLS 1.2 or higher.
 
 **Credentials, or API keys.** *API keys* is the docs' umbrella term for every credential type: sales unit keys (the
-normal case, below), partner keys, and specialty keys for accounting and Donations. This skill only covers sales
+normal case, below), partner keys, and specialty keys for accounting and Donations. This section covers sales
 unit keys and partner keys, the ones ePayment, Recurring, Login, and Webhooks use. If a key doesn't match the
-shape below, it may be one of the other types: see
+shape below, it is one of the other types: see `access-token/SKILL.md` and
 <https://developer.vippsmobilepay.com/docs/knowledge-base/api-keys.md>.
 
 Keys belong to a *sales unit*, not to a company. A merchant with several sales units has several key sets. Each
@@ -116,9 +169,8 @@ in test and 24 hours in production. Cache it and reuse it for its full life. Do 
 Multiple valid tokens may be held at once.
 
 Accounting keys and Donations merchant-level keys use a different, *specialized authentication* flow with only
-`client_id` and `client_secret`, no `Ocp-Apim-Subscription-Key`. Out of scope here: see
-<https://developer.vippsmobilepay.com/docs/APIs/access-token-api/specialized-authentication.md> if one of those
-turns up.
+`client_id` and `client_secret`, no `Ocp-Apim-Subscription-Key`, and a 15-minute token. See `access-token/SKILL.md`
+for both flows side by side.
 
 **Headers.** Send these on API calls:
 
@@ -180,10 +232,11 @@ Every documentation page ships as raw Markdown for agents. Fetch these instead o
 - Index of every page: <https://developer.vippsmobilepay.com/llms.txt>
 - Any page as Markdown: append `.md` to the doc path, for example
   <https://developer.vippsmobilepay.com/docs/APIs/epayment-api/quick-start.md>
-- Rendered API specifications: `/api/epayment`, `/api/recurring`, `/api/login`, `/api/access-token`, `/api/webhooks`
-- Full list of APIs, including ones not covered by these skills (QR, Userinfo, Order Management, Management, Report,
-  Sales, Donations, PSP solutions, Agentic commerce, legacy Checkout and eCom):
-  <https://developer.vippsmobilepay.com/docs/APIs/README.md>
+- Rendered API specifications: `/api/epayment`, `/api/recurring`, `/api/login`, `/api/access-token`, `/api/webhooks`,
+  `/api/qr`, `/api/userinfo`, `/api/order-management`, `/api/management`, `/api/report`, `/api/sales`,
+  `/api/donations`
+- Full list of APIs, including ones not covered by these skills (Agentic commerce, which is still under development,
+  and the legacy Checkout and eCom APIs): <https://developer.vippsmobilepay.com/docs/APIs/README.md>
 - Becoming a partner, partner keys, and partner onboarding questions, which these skills do not cover:
   <https://developer.vippsmobilepay.com/docs/partner/README.md>
 

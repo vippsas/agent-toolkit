@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.14.0 - 2026-09-10
+
+- Add plugin skills for the remaining public APIs
+
 ## 1.13.0 - 2026-09-09
 
 - PSP: the `description` field on a recurring charge is optional, and falls back to the agreement's `productName`.
