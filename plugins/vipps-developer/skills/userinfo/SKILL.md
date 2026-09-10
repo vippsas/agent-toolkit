@@ -65,7 +65,7 @@ Step 1, on ePayment:
 The same `profile.scope` goes on `POST /recurring/v3/agreements`.
 
 Step 2 reads `profile.sub` back from `GET /epayment/v1/payments/{reference}` or
-`GET /recurring/v3/agreements/{agreementId}`. With webhooks, `userDetails` and `profile.sub` also ride along on
+`GET /recurring/v3/agreements/{agreementId}`. With webhooks, `userDetails` and `sub` also ride along on
 `epayments.payment.authorized.v1`, which saves you the extra fetch.
 
 Step 3:

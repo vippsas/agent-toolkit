@@ -117,7 +117,7 @@ Add these to the create request when asked for. Details in `references/features.
 | `expiresAt` | **Long-living payment**: up to 60 days. Requires `receipt` |
 | `minimumUserAge` | Age-restricted goods |
 | `metadata` | Your own key-value data on the payment |
-| `blockedSources` | Block payment sources. Danish and Finnish sales units only |
+| `paymentMethod.blockedSources` | Block payment sources. Danish and Finnish sales units only |
 
 ## 2. Learn the outcome
 

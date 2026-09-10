@@ -15,7 +15,8 @@ Scope values: `address`, `birthDate`, `email`, `name`, `phoneNumber`. Space sepa
 
 The customer sees a consent screen before the payment screen and must complete both. **If they refuse consent, the
 payment fails**, so ask for the fewest scopes the feature needs. The data comes back as `userDetails` and `profile.sub`
-on `GET /epayment/v1/payments/{reference}` and in the `epayments.payment.authorized.v1` webhook payload.
+on `GET /epayment/v1/payments/{reference}`, and as `userDetails` and `sub` in the `epayments.payment.authorized.v1`
+webhook payload.
 
 Comply with the privacy terms, and do not keep the data longer than the purchase requires.
 
@@ -79,7 +80,7 @@ Only when the address is unknown and shipping depends on it.
 }
 ```
 
-Your endpoint receives `Reference`, `AddressLine1`, `AddressLine2`, `City`, `PostCode`, `Country` and must answer
+Your endpoint receives `reference`, `AddressLine1`, `AddressLine2`, `City`, `PostCode`, `Country` and must answer
 `{ "groups": [ ...shipping groups... ] }`. Return HTTP 400 when you cannot ship to that address, and the app tells the
 customer. Verify `callbackAuthorizationToken` on every call. Callbacks arrive from `callback-*.vipps.no`.
 
@@ -131,8 +132,8 @@ are rejected. It is not a place for personal data.
 
 ## Block payment sources
 
-`blockedSources` restricts which sources may pay, for `WALLET` payments on Danish and Finnish sales units only.
-Norwegian sales units get error 5010.
+`paymentMethod.blockedSources` restricts which sources may pay, for `WALLET` payments on Danish and Finnish sales
+units only. Norwegian sales units get error 5010.
 
 ## Customer present payments
 

@@ -61,7 +61,7 @@ These are account or product problems. No amount of code changes them; the merch
 
 | Code | Title | What to do |
 | ---- | ----- | ---------- |
-| 5010 | Blocking sources not applicable | `blockedSources` is Danish and Finnish sales units only |
+| 5010 | Blocking sources not applicable | `paymentMethod.blockedSources` is Danish and Finnish sales units only |
 | 5020 | Express payment not allowed | The sales unit is not enabled for Express |
 | 5030 | Illegal scope | Asking for national identity number or account number without permission |
 | 5040 | Invalid currency for merchant | Currency must match the sales unit's registered market |
