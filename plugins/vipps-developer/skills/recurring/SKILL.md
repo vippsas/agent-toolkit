@@ -216,6 +216,8 @@ the customer's `maxAmount` on a `VARIABLE` agreement), `non_technical_error`, `t
 - Stopping cancels `PENDING`, `DUE`, and `RESERVED` charges. If the customer stops the agreement in the app instead,
   `RESERVED` charges survive and you must capture or cancel them yourself. Capture the initial charge before stopping.
 - When stopping, send only `status`. Any other field in the same `PATCH` gives HTTP 400.
+- Stopping is idempotent: `PATCH` with `{"status": "STOPPED"}` on an already-`STOPPED` agreement returns `204 No
+  Content` and has no further effect, so a stop can safely be retried if you never saw the response.
 
 ## Things that will bite you
 
