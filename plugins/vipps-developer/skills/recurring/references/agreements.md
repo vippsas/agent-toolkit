@@ -164,6 +164,9 @@ sentence.
 ## Stopping, and the customer's side of it
 
 - `PATCH` with `{"status": "STOPPED"}`. Irreversible.
+- Stopping is idempotent: sending `{"status": "STOPPED"}` again on an already-`STOPPED` agreement returns `204 No
+  Content` and has no further effect, so a stop can safely be retried if you never saw the response. Updating any
+  other property of a stopped agreement still returns `400`.
 - Stopping cancels `PENDING`, `DUE`, and `RESERVED` charges.
 - When the **customer** stops the agreement in the app, `RESERVED` charges are not cancelled. Capture or cancel them.
 - Subscribe to `recurring.agreement-stopped.v1`. Its `actor` field tells you whether the merchant or the customer did
