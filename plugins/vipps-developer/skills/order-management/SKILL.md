@@ -27,11 +27,6 @@ only exist after the payment, or when you want the link button and image that `c
 
 Read `../best-practices/SKILL.md` first for servers, keys, and access tokens.
 
-One more fact to establish before writing any code against it:
-
-- **Production only.** Base URL `https://api.vipps.no`. There is no Order Management in the test environment, so this
-  part of an integration cannot be tested on `apitest.vipps.no`.
-
 Not available for PSP pass-through payments.
 
 ## Two independent concepts
@@ -62,8 +57,8 @@ assert on your own side that the identifier is one you actually used.
 
 Exactly one per payment. Sending a second replaces the first; only the last one shows.
 
-`Receipt`, `Order confirmation`, `Delivery information`, `Ticket`, `Booking`, `General`. Pick by what is behind the
-link, since the category decides the button's wording, icon, and how the app treats the push. `General` is the
+`RECEIPT`, `ORDER_CONFIRMATION`, `DELIVERY`, `TICKET`, `BOOKING`, `GENERAL`. Pick by what is behind the
+link, since the category decides the button's wording, icon, and how the app treats the push. `GENERAL` is the
 fallback when none of the others fit.
 
 ```json
