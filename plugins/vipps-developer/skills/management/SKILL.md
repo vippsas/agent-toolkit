@@ -151,7 +151,7 @@ form themselves. Only prefilled ones carry the full detail.
 `COMPLETED`, `REJECTED`, and `EXPIRED` are terminal. The list endpoint hides `EXPIRED` unless you pass
 `includeExpired=true`.
 
-`DELETE /management/v1/product-orders/{prefilledProductOrderId}` removes a prefilled order that was wrong, but only
+`DELETE /management/v1/product-orders/{productOrderId}` removes a prefilled order that was wrong, but only
 before the merchant submits it.
 
 Both parties also get an email when an order finishes processing, carrying the business identifier, the merchant name,

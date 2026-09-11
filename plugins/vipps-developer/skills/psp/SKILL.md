@@ -27,7 +27,8 @@ tells Vipps MobilePay the outcome. Settlement is between the PSP and the merchan
   from your PSP Partner Manager, who also issues your `Psp-Id`.
 - Send `Psp-Id` on every ePayment, Recurring, and webhook request, in addition to the usual headers from
   `../best-practices/SKILL.md`. It does not go on the `POST /accesstoken/get` call itself — only `client_id`,
-  `client_secret`, and `Ocp-Apim-Subscription-Key` do.
+  `client_secret`, and `Ocp-Apim-Subscription-Key` do. Both APIs enforce it: a missing header is `401 Unauthorized`,
+  and a `Psp-Id` that does not match the PSP the `Merchant-Serial-Number` belongs to is `403 Forbidden`.
 - `Merchant-Serial-Number` is the *merchant's* MSN, the sales unit being acted on behalf of, never the PSP's own.
   This is the easiest header to get wrong.
 - Onboarding a merchant and getting their MSN is a separate job, the PSP Merchant API, not covered by this skill.
