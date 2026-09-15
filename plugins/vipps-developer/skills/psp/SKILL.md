@@ -186,11 +186,12 @@ matters for co-branded Visa/Dankort cards and PSD2 strong customer authenticatio
 PSPs need webhooks the same way a direct merchant does, plus the partner/PSP-wide registration that covers every
 sales unit at once. See `../webhooks/SKILL.md` for both.
 
-## Don't use these
+## Don't use these unless the PSP specifically asks for it
 
-The Vipps PSP API and MobilePay Online are legacy, maintenance-only, and closed to new integrations: build
-against ePayment PSP and Recurring PSP instead. This mirrors the "eCom API and Checkout API are legacy" rule for
-direct merchants in `../best-practices/SKILL.md`.
+The Vipps PSP API and MobilePay Online are in maintenance mode: we continue to support and maintain them, and no end
+of life date is planned, but new PSP functionality goes into ePayment PSP and Recurring PSP, so build new
+integrations against those instead. This mirrors the "eCom API and Checkout API are legacy" rule for direct
+merchants in `../best-practices/SKILL.md`.
 
 ## Deeper reference
 
