@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.19.0 - 2026-09-15
+
+- Sync plugin skills: Express currency rules, NIN, PSP maintenance mode, Recurring description length
+
 ## 1.18.0 - 2026-09-11
 
 - Update Management, Order Management, and PSP skills to match doc changes

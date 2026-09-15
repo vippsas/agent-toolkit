@@ -32,7 +32,7 @@ Base path `/recurring/v3`. `Idempotency-Key` on every `POST`, `PUT`, `PATCH`, an
 | Field | Rules |
 | ----- | ----- |
 | `amount` | Plain integer, minor units. Not the `{currency, value}` object ePayment uses |
-| `description` | Maximum 45 characters. Shown under the `productName` title in the app |
+| `description` | Maximum 100 characters. Shown under the `productName` title in the app |
 | `due` | `YYYY-MM-DD`. At least 1 day ahead, at most 2 years ahead. Required for `RECURRING` |
 | `retryDays` | 0 to 14. Use at least 2. Days of retrying after the due date |
 | `transactionType` | `DIRECT_CAPTURE` or `RESERVE_CAPTURE` |

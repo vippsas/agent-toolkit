@@ -92,7 +92,11 @@ Capture the full amount including shipping.
 
 ### Limits and branding
 
-- The shipping address must be in the same country as the sales unit, and the currency must match that country.
+- When `shipping.allowedCountries` is not set, the shipping address must be in the country that corresponds to the
+  payment currency. Set `shipping.allowedCountries` to a list of ISO 3166-1 alpha-2 country codes to support other
+  shipping countries. Every shipping option's currency must match the payment currency.
+- For `WALLET` payments, the transaction currency must match the country where the sales unit is registered. PSPs
+  using `CARD_PASSTHROUGH` can use any supported currency, subject to their commercial agreement.
 - Express payments cannot use the test-environment force approve endpoint.
 - Button text must be one of "Buy now with Vipps/MobilePay" (preferred), "Vipps/MobilePay Express", or icon plus
   "Express", translated for the market.

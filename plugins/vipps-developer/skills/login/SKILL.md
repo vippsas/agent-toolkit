@@ -125,7 +125,7 @@ user accepts the whole list or none of it, and cannot deselect individual items.
 | `address` | `address` plus `other_addresses`. Up to three: home, work, other |
 | `birthDate` | `birthdate`, verified |
 | `gender` | `gender`. Not available in the test environment |
-| `nin` | National identity number. Not available in Norway. Requires application and legal justification |
+| `nin` | National identity number. In Norway, no new access is granted and existing access ends January 1, 2027. Requires application and legal justification |
 | `customFlow` / `delegatedConsents` | Marketing consents. `customFlow` is the current one |
 | `paymentSourceReferences` | Login Connect |
 

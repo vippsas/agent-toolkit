@@ -157,7 +157,7 @@ Rules that the API enforces:
 - `due` must be at least 1 day ahead and at most 2 years ahead. A charge due the 27th must be created on the 26th or
   earlier.
 - `retryDays` is capped at 14. Use at least 2. `retryDays: 0` means one attempt and then `FAILED`.
-- `description` is at most 45 characters. The app shows it under the `productName` title.
+- `description` is at most 100 characters. The app shows it under the `productName` title.
 - `orderId` replaces the generated `chargeId`. Use your own stable ID so retries and reconciliation line up; see
   `../payment-lifecycle/SKILL.md` for the formatting rules. `externalId` is a separate, looser field used only in
   settlement reports.
