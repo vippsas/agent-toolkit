@@ -105,7 +105,8 @@ Same `POST /recurring/v3/agreements` as a direct integration, with the merchant'
 Same fields as the ePayment `cardPassthrough` object, plus `ELEC_DEBIT` in `allowedCardTypes`. The agreement
 sign-up is a Customer-Initiated Transaction (CIT) the PSP itself processes through the card callback, to verify
 the payment source and confirm the agreement — Vipps MobilePay does not do this for you. `initialCharge` sets
-the CIT amount; omit it and a zero-amount verification runs instead.
+the CIT amount; omit it and a zero-amount verification runs instead. `initialCharge.description` is optional; if
+omitted, it falls back to the agreement's `productName`.
 
 A user changing their card on an existing agreement triggers the same card callback with a zero-amount CIT.
 Nothing to build beyond handling that callback.
