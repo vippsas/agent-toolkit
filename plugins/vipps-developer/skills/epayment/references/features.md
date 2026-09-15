@@ -90,6 +90,10 @@ customer. Verify `callbackAuthorizationToken` on every call. Callbacks arrive fr
 `shippingOptionName`, plus `userDetails` containing whatever profile information the customer consented to share.
 Capture the full amount including shipping.
 
+If the payment was created with [order details](https://developer.vippsmobilepay.com/docs/APIs/order-management-api/order-management-api-guide.md#adding-order-details),
+the shipping order line (`isShipping: true`) is set to the shipping method the customer selected in the app. If they
+change their selection, the line is updated, so by the time the payment is authorized it reflects their final choice.
+
 ### Limits and branding
 
 - When `shipping.allowedCountries` is not set, the shipping address must be in the country that corresponds to the

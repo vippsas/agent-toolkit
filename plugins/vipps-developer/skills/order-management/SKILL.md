@@ -128,6 +128,11 @@ The app fetches them pre-authenticated, which is why a ticket or a receipt is a 
 **This can only be sent once.** There is no update and no overwrite; a wrong receipt stays wrong. Build the payload
 from finalized order data, not from a cart that a warehouse system might still adjust.
 
+For [Express](https://developer.vippsmobilepay.com/docs/APIs/epayment-api/api-guide/features/express.md) payments
+created with order details, the shipping order line is set to the shipping method the customer selected in the app.
+If they change their selection, the line is updated, so by the time the payment is authorized it reflects their
+final choice.
+
 ## Content monitoring
 
 Posting order details is **mandatory**, not optional, when there is no lasting public page describing what was sold:
