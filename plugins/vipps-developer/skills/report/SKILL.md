@@ -106,19 +106,25 @@ See `references/entry-types.md` for what each `entryType` means.
 
 ## Paging, `hasMore`, and `tryLater`
 
-Up to 1000 items per response, and the two endpoints signal continuation **differently**. Getting this wrong is the
-classic Report API bug.
+The page size is not a fixed number: 1000 items is the default, but the value resolved for your ledger is returned
+in the `Vipps-Feed-Page-Size` response header. Read the page size from that header rather than assuming 1000. The
+two endpoints signal continuation **differently**. Getting this wrong is the classic Report API bug.
 
 **Date endpoint.** `hasMore` is always present. Continue only while `hasMore` is `true`, passing the returned
 `cursor` as a query parameter. When `hasMore` is `false` there is no `cursor` in the body. A `hasMore: true` page can
-be followed by an empty one, so treat empty as normal rather than as an error.
+be followed by an empty one, so treat empty as normal rather than as an error. If `hasMore` and `tryLater` are both
+`true`, do not wait: keep paging with the returned `cursor`.
 
 **Feed endpoint.** No `hasMore`. The `cursor` is **always** present and never becomes empty. Persist it after every
 successful batch and send it on the next poll, even when nothing came back. It is your entire position in the stream;
-lose it and you re-read from the start.
+lose it and you re-read from the start. If `tryLater` is `true`, wait at least 1 second before retrying with the same
+cursor.
 
 `tryLater: true` means "not yet, ask again with the same request". On the date endpoint it means the ledger date is
-still open. On the feed it means you have caught up.
+still open, *even when the response already contains entries* — late entries can still land on an open date, so a
+response is not complete until the date closes. An empty response for a date that has already closed returns
+`tryLater: false`; that is how you tell "genuinely no entries" from "not ready yet". On the feed it means you have
+caught up.
 
 **`tryLater` can stay true for a very long time**, and that is not a fault:
 
@@ -149,13 +155,17 @@ appear **without notice** — treat an unknown type by its `amount`'s effect on 
 
 Each bank transfer covers a whole number of ledger dates, and `payout-scheduled` is always the last entry of a date
 where a payout happened. So: fetch the oldest unreported date, and if its `funds` report does not end with
-`payout-scheduled`, roll the next date into the same report and continue.
+`payout-scheduled`, roll the next date into the same report and continue. Wait until `tryLater` is `false` for that
+date first: while a ledger date is still open, the `payout-scheduled` entry may not have been added yet, so its
+absence does not mean a payout was skipped.
 
 The `reference` on a `payout-scheduled` entry is the text on the merchant's bank statement. See
 `../settlement/SKILL.md` for the per-market format and for reconciling without this API.
 
-There is no per-payout endpoint, and we do not recommend building around the idea of one: a stretch with no payouts
-looks like the API has gone silent.
+There is no per-payout endpoint. Building one yourself goes quiet whenever no payout is made: if the balance stays
+negative for an extended period, no `payout-scheduled` entry is added, so no per-payout report is produced at all,
+and that gap is indistinguishable from a failure to fetch. Keep fetching every ledger date, or read the feed, rather
+than fetching only when a payout arrives.
 
 ## What it will not tell you
 
