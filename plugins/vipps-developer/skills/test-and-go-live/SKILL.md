@@ -104,9 +104,9 @@ Webhooks need a public HTTPS URL, so a tunnel or a request inspection service is
 `callback-mt-1.vipps.no` and `callback-mt-2.vipps.no` in test, and from `callback-1` through `callback-4.vipps.no` plus
 the `callback-dr-*` disaster recovery hosts in production. Allow the hostnames, never IP addresses.
 
-Postman collections for each API, plus a shared environment file, are at
-<https://developer.vippsmobilepay.com/docs/knowledge-base/postman.md>. Do not put production keys in a cloud-synced
-Postman environment.
+Request collections for each API, plus a shared environment file, are at
+<https://developer.vippsmobilepay.com/docs/knowledge-base/api-collections.md>. Do not put production keys in a
+cloud-synced environment.
 
 ## Moving to production
 
