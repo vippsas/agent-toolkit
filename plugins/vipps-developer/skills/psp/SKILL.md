@@ -113,7 +113,8 @@ Nothing to build beyond handling that callback.
 
 ### Recurring PSP: charges
 
-Charges are PSP-initiated, batched, and use dedicated v4 endpoints, not the v3 ones in `../recurring/SKILL.md`:
+Charges are PSP-initiated, batched, and use dedicated v4 endpoints, not the v3 ones in `../recurring/SKILL.md` —
+the v3 charge creation endpoints reject PSP requests with `403 Forbidden`:
 
 | Step | Call |
 | ---- | ---- |
@@ -145,10 +146,13 @@ or
 { "status": "FAILED", "error": { "code": 300, "retry": true, "message": "Refused by Issuer" } }
 ```
 
-`error.retry: true` keeps the charge `DUE` and retryable within its window (the `due` date plus `retryDays`);
-`retry: false` settles it to `FAILED`. Reporting `SUCCESS` with `transactionType: RESERVE_CAPTURE` reserves the
-charge for a later `POST .../capture`; `DIRECT_CAPTURE` captures it in full immediately. Skipping the result
-report leaves the charge stuck and the customer sees it as unresolved in the app.
+`error.retry: true` keeps the charge `DUE` and retryable until the end of `due` + `retryDays` days (agreement local
+time): for `RECURRING`, `retryDays` (`0`-`14`, default `14`) extends the window past the `due` you chose; for
+`UNSCHEDULED`, `due` is set to the creation date and `retryDays` must be `0` or omitted, so the window closes at
+the end of that same day. `retry: false` settles it to `FAILED`. Reporting `SUCCESS` with
+`transactionType: RESERVE_CAPTURE` reserves the charge for a later `POST .../capture`; `DIRECT_CAPTURE` captures it
+in full immediately. Skipping the result report leaves the charge stuck and the customer sees it as unresolved in
+the app.
 
 Everything after a successful charge — capture, refund, cancel — uses the same v3 endpoints as
 `../recurring/SKILL.md`.
