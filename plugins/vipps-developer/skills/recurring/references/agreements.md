@@ -59,7 +59,7 @@ Example `GET` response:
 ```
 
 `history` is an oldest-first array of lifecycle events, empty when none have been recorded. Each event has
-`occurred`, `event`, and `actor` (the actor of the event, when applicable).
+`occurred`, `event`, and `actor` (who initiated the event, i.e. `MERCHANT`, `USER`, or `ADMIN`, when applicable).
 
 ## Pricing in detail
 
