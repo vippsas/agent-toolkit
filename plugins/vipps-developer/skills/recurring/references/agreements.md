@@ -50,9 +50,16 @@ Example `GET` response:
   "campaign": null,
   "merchantAgreementUrl": "https://example.com/subscriptions/1234/",
   "uuid": "6080c099-d7f2-43ef-a82b-2991ccc3a239",
-  "countryCode": "NO"
+  "countryCode": "NO",
+  "history": [
+    { "occurred": "2026-08-22T12:59:56Z", "event": "CREATE", "actor": "MERCHANT" },
+    { "occurred": "2026-08-22T13:00:00Z", "event": "ACTIVATE", "actor": "USER" }
+  ]
 }
 ```
+
+`history` is an oldest-first array of lifecycle events, empty when none have been recorded. Each event has
+`occurred`, `event`, and `actor` (the actor of the event, when applicable).
 
 ## Pricing in detail
 

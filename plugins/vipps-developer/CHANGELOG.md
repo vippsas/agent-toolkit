@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.23.0 - 2026-09-24
+
+- Document agreement history in Recurring skill
+
 ## 1.22.0 - 2026-09-22
 
 - Describe the API collections without requiring Postman
