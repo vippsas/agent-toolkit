@@ -102,7 +102,9 @@ The merchant transferred money in, typically after an invoice for a balance that
 
 ### `credit-note` (funds)
 
-Credit against a previously issued top-up invoice.
+Credit against a previously issued top-up invoice. Credit notes are normally issued on the fees ledger instead, so
+expect `credit-note` there rather than here — you are unlikely to see this entry type on the funds ledger on current
+data.
 
 ## Fees entry types
 
@@ -126,7 +128,13 @@ funds ledger.
 
 ### `credit-note` (fees)
 
-Credit against a previously issued fee invoice.
+Credit against a previously issued fee invoice. This entry type is live: it is added to the fees ledger when a
+credit note is issued against fees that were invoiced earlier.
+
+### `service-fee`
+
+A fee charged to the merchant that is not tied to a single capture, such as a monthly subscription fee. Unlike
+`capture-fee`, there is no payment to match it against.
 
 ### `correction` (fees)
 

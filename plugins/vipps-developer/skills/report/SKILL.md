@@ -100,7 +100,9 @@ An entry:
 - Amounts are minor units, and signed: refunds and fees are negative.
 - `reference` groups every entry for one payment. On ePayment it is the `reference` you sent to `createPayment`.
 - `pspReference` identifies one movement. Correlate a fee to its capture on `pspReference`.
-- `recipientHandle` can be `null`: some entry types never have one, and data from before 2022 may be missing it.
+- `recipientHandle` is always present, but can come back empty or `null`: entry types with no recipient (such as
+  `payout-scheduled`, `fees-retained`, `top-up`, and `correction`) return it as an empty string, and older data (from
+  before 2022) can return `null` instead. Treat both as "no recipient on this entry".
 
 See `references/entry-types.md` for what each `entryType` means.
 
@@ -181,8 +183,10 @@ than fetching only when a payout arrives.
 Near real time on the feed is 5 to 30 seconds in the good case, but can stretch to hours under load. This is an
 accounting API; do not put it behind a live fundraising display.
 
-**HTTP 404 on a ledger means "not yours".** We do not reveal that a ledger exists to someone without access, so a
-real ledger returns `No such ledgerId`. Check the keys and the MSN. An empty list means the same thing more quietly.
+**HTTP 404 on a ledger means "not yours".** We do not reveal that a ledger exists to someone without access, so you
+get the same `404` whether the ledger does not exist at all or exists but belongs to someone else. Check the keys and
+the MSN. An empty list means the same thing more quietly. A report that is not finished yet is *not* a `404`: both
+the `dates` and the `feed` endpoint answer `HTTP 200` with `tryLater` set to `true` instead.
 
 ## GDPR data
 
