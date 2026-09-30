@@ -47,7 +47,7 @@ Same `POST /epayment/v1/payments` as a direct integration, with `Psp-Id` added a
   "cardPassthrough": {
     "pspReference": "payment-ref-123456",
     "cardCallbackUrl": "https://example.com/psp-callback",
-    "allowedCardTypes": ["VISA_DEBIT", "VISA_CREDIT", "DANKORT", "MC_CREDIT", "MC_DEBIT"],
+    "allowedCardTypes": ["VISA_DEBIT", "VISA_CREDIT", "ELEC_DEBIT", "DANKORT", "MC_CREDIT", "MC_DEBIT"],
     "publicEncryptionKeyId": "3f1c2e90-7a4b-4c9d-8f21-6b3e2d7a91c4"
   },
   "reference": "acme-shop-123-order123abc",
@@ -63,7 +63,7 @@ Same `POST /epayment/v1/payments` as a direct integration, with `Psp-Id` added a
 | ----- | -------- | ----- |
 | `pspReference` | Yes | Your own reference for this payment |
 | `cardCallbackUrl` | Yes | Where the card token or encrypted PAN is sent. See Card callback below |
-| `allowedCardTypes` | Yes | `VISA_DEBIT`, `VISA_CREDIT`, `MC_CREDIT`, `MC_DEBIT`, `DANKORT` |
+| `allowedCardTypes` | Yes | `VISA_DEBIT`, `VISA_CREDIT`, `ELEC_DEBIT`, `MC_CREDIT`, `MC_DEBIT`, `DANKORT` |
 | `preferVisaPartOfVisaDankort` | No | Route a co-branded Visa/Dankort card through Visa. Default `false` |
 | `publicEncryptionKeyId` | No | GUID of your registered public key. Without it, standalone Dankort cards fail |
 
@@ -102,7 +102,7 @@ Same `POST /recurring/v3/agreements` as a direct integration, with the merchant'
 }
 ```
 
-Same fields as the ePayment `cardPassthrough` object, plus `ELEC_DEBIT` in `allowedCardTypes`. The agreement
+Same fields as the ePayment `cardPassthrough` object. The agreement
 sign-up is a Customer-Initiated Transaction (CIT) the PSP itself processes through the card callback, to verify
 the payment source and confirm the agreement — Vipps MobilePay does not do this for you. `initialCharge` sets
 the CIT amount; omit it and a zero-amount verification runs instead. `initialCharge.description` is optional; if
