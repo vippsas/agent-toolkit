@@ -3,7 +3,8 @@ name: psp
 description: >-
   Integrate Vipps MobilePay payments and subscriptions as a Payment Service Provider (PSP) doing card passthrough.
   Use when the user mentions PSP, payment service provider, card passthrough, CARD_PASSTHROUGH, cardPassthrough,
-  Psp-Id, cardCallbackUrl, psp-epayment-api, psp-recurring-api, or acting on behalf of a merchant's sales unit.
+  Psp-Id, cardCallbackUrl, callbackUrl, psp-epayment-api, psp-recurring-api, or acting on behalf of a merchant's
+  sales unit.
 ---
 
 # PSP card passthrough
@@ -37,16 +38,16 @@ tells Vipps MobilePay the outcome. Settlement is between the PSP and the merchan
 ## ePayment PSP: create a payment
 
 Same `POST /epayment/v1/payments` as a direct integration, with `Psp-Id` added and
-`paymentMethod.type: CARD_PASSTHROUGH` plus a required `cardPassthrough` object:
+`paymentMethod.type: CARD_PASSTHROUGH` plus a required `psp` object:
 
 ```json
 {
   "amount": { "currency": "NOK", "value": 6000 },
   "customer": { "phoneNumber": "4712345678" },
   "paymentMethod": { "type": "CARD_PASSTHROUGH" },
-  "cardPassthrough": {
+  "psp": {
     "pspReference": "payment-ref-123456",
-    "cardCallbackUrl": "https://example.com/psp-callback",
+    "callbackUrl": "https://example.com/psp-callback",
     "allowedCardTypes": ["VISA_DEBIT", "VISA_CREDIT", "ELEC_DEBIT", "DANKORT", "MC_CREDIT", "MC_DEBIT"],
     "publicEncryptionKeyId": "3f1c2e90-7a4b-4c9d-8f21-6b3e2d7a91c4"
   },
@@ -57,12 +58,12 @@ Same `POST /epayment/v1/payments` as a direct integration, with `Psp-Id` added a
 }
 ```
 
-`cardPassthrough` fields:
+`psp` fields:
 
 | Field | Required | Notes |
 | ----- | -------- | ----- |
 | `pspReference` | Yes | Your own reference for this payment |
-| `cardCallbackUrl` | Yes | Where the card token or encrypted PAN is sent. See Card callback below |
+| `callbackUrl` | Yes | Where the card token or encrypted PAN is sent. See Card callback below |
 | `allowedCardTypes` | Yes | `VISA_DEBIT`, `VISA_CREDIT`, `ELEC_DEBIT`, `MC_CREDIT`, `MC_DEBIT`, `DANKORT` |
 | `preferVisaPartOfVisaDankort` | No | Route a co-branded Visa/Dankort card through Visa. Default `false` |
 | `publicEncryptionKeyId` | No | GUID of your registered public key. Without it, standalone Dankort cards fail |
@@ -102,8 +103,9 @@ Same `POST /recurring/v3/agreements` as a direct integration, with the merchant'
 }
 ```
 
-Same fields as the ePayment `cardPassthrough` object. The agreement
-sign-up is a Customer-Initiated Transaction (CIT) the PSP itself processes through the card callback, to verify
+Same fields as the ePayment `psp` object, except the callback URL is still `cardCallbackUrl` here. In the agreement,
+`pspReference` must match `^[a-zA-Z0-9-_]{1,64}$`, otherwise the request is rejected with
+`400 Bad Request`. The agreement sign-up is a Customer-Initiated Transaction (CIT) the PSP itself processes through the card callback, to verify
 the payment source and confirm the agreement — Vipps MobilePay does not do this for you. `initialCharge` sets
 the CIT amount; omit it and a zero-amount verification runs instead. `initialCharge.description` is optional; if
 omitted, it falls back to the agreement's `productName`.
@@ -160,7 +162,8 @@ Everything after a successful charge — capture, refund, cancel — uses the sa
 ## Card callback
 
 Shared by ePayment PSP (payment creation) and Recurring PSP (agreement sign-up, payment source updates). Vipps
-MobilePay `POST`s to your `cardCallbackUrl` synchronously; you must respond within 20 seconds or the operation
+MobilePay `POST`s to your callback URL (`psp.callbackUrl` for ePayment, `cardPassthrough.cardCallbackUrl` for
+Recurring) synchronously; you must respond within 20 seconds or the operation
 fails and cannot be retried by the user.
 
 Request carries `pspReference`, `authorizationAttemptId`, `merchantSerialNumber`, `amount`, and `cardInfo`
