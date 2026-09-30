@@ -236,7 +236,7 @@ Every documentation page ships as raw Markdown for agents. Fetch these instead o
   `/api/qr`, `/api/userinfo`, `/api/order-management`, `/api/management`, `/api/report`, `/api/sales`,
   `/api/donations`
 - Full list of APIs, including ones not covered by these skills (Agentic commerce, which is still under development,
-  and the legacy Checkout and eCom APIs): <https://developer.vippsmobilepay.com/docs/APIs/README.md>
+  and the legacy eCom API): <https://developer.vippsmobilepay.com/docs/APIs/README.md>
 - Becoming a partner, partner keys, and partner onboarding questions, which these skills do not cover:
   <https://developer.vippsmobilepay.com/docs/partner/README.md>
 
