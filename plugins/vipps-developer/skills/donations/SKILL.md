@@ -32,6 +32,8 @@ Merchant-level keys are unusual: they belong to the organization rather than to 
 yourself in the business portal under *For developers*, then the *Donations* tab, which only appears once the product
 is approved. **The secret is shown once.** Regenerating it invalidates the old one immediately, so deploy the new one
 before you regenerate in production.
+You can add more than one merchant-level client, for example to rotate credentials without downtime: add a new
+client, switch your system to it, then delete the old one. Deleting a client stops its credentials immediately.
 
 The same merchant-level keys also reach the Report API, which is where settlement data lives. See
 `../report/SKILL.md`.

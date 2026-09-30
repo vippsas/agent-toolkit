@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.27.0 - 2026-09-30
+
+- Update donations skill for multiple merchant-level clients
+
 ## 1.26.0 - 2026-09-30
 
 - Add ELEC_DEBIT to ePayment PSP card types in psp skill
