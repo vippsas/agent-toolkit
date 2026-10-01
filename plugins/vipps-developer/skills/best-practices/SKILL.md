@@ -92,7 +92,7 @@ Start from what the user wants to happen, not from the product name.
 
 Rules that decide the answer for you:
 
-- **Check for a ready-made plugin first.** If the system is Shopify, WooCommerce, Magento, Shopware, PrestaShop,
+- **Check for a ready-made plugin first.** If the system is Shopify, WooCommerce, Magento, Shopware,
   Drupal, Wix, WordPress, or Optimizely, an official plugin exists and no API code should be written. See
   <https://developer.vippsmobilepay.com/docs/plugins/README.md>.
 - **Recurring is not ePayment repeated.** Do not build subscriptions by storing a token and re-charging through
