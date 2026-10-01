@@ -84,7 +84,7 @@ The merchant's sales unit must be approved for Express first. Retrieve `shipping
 ## Recurring PSP: agreement sign-up
 
 Same `POST /recurring/v3/agreements` as a direct integration, with the merchant's `Merchant-Serial-Number` and a
-`cardPassthrough` object added:
+`psp` object added:
 
 ```json
 {
@@ -94,16 +94,16 @@ Same `POST /recurring/v3/agreements` as a direct integration, with the merchant'
   "merchantRedirectUrl": "https://example.com/redirect",
   "merchantAgreementUrl": "https://example.com/agreement",
   "productName": "Streaming subscription",
-  "cardPassthrough": {
+  "psp": {
     "pspReference": "subscription-product-123",
-    "cardCallbackUrl": "https://example.com/psp-callback",
+    "callbackUrl": "https://example.com/psp-callback",
     "allowedCardTypes": ["VISA_DEBIT", "VISA_CREDIT", "ELEC_DEBIT", "MC_CREDIT", "MC_DEBIT", "DANKORT"],
     "preferVisaPartOfVisaDankort": true
   }
 }
 ```
 
-Same fields as the ePayment `psp` object, except the callback URL is still `cardCallbackUrl` here. In the agreement,
+Same fields as the ePayment `psp` object. In the agreement,
 `pspReference` must match `^[a-zA-Z0-9-_]{1,64}$`, otherwise the request is rejected with
 `400 Bad Request`. The agreement sign-up is a Customer-Initiated Transaction (CIT) the PSP itself processes through the card callback, to verify
 the payment source and confirm the agreement — Vipps MobilePay does not do this for you. `initialCharge` sets
@@ -162,8 +162,7 @@ Everything after a successful charge — capture, refund, cancel — uses the sa
 ## Card callback
 
 Shared by ePayment PSP (payment creation) and Recurring PSP (agreement sign-up, payment source updates). Vipps
-MobilePay `POST`s to your callback URL (`psp.callbackUrl` for ePayment, `cardPassthrough.cardCallbackUrl` for
-Recurring) synchronously; you must respond within 20 seconds or the operation
+MobilePay `POST`s to your callback URL (`psp.callbackUrl`) synchronously; you must respond within 20 seconds or the operation
 fails and cannot be retried by the user.
 
 Request carries `pspReference`, `authorizationAttemptId`, `merchantSerialNumber`, `amount`, and `cardInfo`
