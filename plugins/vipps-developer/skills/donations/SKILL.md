@@ -78,7 +78,8 @@ when it looks complete**. Assuming it does is the standard bug in a Donations im
 1. Request with your `from` and `to`.
 2. Process the payments.
 3. If any came back, repeat with `from` set to the **exact** latest `capturedAt` from the response.
-4. Stop when `payments` comes back empty.
+4. Stop when a response contains no payments you have not already processed. `from` is inclusive, so the next
+   response always has at least one payment; do not wait for an empty `payments` array.
 
 Two consequences to build for: using the exact timestamp means **the last payment of one page reappears as the first
 of the next**, so deduplicate on `pspReference`; and the number of entries per page varies and may change, so never
