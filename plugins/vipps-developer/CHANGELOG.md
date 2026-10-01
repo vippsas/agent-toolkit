@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.31.0 - 2026-10-01
+
+- TRE-3119: Recurring PSP account payment support renaming
+
 ## 1.30.0 - 2026-10-01
 
 - Hide the PrestaShop plugin pages
