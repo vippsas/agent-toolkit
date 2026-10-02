@@ -127,7 +127,7 @@ user accepts the whole list or none of it, and cannot deselect individual items.
 | `gender` | `gender`. Not available in the test environment |
 | `nin` | National identity number. In Norway, no new access is granted and existing access ends January 1, 2027. Requires application and legal justification |
 | `customFlow` / `delegatedConsents` | Marketing consents. `customFlow` is the current one |
-| `paymentSourceReferences` | Login Connect |
+| `loginConnect` | Login Connect |
 
 Space separated, URL encoded as `%20` in the authorize URL.
 

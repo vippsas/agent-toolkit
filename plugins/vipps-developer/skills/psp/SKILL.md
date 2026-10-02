@@ -77,7 +77,8 @@ After the card callback, use the normal ePayment capture, refund, and cancel cal
 ### Express for PSPs
 
 Same as direct Express (`../epayment/references/features.md`), delivered through card passthrough: add
-`profile.scope` (must include `address`) and `shipping` to the `CARD_PASSTHROUGH` create request above.
+`profile.scope` (must include `address`, plus every other scope needed to deliver the order, usually
+`name email phoneNumber address`) and `shipping` to the `CARD_PASSTHROUGH` create request above.
 The merchant's sales unit must be approved for Express first. Retrieve `shippingDetails` and `userDetails` from
 `GET /epayment/v1/payments/{reference}` (with `Psp-Id`) or the webhook, same shape as direct Express.
 
@@ -126,7 +127,9 @@ the v3 charge creation endpoints reject PSP requests with `403 Forbidden`:
 
 The batch request is a plain array of charge items (same `type`, `amount`, `description`, `chargeId`,
 `agreementId`, `transactionType` fields as `../recurring/references/charges.md`, plus `due` and `retryDays` for
-`RECURRING` items). `description` is optional here; if omitted, the charge description falls back to the
+`RECURRING` items). An optional `externalId` (`^[a-zA-Z0-9-_]{1,64}$`, not unique, not used for idempotency)
+maps a charge to an ID in your system; a bad format is rejected in `failedCharges` with
+`external_id_invalid_format`. `description` is optional here; if omitted, the charge description falls back to the
 agreement's `productName`. The response splits into `successfulCharges`, `failedCharges`, and `retryableCharges`;
 retry only the last one, with the same `agreementId` and `chargeId`.
 
