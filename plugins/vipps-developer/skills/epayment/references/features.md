@@ -89,7 +89,8 @@ customer. Verify `callbackAuthorizationToken` on every call. Callbacks arrive fr
 
 `GET /epayment/v1/payments/{reference}` returns `shippingDetails` with `address`, `shippingCost`, `shippingOptionId`,
 `shippingOptionName`, plus `userDetails` containing whatever profile information the customer consented to share.
-Capture the full amount including shipping.
+Capture `aggregate.authorizedAmount` (the amount you sent plus the selected shipping cost), not the amount you
+specified in the payment creation request. Otherwise the shipping cost is never captured.
 
 If the payment was created with [order details](https://developer.vippsmobilepay.com/docs/APIs/order-management-api/order-management-api-guide.md#adding-order-details),
 the shipping order line (`isShipping: true`) is set to the shipping method the customer selected in the app. If they
@@ -102,6 +103,10 @@ change their selection, the line is updated, so by the time the payment is autho
   shipping countries. Every shipping option's currency must match the payment currency.
 - For `WALLET` payments, the transaction currency must match the country where the sales unit is registered. PSPs
   using `CARD_PASSTHROUGH` can use any supported currency, subject to their commercial agreement.
+- The customer's address is available only after they consent in the app, as part of the payment. If you need it
+  before creating the payment, for example for taxes, you will need to use the Login API to log the customer in first.
+- After the payment is created, the only change to the total is the selected shipping option's cost. You can't update
+  taxes or other parts of the order in the app.
 - Express payments cannot use the test-environment force approve endpoint.
 - Button text must be one of "Buy now with Vipps/MobilePay" (preferred), "Vipps/MobilePay Express", or icon plus
   "Express", translated for the market.
