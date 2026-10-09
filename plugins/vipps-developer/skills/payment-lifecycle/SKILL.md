@@ -70,10 +70,10 @@ Refund reverses a captured amount, up to 365 days after the capture, and never m
 reaches the customer in 2-3 bank days, but can take up to 10 depending on the bank. Where the money goes depends on
 the market:
 
-| Market | Refund destination |
+| Customer's country | Refund destination |
 | ------ | ------------------- |
 | Norway, Sweden | The same card used for the payment. If that card is no longer valid, contact the customer to arrange another way to pay them back |
-| Denmark, Finland | The receiving account configured in the customer's MobilePay app, which can differ from the account or card originally charged |
+| Denmark, Finland, Greenland | The receiving account configured in the customer's app, which can differ from the account or card originally charged |
 
 Partial refunds are allowed, repeated, until the captured amount is used up.
 
