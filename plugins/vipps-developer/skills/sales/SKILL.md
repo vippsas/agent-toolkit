@@ -36,8 +36,8 @@ Constraints that rule this in or out before any code:
 | Sales type | Available from |
 | ---------- | -------------- |
 | mPOS | 2026-03-09 12:45 UTC |
-| Open Amount | 2026-03-16 09:28 UTC |
-| Shopping Basket | 2026-04-22 11:04 UTC |
+| Open Amount (including Get Paid) | 2026-03-16 09:28 UTC |
+| Shopping Basket (including Get Paid) | 2026-04-22 11:04 UTC |
 
 ## Endpoints
 

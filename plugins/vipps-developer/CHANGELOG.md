@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.35.0 - 2026-10-13
+
+- Update recurring agreement history actor and Sales API Get Paid notes
+
 ## 1.34.0 - 2026-10-09
 
 - Update refund destination by customer country
