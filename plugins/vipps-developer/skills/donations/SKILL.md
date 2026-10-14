@@ -1,9 +1,9 @@
 ---
 name: donations
 description: >-
-  Pull donation payment reports, read and stop recurring donation agreements, and build donation links or QR codes for
-  the Vipps MobilePay Donations product. Use when work involves /donations/v1/reports/payments,
-  /donations/v1/agreements, donations.agreement.started.v1, merchant-level keys, qr.vipps.no/donations, fundraising,
+  Pull donation payment reports, read, stop, and request amount changes on recurring donation agreements, and build
+  donation links or QR codes for the Vipps MobilePay Donations product. Use when work involves /donations/v1/reports/payments,
+  /donations/v1/agreements, request-amount-change, donations.agreement.started.v1, merchant-level keys, qr.vipps.no/donations, fundraising,
   or a charity receiving single or recurring gifts.
 ---
 
@@ -97,8 +97,10 @@ cannot see.
 
 | Call | Behavior |
 | ---- | -------- |
-| `GET /donations/v1/agreements/{agreementId}` | `200` with the agreement, `404` if it does not exist **or you cannot see it** |
+| `GET /donations/v1/agreements/{agreementId}` | `200` with the agreement, `404` if it does not exist |
 | `POST /donations/v1/agreements/{agreementId}/stop` | `200` when stopped, `200` again if already stopped, so it is idempotent |
+| `POST /donations/v1/agreements/{agreementId}/request-amount-change` | `202` with no body when the request is recorded or is a retry; `400` invalid `requestId`, amount not above zero, or currency mismatch; `403` token is not a merchant or partner; `404` no such agreement; `409` agreement not active, or `requestId` reused with a different amount |
+| `GET /donations/v1/agreements/{agreementId}/change-requests/{requestId}` | `200` with the request and its `status`; `403` as above; `404` if the agreement or request does not exist |
 
 ```json
 {
@@ -118,8 +120,22 @@ cannot see.
 }
 ```
 
-There is no endpoint to create or change an agreement. Donors start them in the app and change the amount or
-withdrawal day themselves; you find out through webhooks.
+There is no endpoint to create an agreement or to change one directly. Donors start them in the app and change the
+amount or withdrawal day themselves; you find out through webhooks.
+
+### Request an amount change
+
+The only way to change an amount is to ask the donor. `request-amount-change` takes `requestId` (your own ID, 1 to
+128 characters: letters, digits, dot, hyphen, underscore) and `amount` (`value` in minor units, above zero, same
+`currency` as the agreement; higher or lower is allowed). It does not change the agreement: the donor gets a push
+notification and approves or declines the exact amount in the app, and has **1 hour** to respond.
+
+- The `requestId` makes the call idempotent per agreement. Do not reuse it for a different amount.
+- An agreement has one open request. A new one with a different `requestId` replaces it, and the old one expires.
+- `status` is `Requested`, `Approved`, `Declined`, or `Expired`. A request also expires when the agreement is stopped
+  or the donor changes the amount themselves. Status updates lag slightly, so poll rather than expect it instantly.
+- After `Approved`, confirm the new amount with the `amount-changed` webhook or `GET` on the agreement. There are no
+  webhooks for declined or expired requests; use the status endpoint.
 
 ## Webhooks
 
@@ -131,10 +147,12 @@ signature verification, which are identical here.
 | `donations.agreement.started.v1` | A donor starts an agreement |
 | `donations.agreement.stopped.v1` | An agreement stops |
 | `donations.agreement.withdrawal-day-changed.v1` | The donor moved the withdrawal day |
-| `donations.agreement.amount-changed.v1` | The donor changed the amount |
+| `donations.agreement.amount-changed.v1` | The donor changed the amount, or approved your amount change request |
 
 **Subscribe to `stopped`, `amount-changed`, and `withdrawal-day-changed`, not just `started`.** Donors adjust and
 cancel in the app, and nothing else tells you.
+
+The `amount-changed` payload includes an optional `requestId` when the change came from an approved request.
 
 The payload is a notification. Follow it with `GET /donations/v1/agreements/{agreementId}` for the current state.
 
