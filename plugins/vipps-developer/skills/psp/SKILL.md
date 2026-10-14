@@ -117,7 +117,8 @@ Nothing to build beyond handling that callback.
 ### Recurring PSP: charges
 
 Charges are PSP-initiated, batched, and use dedicated v4 endpoints, not the v3 ones in `../recurring/SKILL.md` —
-the v3 charge creation endpoints reject PSP requests with `403 Forbidden`:
+the v3 charge creation endpoints reject PSP requests with `403 Forbidden`, and the v4 endpoints return `403 Forbidden`
+with the `invalid-sale-unit` problem type to merchants that are not PSPs:
 
 | Step | Call |
 | ---- | ---- |
@@ -188,7 +189,9 @@ On `SOFT_DECLINE`: host the 3-D Secure session yourself, redirect the user to
 callback with the same `authorizationAttemptId` and a fresh cryptogram. Respond to that one with `RESERVE` or
 `FAIL` to finish.
 
-Always process the card using the `cardType` from the callback, never assume it from `allowedCardTypes` — this
+Always process the card using the `cardType` from the callback (`VISA_DEBIT`, `VISA_CREDIT`, `ELEC_DEBIT`, `MC_DEBIT`,
+`MC_CREDIT`, or `DANKORT`, the same underscore values as `allowedCardTypes`), rather than assuming it from
+`allowedCardTypes` — this
 matters for co-branded Visa/Dankort cards and PSD2 strong customer authentication.
 
 ## Webhooks
