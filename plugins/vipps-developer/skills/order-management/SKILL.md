@@ -146,6 +146,4 @@ order details are the only record, so they have to be there.
 
 Canonical pages: <https://developer.vippsmobilepay.com/docs/APIs/order-management-api/order-management-api-guide.md>,
 <https://developer.vippsmobilepay.com/docs/APIs/order-management-api/order-management-api-quick-start.md>,
-checklist at
-<https://developer.vippsmobilepay.com/docs/APIs/order-management-api/order-management-api-checklist.md>, spec at
-`/api/order-management`.
+spec at `/api/order-management`.
