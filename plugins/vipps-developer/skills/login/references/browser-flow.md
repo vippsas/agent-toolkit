@@ -39,7 +39,7 @@ hardcoding paths.
 | Parameter | Required | Notes |
 | --------- | -------- | ----- |
 | `response_type` | Yes | Always `code` |
-| `client_id` | Yes | Partners send the target sales unit's MSN instead |
+| `client_id` | Yes | Partners send the target sales unit's MSN as an `msn` query parameter instead |
 | `redirect_uri` | Yes | Must match the portal entry exactly. Universal or app links preferred. A custom scheme needs a path: `myapp://path` |
 | `scope` | Yes | Space separated, URL encoded. `openid` always included |
 | `state` | Yes | Opaque, at least 8 characters, fresh per login. Too short and the user is bounced back with an error |
@@ -165,7 +165,7 @@ validate the `acr` claim in the returned ID token.
 
 ## Marketing consents
 
-Add the `customFlow` scope (`delegatedConsents` is the legacy equivalent) to collect marketing consents alongside login.
+Add the `customFlow` scope (`delegatedConsents` is the legacy equivalent) to collect marketing consents alongside login. `customFlow` returns its result in a `flowResult` object in userinfo; the details below describe the legacy `delegatedConsents` object.
 Configure the texts in the business portal.
 
 - The consent screen appears on the **first** login only, and the `delegatedConsents` object is present in userinfo only

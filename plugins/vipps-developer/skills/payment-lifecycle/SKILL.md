@@ -100,7 +100,7 @@ Management APIs. Rules, common to both:
 - Unique per sales unit (MSN) within that API. Uniqueness across APIs for the same MSN is not enforced, but keeping
   the ePayment `reference` and the Recurring `orderId` distinct from each other is strongly recommended to avoid
   reconciliation mix-ups.
-- Case-sensitive, 8-64 characters, `a-z`, `A-Z`, `0-9`, and `-` only.
+- Case-sensitive, at most 64 characters (at least 8 recommended), `a-z`, `A-Z`, `0-9`, and `-` only.
 - Avoid leading zeros: spreadsheet tools like Excel strip them, which breaks reconciliation.
 - Avoid purely numeric IDs: they are slower to look up and easy to confuse with unrelated numbers in logs. Mix letters
   and numbers, and make the ID recognizable, since it is shown to the customer in the app.

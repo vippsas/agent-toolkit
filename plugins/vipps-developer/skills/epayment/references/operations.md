@@ -102,7 +102,7 @@ event that fired. They intentionally differ.
 
 - Partial captures are allowed, repeatedly, up to `authorizedAmount`.
 - An idempotent retry must send an identical body, or you get error 4010.
-- Some sales units are configured so partial capture is refused: error 6140.
+- Danish and Finnish sales units must have partial capture enabled, or it is refused: error 6140.
 - After a partial capture, cancel the rest.
 - If the reservation was released early (error `6260`, `Funds unavailable`) or the capture otherwise fails
   transiently (error `6280`), do not send the goods; retry with the same idempotency key or contact the customer.

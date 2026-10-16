@@ -178,7 +178,7 @@ than fetching only when a payout arrives.
   charge endpoint on Recurring.
 - **No payouts topic.** Only `funds` and `fees` exist today.
 - **Nothing for a sales unit that cannot move money.** A Login-only sales unit has no settlements and no ledger.
-- VM number shopping basket contents, per-product VAT rates, and donor tax deductions are portal-only.
+- VM number shopping basket contents and per-product VAT rates come from the Sales API; see `../sales/SKILL.md`. Donor tax deductions are portal-only.
 
 Near real time on the feed is 5 to 30 seconds in the good case, but can stretch to hours under load. This is an
 accounting API; do not put it behind a live fundraising display.

@@ -37,13 +37,13 @@ not registered redirect URIs, not webhook registrations.
 Never use a test phone number against production. Those numbers may belong to real people.
 
 Available in test: Access Token, ePayment, Recurring, Login, Userinfo, Webhooks, QR, eCom, ePayment PSP API,
-Recurring PSP API. MobilePay Online has its own separate sandbox with separate credentials and endpoints; the Vipps PSP
-API is legacy and not part of this list.
+Recurring PSP API, PSP Merchant API. MobilePay Online has its own separate sandbox with separate credentials and endpoints; the Vipps PSP
+API is in maintenance mode but is also available in test.
 
 ## Skipping the app: force approve
 
 For automated tests, both payment APIs can be approved without a human touching a phone. Test environment only, and both
-require the test user to be properly registered in the test app first.
+require the test user to be properly registered in the test app first. For ePayment, the test user must also have approved at least one payment manually in the app.
 
 | API | Call | Body |
 | --- | ---- | ---- |

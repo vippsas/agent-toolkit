@@ -209,7 +209,7 @@ vipps
 ## Content security policy and cookie consent
 
 If the embedding page uses a Content Security Policy, allowlist `https://cdn.vippsmobilepay.com` for `script-src` and
-the market's payment domain (for example `https://pay.vipps.no`) for `frame-src`. Do not pin the script with a hashed
+the market's payment domain (for example `https://pay.vipps.no`) for `frame-src`, and `https://designsystem.vippsmobilepay.com` for `font-src`. Do not pin the script with a hashed
 CSP source or Subresource Integrity, since the CDN script changes without notice. If CSP blocks framing, the SDK
 degrades gracefully: the dialog closes and redirects to the payment URL, or the button falls back to an on-page
 web component.

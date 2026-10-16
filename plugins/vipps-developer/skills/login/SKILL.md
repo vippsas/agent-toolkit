@@ -71,7 +71,7 @@ https://apitest.vipps.no/access-management-1.0/access/oauth2/auth
 - `response_type` is always `code`.
 - `state` is required, must be at least 8 characters, and must be fresh and random per login. Verify it on the way back.
 - `redirect_uri` must match the portal entry exactly.
-- Partners send the target sales unit's **MSN** in place of `client_id`.
+- Partners send the target sales unit's **MSN** as an `msn` query parameter in place of `client_id`.
 - Add `code_challenge` and `code_challenge_method=S256` for PKCE. The default is `plain`, so set `S256` explicitly.
 - Full-page redirect in the top-level browser window. **iframes are not supported**, and a new window is discouraged.
 - In a native app, use Custom Tabs on Android and `ASWebAuthenticationSession` on iOS. Never a web view.

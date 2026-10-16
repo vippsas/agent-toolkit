@@ -96,7 +96,7 @@ the payment or agreement**, it does not fall through to a payment without detail
 
 A customer who already consented to a scope within the last 7 days is not asked for it again.
 
-`nin` is restricted. Only a sales unit with a legal requirement or another objective need to identify the person that
+`nin` is restricted. In Norway, no new access is granted and existing access ends January 1, 2027. Elsewhere, only a sales unit with a legal requirement or another objective need to identify the person that
 precisely gets it approved. Do not design a flow around it and then discover it was never enabled.
 
 ## The response
