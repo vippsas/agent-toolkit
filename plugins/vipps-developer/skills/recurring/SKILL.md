@@ -156,7 +156,7 @@ Rules that the API enforces:
 - The agreement must be `ACTIVE`. Charges cannot be created against any other status.
 - `due` must be at least 1 day ahead and at most 2 years ahead. A charge due the 27th must be created on the 26th or
   earlier.
-- `retryDays` is capped at 14. Use at least 2. `retryDays: 0` means one attempt and then `FAILED`.
+- `retryDays` is capped at 14. Use at least 2. `retryDays: 0` means attempts on the due date only, and then `FAILED`.
 - `description` is at most 100 characters. The app shows it under the `productName` title.
 - `orderId` replaces the generated `chargeId`. Use your own stable ID so retries and reconciliation line up; see
   `../payment-lifecycle/SKILL.md` for the formatting rules. `externalId` is a separate, looser field used only in
@@ -207,7 +207,7 @@ the customer's `maxAmount` on a `VARIABLE` agreement), `non_technical_error`, `t
 | Refund a charged amount | `POST /agreements/{id}/charges/{chargeId}/refund` |
 | End the subscription | `PATCH /agreements/{id}` with `{"status": "STOPPED"}` |
 
-- Partial capture is supported. Cancel any reserved remainder you will not take; see `../payment-lifecycle/SKILL.md`
+- Partial capture is supported, but Danish and Finnish sales units must have it enabled first. Cancel any reserved remainder you will not take; see `../payment-lifecycle/SKILL.md`
   for capture deadlines and the refund window.
 - There is **no pause status**. To pause, simply create no charges and say so in the agreement description. Do not use
   `STOPPED` as a pause: it is irreversible.

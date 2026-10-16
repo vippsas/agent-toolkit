@@ -97,7 +97,7 @@ The SDK is front end only. The outcome still comes from the webhook and the poll
 | Value | When | Requires |
 | ----- | ---- | -------- |
 | `WEB_REDIRECT` | Websites and apps. The right answer almost always | `returnUrl` |
-| `QR` | Customer-facing screen the customer scans. Returns a one-time QR | `qrFormat`, `customerInteraction` |
+| `QR` | Customer-facing screen the customer scans. Returns a one-time QR | `customerInteraction`. `qrFormat` is optional |
 | `PUSH_MESSAGE` | Till, vending machine, call center: a device the customer does not hold | `customer`, and the sales unit must be approved for it |
 | `NATIVE_REDIRECT` | Discouraged. Only when the merchant has no web presence at all | `customer` |
 
@@ -158,7 +158,7 @@ Full history is at `GET /epayment/v1/payments/{reference}/events`. Use it for su
 { "modificationAmount": { "currency": "NOK", "value": 49900 } }
 ```
 
-Partial captures are allowed: call it repeatedly, up to the authorized amount. See `../payment-lifecycle/SKILL.md` for
+Partial captures are allowed, but Danish and Finnish sales units must have them enabled first: call it repeatedly, up to the authorized amount. See `../payment-lifecycle/SKILL.md` for
 capture deadlines, why a late capture can fail, and why the reserved amount must cover shipping added at capture time.
 
 ## 4. Cancel and refund

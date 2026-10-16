@@ -57,12 +57,12 @@ something else.
 
 One QR per payment, shown on a screen. The customer scans and the payment is waiting in their app.
 
-With ePayment this is built in: create the payment with `userFlow: "QR"` and the response carries the QR image. That is
+With ePayment this is built in: create the payment with `userFlow: "QR"` and the response carries a `redirectUrl` link to the QR image. That is
 the whole integration, and it is what new work should use. See
 <https://developer.vippsmobilepay.com/docs/APIs/epayment-api/api-guide/features/qr-payments.md>.
 
 The standalone `POST /qr/v1/` endpoint exists for eCom and Recurring: initiate the payment, then post the returned
-deep-link `url` to it and get back a QR image plus `expiresIn` in seconds.
+deep-link `url` to it and get back a `url` to the QR image plus `expiresIn` in seconds.
 
 **These expire in 10 minutes, so they cannot be printed.** They are also the one flow that uses **polling rather than
 webhooks**, because the payment starts inside the app at scan time. Poll about once a second in a physical setting.

@@ -122,7 +122,7 @@ controls notifications for successful charges.
 
 ## Capture, cancel, refund
 
-- Capture applies to `RESERVED` charges, in full or in part. Cancel any reserved remainder you will not take, so the
+- Capture applies to `RESERVED` charges, in full or in part (Danish and Finnish sales units must have partial capture enabled first). Cancel any reserved remainder you will not take, so the
   customer gets their money back immediately instead of waiting for a refund.
 - Cancel with `DELETE` before the money moves.
 - Refund with `POST .../refund` and `{ "amount": ..., "description": ... }`, up to 365 days after capture, in parts if

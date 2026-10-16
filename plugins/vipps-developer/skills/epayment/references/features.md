@@ -60,7 +60,7 @@ Use these whenever the delivery options are known up front. Faster, and nothing 
 ```
 
 - `type`: `HOME_DELIVERY`, `PICKUP_POINT`, `MAILBOX`, `IN_STORE`, `OTHER`.
-- `brand`: `BRING`, `DHL`, `FEDEX`, `GLS`, `HELTHJEM`, `INSTABOX`, `MATKAHUOLTO`, `PORTERBUDDY`, `POSTEN`, `POSTI`,
+- `brand`: `BRING`, `DHL`, `FEDEX`, `GLS`, `GORDON`, `HELTHJEM`, `INSTABOX`, `MATKAHUOLTO`, `PORTERBUDDY`, `POSTEN`, `POSTI`,
   `POSTNORD`, `OTHER`. The app draws the carrier logo from this.
 - One shipping group per unique brand and type combination. Variants such as pickup points or time slots go in
   `options`.
@@ -113,7 +113,7 @@ change their selection, the line is updated, so by the time the payment is autho
 
 ## QR payments
 
-`userFlow: "QR"` plus `qrFormat`, for example `{ "format": "IMAGE/SVG+XML", "size": 1024 }`. Show the returned QR on a
+`userFlow: "QR"` plus an optional `qrFormat`, for example `{ "format": "IMAGE/SVG+XML", "size": 1024 }`. Show the returned QR on a
 screen facing the customer and set `customerInteraction: "CUSTOMER_PRESENT"`. For static merchant QR codes and personal
 QR, see the QR API instead.
 
