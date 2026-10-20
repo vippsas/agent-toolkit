@@ -91,7 +91,7 @@ complete and only needs checking and submitting. Prefilled orders are processed 
   "settlementBankAccount": { "scheme": "BBAN:NO", "id": "86011117947" },
   "pricePackageId": "8a11afb7-c223-48ed-8ca6-4722b97261aa",
   "productType": "PAYMENT_INTEGRATION",
-  "productUseCase": "WebsiteWithTest",
+  "productUseCase": "Website",
   "annualTurnover": 100000,
   "annualTurnoverPercentage": "50",
   "intendedPurpose": "Gym membership for accessing the gym's facilities. Guests will not be physically present when buying the subscription, it's done on the gym's website.",
@@ -103,7 +103,7 @@ complete and only needs checking and submitting. Prefilled orders are processed 
     "testWebsitePassword": "test-password"
   },
   "hasRecurring": true,
-  "merchantCategoryCode": 5942
+  "merchantCategoryCode": "5942"
 }
 ```
 
@@ -138,6 +138,7 @@ payload rather than the portal.
 `GET /management/v2/product-orders/{productOrderId}/details` and `GET /management/v2/product-orders` cover every order
 naming the partner, whether it came from a prefill, from a product order template, or from the merchant filling in the
 form themselves. Only prefilled ones carry the full detail.
+The list returns orders created in the last year, newest first.
 
 | Status | Means |
 | ------ | ----- |
@@ -148,8 +149,7 @@ form themselves. Only prefilled ones carry the full detail.
 | `REJECTED` | Declined. **We may not tell a partner why**, for legal reasons; ask the merchant |
 | `EXPIRED` | 14 days elapsed before submission |
 
-`COMPLETED`, `REJECTED`, and `EXPIRED` are terminal. The list endpoint hides `EXPIRED` unless you pass
-`includeExpired=true`.
+`COMPLETED`, `REJECTED`, and `EXPIRED` are terminal.
 
 `DELETE /management/v1/product-orders/{productOrderId}` removes a prefilled order that was wrong, but only
 before the merchant submits it.
