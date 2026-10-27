@@ -30,6 +30,12 @@ cannot be tested end to end before it meets real data. Write it defensively.
 Only accounting partners get partner access here. Other partner types do not, and an accounting partner may **not**
 use a merchant's own keys.
 
+**Merchants must send three headers, partners two.** Every call needs the `Authorization` header carrying the
+access token. A merchant calling with its own sales unit keys must *also* send `Ocp-Apim-Subscription-Key` and
+`Merchant-Serial-Number`; accounting partners and Donations organizations authenticate with partner or
+merchant-level keys and send neither. Omitting them as a merchant is the usual cause of a `401` that looks like a
+bad token.
+
 **A merchant must grant access in the business portal before a partner sees anything.** Under *Reports*, then
 *Accounting partners*, and they choose which ledgers each partner gets. This is a GDPR consent step and cannot be done
 by the partner or by us. When an expected ledger is missing, this is nearly always why.
@@ -187,6 +193,31 @@ accounting API; do not put it behind a live fundraising display.
 get the same `404` whether the ledger does not exist at all or exists but belongs to someone else. Check the keys and
 the MSN. An empty list means the same thing more quietly. A report that is not finished yet is *not* a `404`: both
 the `dates` and the `feed` endpoint answer `HTTP 200` with `tryLater` set to `true` instead.
+
+## Errors
+
+Errors come back as `application/problem+json`:
+
+```json
+{
+  "type": "https://developer.vippsmobilepay.com/docs/knowledge-base/errors/",
+  "title": "Invalid value in query parameter 'cursor'",
+  "detail": "Invalid value in query parameter 'cursor'",
+  "status": "400",
+  "details": [],
+  "error": null
+}
+```
+
+**`status` is a string, not a number.** A strongly typed client that maps it to an integer will fail to deserialize
+the error and report the wrong cause. `title` and `detail` currently carry the same text.
+
+`400` means the request itself is wrong: an unknown `topic`, a non-numeric `ledgerId`, a `ledgerDate` that is
+malformed or more than 24 hours in the future, a `cursor` that cannot be decoded, or an
+`includeGDPRSensitiveData` value that is not a boolean. Retrying unchanged will not help. A corrupted stored cursor
+therefore surfaces as a `400` on every poll, not as missing data.
+
+`500` is safe to retry with the same cursor. For `404`, see above: it means "not yours", not "not ready yet".
 
 ## GDPR data
 

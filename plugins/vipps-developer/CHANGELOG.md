@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.41.0 - 2026-10-27
+
+- Report API: correct the 1.0 spec against production
+
 ## 1.40.0 - 2026-10-27
 
 - Remove the deprecated Optimizely plugins from the docs
