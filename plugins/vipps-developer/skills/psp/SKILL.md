@@ -184,6 +184,9 @@ Respond with:
 or `{ "status": "FAIL", "errorCode": 300, "errorMessage": "Refused by Issuer" }`, or `{ "status": "SOFT_DECLINE",
 "softDeclineUrl": "https://example.com" }` when the issuer needs a 3-D Secure step-up.
 
+For Recurring PSP callbacks on Mastercard cards, also include the Mastercard Transaction Link ID as
+`transactionLinkId` in the `RESERVE` response.
+
 On `SOFT_DECLINE`: host the 3-D Secure session yourself, redirect the user to
 `softDeclineCompletedRedirectUrl` from the original callback once it completes, and expect a **second** card
 callback with the same `authorizationAttemptId` and a fresh cryptogram. Respond to that one with `RESERVE` or
