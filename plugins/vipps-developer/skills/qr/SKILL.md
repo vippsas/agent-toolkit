@@ -132,7 +132,7 @@ way* and the sale is lost. See `../webhooks/SKILL.md`.
 resolve it to a phone number first. If you do need the number, `POST /qr/v1/exchange/customer` with
 `{ "customer": { "customerToken": "..." } }` returns `msisdn` and the scan `timestamp`.
 
-QR is limited to **one webhook registration per sales unit**, unlike the 25 other event types get. A partner
+QR is limited to **one webhook registration per sales unit**, unlike the 30 other event types get. A partner
 registration may exist alongside it, and when both match, the sales unit one wins.
 
 Delete codes that go out of service. A scan of a deleted code tells the customer it is not found, which beats leaving

@@ -43,7 +43,7 @@ action, and keep the `id` so you can delete it later.
 | List registrations | `GET /webhooks/v1/webhooks` |
 | Delete a registration | `DELETE /webhooks/v1/webhooks/{id}` |
 
-Two registration types, each with its own 25-per-event-type limit (1 for QR), never sharing a bucket:
+Two registration types, each with its own 30-per-event-type limit (1 for QR), never sharing a bucket:
 
 - **Sales unit webhook**: has a `Merchant-Serial-Number`, applies to that one sales unit.
 - **Partner/PSP webhook**: a partner or PSP registers with their own keys. If they want a webhook for a single sales unit,

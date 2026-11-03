@@ -101,7 +101,7 @@ Register `login.merchant-initiated.ping.v1` (see `../../webhooks/SKILL.md`). Pay
 ```
 
 Order of operations: subscribe, start the authentication, the customer confirms, you receive the ping, then you call the
-token endpoint. Up to 25 registrations per event type per MSN.
+token endpoint. Up to 30 registrations per event type per MSN.
 
 Supported for the finish-in-the-app variant only, for the single-exchange reason above.
 
