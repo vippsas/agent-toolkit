@@ -232,6 +232,8 @@ Every documentation page ships as raw Markdown for agents. Fetch these instead o
 - Index of every page: <https://developer.vippsmobilepay.com/llms.txt>
 - Any page as Markdown: append `.md` to the doc path, for example
   <https://developer.vippsmobilepay.com/docs/APIs/epayment-api/quick-start.md>
+- If a documentation link returns 404, the page has probably moved. Find its current address in
+  <https://developer.vippsmobilepay.com/llms.txt>.
 - Rendered API specifications: `/api/epayment`, `/api/recurring`, `/api/login`, `/api/access-token`, `/api/webhooks`,
   `/api/qr`, `/api/userinfo`, `/api/order-management`, `/api/management`, `/api/report`, `/api/sales`,
   `/api/donations`

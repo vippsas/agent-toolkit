@@ -15,7 +15,7 @@ opens the Vipps MobilePay app on mobile devices and a payment dialog on desktop 
 the current design guidelines and the correct brand for the market, and the SDK already implements the app-switch and
 redirect behavior a manual integration has to get right. The documentation says so on every page that describes the
 alternative: the button generator at
-<https://developer.vippsmobilepay.com/docs/knowledge-base/buttons.md> renders a button only, while the Widget SDK
+<https://developer.vippsmobilepay.com/docs/buttons-and-widgets/buttons.md> renders a button only, while the Widget SDK
 renders the same button and connects it to a payment, and both
 <https://developer.vippsmobilepay.com/docs/knowledge-base/initiate-payment.md> and
 <https://developer.vippsmobilepay.com/docs/knowledge-base/app-flow.md> point at it instead of their manual guides.
@@ -219,8 +219,8 @@ consent-relevant behaviors on the Vipps origin; call `vipps.consent({ rememberMe
 visitor's cookie consent choice. `rememberMe` defaults to off until explicitly enabled; `analytics` and on-page
 personalization default to on until consent is set, to preserve historic behavior.
 
-See <https://developer.vippsmobilepay.com/docs/knowledge-base/widget.md#content-security-policy> and
-<https://developer.vippsmobilepay.com/docs/knowledge-base/widget.md#cookie-consent-and-gdpr> for full details.
+See <https://developer.vippsmobilepay.com/docs/buttons-and-widgets/widget.md#content-security-policy> and
+<https://developer.vippsmobilepay.com/docs/buttons-and-widgets/widget.md#cookie-consent-and-gdpr> for full details.
 
 ## Before calling it done
 
@@ -231,6 +231,7 @@ See <https://developer.vippsmobilepay.com/docs/knowledge-base/widget.md#content-
 - Nothing on mobile depends on an `.on()` callback.
 
 Everything in this skill comes from the canonical page,
-<https://developer.vippsmobilepay.com/docs/knowledge-base/widget.md>. Fetch it for anything not covered here rather than
-guessing, and see <https://developer.vippsmobilepay.com/docs/knowledge-base/buttons.md> for button design and the
-standalone generator.
+<https://developer.vippsmobilepay.com/docs/buttons-and-widgets/widget.md>. Fetch it for anything not covered here rather than
+guessing, and see <https://developer.vippsmobilepay.com/docs/buttons-and-widgets/buttons.md> for button design and the
+standalone generator. If a documentation link returns 404, the page has probably moved. Find its current address in
+<https://developer.vippsmobilepay.com/llms.txt>.

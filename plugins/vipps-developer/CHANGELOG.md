@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.43.0 - 2026-11-03
+
+- Widget SDK, Button generator, and Badge generator moved to own folder: Buttons and widgets
+
 ## 1.42.0 - 2026-10-30
 
 - TRE-3175: Document transactionLinkId
