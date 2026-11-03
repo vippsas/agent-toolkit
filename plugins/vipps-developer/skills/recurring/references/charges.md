@@ -144,7 +144,7 @@ Agreements: `recurring.agreement-activated.v1`, `recurring.agreement-rejected.v1
 Charges: `recurring.charge-reserved.v1`, `recurring.charge-captured.v1`, `recurring.charge-canceled.v1`,
 `recurring.charge-refunded.v1`, `recurring.charge-failed.v1`, `recurring.charge-creation-failed.v1`.
 
-Up to 25 registrations per event type per MSN. Registration and HMAC verification are in
+Up to 30 registrations per event type per MSN. Registration and HMAC verification are in
 `../../webhooks/SKILL.md`.
 `recurring.agreement-stopped.v1` carries an `actor` field saying whether the merchant or the customer stopped it.
 
