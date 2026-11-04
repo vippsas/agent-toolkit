@@ -32,8 +32,8 @@ tells Vipps MobilePay the outcome. Settlement is between the PSP and the merchan
   and a `Psp-Id` that does not match the PSP the `Merchant-Serial-Number` belongs to is `403 Forbidden`.
 - `Merchant-Serial-Number` is the *merchant's* MSN, the sales unit being acted on behalf of, never the PSP's own.
   This is the easiest header to get wrong.
-- Onboarding a merchant and getting their MSN is a separate job, the PSP Merchant API, not covered by this skill.
-  See <https://developer.vippsmobilepay.com/docs/APIs/psp-merchant-api/README.md>.
+- Each merchant's MSN comes from the PSP Merchant API, which creates, updates, and deactivates the merchants you
+  process for. See `references/merchant-api.md`.
 
 ## ePayment PSP: create a payment
 
@@ -71,8 +71,14 @@ Same `POST /epayment/v1/payments` as a direct integration, with `Psp-Id` added a
 PSPs are not currency-restricted to the sales unit's registered market: `NOK`, `DKK`, `EUR`, `SEK`, `USD`, `GBP`
 are all allowed, cross-border, as long as the commercial agreement covers them.
 
+Every `userFlow` works with card passthrough. In person (`PUSH_MESSAGE` with `customer.phoneNumber`) and with a QR on
+a screen (`QR`), also send `"customerInteraction": "CUSTOMER_PRESENT"`, which regulation requires. `receipt` is not
+used by PSP integrations. Error 4160 means the payment method type is invalid for `CARD_PASSTHROUGH`.
+
 After the card callback, use the normal ePayment capture, refund, and cancel calls (`../epayment/SKILL.md`,
-`Psp-Id` header added) to report the outcome and keep Vipps MobilePay's view of the payment in sync.
+`Psp-Id` header added) to keep Vipps MobilePay's view of the payment in sync. **These calls move no money.** Capture,
+refund, and cancel happen in your own systems first; then call the endpoint so the app shows the customer the right
+status.
 
 ### Express for PSPs
 
@@ -115,6 +121,12 @@ omitted, it falls back to the agreement's `productName`.
 A user changing their card on an existing agreement triggers the same card callback with a zero-amount CIT.
 Nothing to build beyond handling that callback.
 
+`callbackUrl` must be HTTPS; deeplinks are not allowed. The `psp` object can be changed later with
+`PATCH /recurring/v3/agreements/{agreementId}`: fields you include replace the old values, and omitted ones stay.
+
+PSPs can call only these Recurring endpoints: draft, update, list, and get agreements; get and list charges; the
+three v4 charge endpoints below; and v3 capture, refund, and cancel. Anything else is not available to PSPs.
+
 ### Recurring PSP: charges
 
 Charges are PSP-initiated, batched, and use dedicated v4 endpoints, not the v3 ones in `../recurring/SKILL.md` —
@@ -133,7 +145,15 @@ The batch request is a plain array of charge items (same `type`, `amount`, `desc
 maps a charge to an ID in your system; a bad format is rejected in `failedCharges` with
 `external_id_invalid_format`. `description` is optional here; if omitted, the charge description falls back to the
 agreement's `productName`. The response splits into `successfulCharges`, `failedCharges`, and `retryableCharges`;
-retry only the last one, with the same `agreementId` and `chargeId`.
+retry only the last one, with the same `agreementId` and `chargeId`. Item order in the response is not guaranteed, so
+match items on `agreementId` plus `chargeId`, never by position. Each item has an error `code`; branch on `code`, not
+on the description, and expect new codes:
+
+- `retryableCharges`: `processing_timeout` (outcome uncertain) and `technical_error`. Retry with the same IDs.
+- `failedCharges`: fix the request before trying again. For example `due_date_too_soon`, `amount_too_high`,
+  `agreement_not_active`, `agreement_not_psp`, `retry_days_not_allowed` (on `UNSCHEDULED`), `charge_already_exists`,
+  or `charge_in_invalid_state` (create a new charge with a different `chargeId`). A charge is also failed when the
+  card has neither a network token nor, with `publicEncryptionKeyId` on the agreement, an encrypted PAN.
 
 Card data delivery differs by charge type:
 
@@ -159,10 +179,23 @@ or
 `error.retry: true` keeps the charge `DUE` and retryable until the end of `due` + `retryDays` days (agreement local
 time): for `RECURRING`, `retryDays` (`0`-`14`, default `14`) extends the window past the `due` you chose; for
 `UNSCHEDULED`, `due` is set to the creation date and `retryDays` must be `0` or omitted, so the window closes at
-the end of that same day. `retry: false` settles it to `FAILED`. Reporting `SUCCESS` with
-`transactionType: RESERVE_CAPTURE` reserves the charge for a later `POST .../capture`; `DIRECT_CAPTURE` captures it
-in full immediately. Skipping the result report leaves the charge stuck and the customer sees it as unresolved in
-the app.
+the end of that same day. `retry: false` settles it to `FAILED`. `payment-info` keeps returning card data throughout
+the window, so fetch it again before each retry. When the window closes, report a final result: `SUCCESS`, or
+`FAILED` with `retry: false`. `error.retry` is required; `error.message` is optional, kept for auditing, and never shown
+to the payer.
+
+`error.code` uses the card callback codes and sets the charge's `failureReason`, which tells the user in the app what
+to fix:
+
+| `error.code` | `failureReason` |
+| ------------ | --------------- |
+| `100`, `200`, `400` | `user_action_required` |
+| `210`, `300`, `500` | `non_technical_error` |
+| `600`, `700`, `900` | `technical_error` |
+
+Reporting `SUCCESS` with `transactionType: RESERVE_CAPTURE` reserves the charge for a later `POST .../capture`, full
+or partial; `DIRECT_CAPTURE` captures it in full immediately, with no partial capture possible. Skipping the result
+report leaves the charge stuck and the customer sees it as unresolved in the app.
 
 Everything after a successful charge — capture, refund, cancel — uses the same v3 endpoints as
 `../recurring/SKILL.md`.
@@ -173,9 +206,13 @@ Shared by ePayment PSP (payment creation) and Recurring PSP (agreement sign-up, 
 MobilePay `POST`s to your callback URL (`psp.callbackUrl`) synchronously; you must respond within 20 seconds or the operation
 fails and cannot be retried by the user.
 
+A `FAIL` with a retryable `errorCode` lets the user try again with the same or another card. A timeout or HTTP 500
+cannot be retried by the user; a new payment is needed.
+
 Request carries `pspReference`, `authorizationAttemptId`, `merchantSerialNumber`, `amount`, and `cardInfo`
 (`maskedCardNumber`, `cardType`, `cardIssuedInCountryCode`, `cardDataType: TOKEN | PAN`, and either `networkToken`
-or `encryptedPan`). Verify it with HMAC-SHA256 over `x-ms-date`, `Host`, and `x-ms-content-sha256`, signed with
+or `encryptedPan`). Field details, the `errorCode` table, and encrypted PAN setup are in
+`references/card-callback.md`. Verify it with HMAC-SHA256 over `x-ms-date`, `Host`, and `x-ms-content-sha256`, signed with
 your PSP client secret — same scheme as `../webhooks/SKILL.md`, but signed with your client secret instead of a
 webhook `secret`.
 
@@ -186,7 +223,8 @@ Respond with:
 ```
 
 or `{ "status": "FAIL", "errorCode": 300, "errorMessage": "Refused by Issuer" }`, or `{ "status": "SOFT_DECLINE",
-"softDeclineUrl": "https://example.com" }` when the issuer needs a 3-D Secure step-up.
+"softDeclineUrl": "https://example.com" }` when the issuer needs a 3-D Secure step-up. Always respond `HTTP 200 OK`;
+`errorCode` and `errorMessage` are required with `FAIL`.
 
 `networkTransactionReference` is optional on `RESERVE`: include it when you have one. For ePayment, it is passed on
 to the merchant in `GET /epayment/v1/payments/{reference}` and the `epayments.payment.authorized.v1` webhook.
@@ -211,6 +249,16 @@ matters for co-branded Visa/Dankort cards and PSD2 strong customer authenticatio
 PSPs need webhooks the same way a direct merchant does, plus the partner/PSP-wide registration that covers every
 sales unit at once. See `../webhooks/SKILL.md` for both.
 
+For ePayment, subscribe to `authorized`, `aborted`, `expired`, and `terminated`, not only `authorized`: an unattended
+screen otherwise keeps showing a payment that can no longer be completed. A PSP-wide registration delivers every
+merchant's events to one URL, so route on `msn` and `reference` in the payload.
+
+## Testing
+
+Cards can't be added in the test app. Whatever card the user picks, the card callback in test carries a test token,
+a Visa token by default. Specific payment amounts select other tokens, for example `3100` emulates a card that is
+not eligible. The table is in `references/card-callback.md`. For encrypted PAN in test, see the same file.
+
 ## Don't use these unless the PSP specifically asks for it
 
 The Vipps PSP API and MobilePay Online are in maintenance mode: we continue to support and maintain them, and no end
@@ -220,7 +268,12 @@ merchants in `../best-practices/SKILL.md`.
 
 ## Deeper reference
 
+- `references/card-callback.md` — callback request fields, `errorCode` table, HMAC verification, encrypted PAN setup,
+  test tokens
+- `references/merchant-api.md` — PSP Merchant API: create, update, list, and deactivate merchants
+
 Canonical pages: <https://developer.vippsmobilepay.com/docs/APIs/psp-epayment-api/epayment-psp-api-guide.md>,
 <https://developer.vippsmobilepay.com/docs/APIs/psp-epayment-api/epayment-psp-checklist.md>,
 <https://developer.vippsmobilepay.com/docs/APIs/psp-recurring-api/recurring-psp-api-guide.md>,
-<https://developer.vippsmobilepay.com/docs/APIs/psp-recurring-api/recurring-psp-api-checklist.md>.
+<https://developer.vippsmobilepay.com/docs/APIs/psp-recurring-api/recurring-psp-api-checklist.md>,
+<https://developer.vippsmobilepay.com/docs/APIs/psp-merchant-api/psp-merchant-api-guide.md>.
