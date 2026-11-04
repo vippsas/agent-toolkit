@@ -9,7 +9,9 @@ description: >-
 # Order Management API
 
 Adds a receipt and a link to a payment the customer already made, so the app's *Activities* view shows order lines,
-VAT, and a button back to your site rather than just an amount.
+VAT, and a button back to your site rather than just an amount. Customers see the details right after an in-store
+purchase, in their order history at any time, and while a long-living payment is waiting to be paid. Works in the test
+environment.
 
 **On ePayment, assume you do not need this API to _write_ order details.** ePayment carries `receipt` on
 `createPayment` through the pre-built Order Management integration, so the order lines and totals go out with the
@@ -83,6 +85,10 @@ Upload first, then reference the returned `imageId` from the category.
 Base64 is the only supported type. Images exist on their own, not tied to a transaction, and one image can serve many
 payments. They cannot be overwritten, so version the `imageId` rather than trying to replace one.
 
+- The image must be PNG or JPEG, at least 167 pixels high, and at most 2 MB. Square images are recommended. A smaller
+  image is rejected with HTTP 400.
+- `imageId` is your own ID: up to 128 characters of letters, digits, `-`, `_`, and `.`.
+
 The app fetches them pre-authenticated, which is why a ticket or a receipt is a reasonable thing to upload here.
 
 ## Order details
@@ -121,7 +127,9 @@ The app fetches them pre-authenticated, which is why a ticket or a receipt is a 
 
 - Amounts are minor units, as everywhere else. `taxRate` is in **hundredths of a percent**: `2500` is 25%, not 25%
   of anything else and not 2500%.
-- `quantity` is a **string**, so fractional quantities like `"2.5"` with a `quantityUnit` of `"KG"` work.
+- `quantity` is a **string**, so fractional quantities like `"2.5"` with a `quantityUnit` of `"KG"` work: up to 10
+  characters and 8 decimal places. `unitPrice` includes tax and excludes discount.
+- `taxPercentage` (whole percent) is deprecated. Use `taxRate`.
 - Shipping is an order line with `isShipping: true`, not a separate field.
 - The totals shown in the app are computed from the lines. Get the arithmetic right on your side before sending.
 

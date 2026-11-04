@@ -29,16 +29,33 @@ not registered redirect URIs, not webhook registrations.
 2. **Sales unit API keys** for that unit, from the *For developers* section of the portal. Usually available within
    minutes.
 3. **A test user**, which is a generated phone number plus a national identity number. Test users cannot be created in
-   the app. Merchants create them in the portal under *For developers* then *Test users*; partners receive them by
-   email. The test user must be in the same market and currency as the sales unit.
+   the app. Merchants create them in the portal under *For developers* then *Test users*, which needs *Developer*
+   access; partners receive them by email. The test user must be in the same market and currency as the sales unit.
 4. **The Merchant Test app** on a phone or tablet. iOS through TestFlight, Android through the Vipps MobilePay MT Google
-   group plus Google Play. It installs next to the production app without conflict.
+   group plus Google Play, with the same Google account for both. It installs next to the production app without
+   conflict. The app looks orange, but it works for every market.
+
+About test users:
+
+- A test user works with any merchant and sales unit in test, and on several devices at once.
+- Name, birth date, and the other attributes are random. Only the birth date can be chosen at creation, and a test
+  user cannot be changed afterwards. Each comes with one payment card, and cards cannot be added in the test app.
+- Partners with an older test user that has no national identity number ask partner@vippsmobilepay.com for a new one.
+
+Registering a test user in the MT app: choose the country that matches the test user, or registration fails; answer
+*Over 15* if asked; enter the national identity number and phone number; confirm the phone number with `0000` or
+`000000`; ignore the browser window that opens and closes, which stands in for eID; and set the personal code `1236`.
+Emulators work poorly, often needing a fresh login on every launch. When the test app has to be a specific version,
+the test status page says so: <https://status-test.vippsmobilepay.com/>.
 
 Never use a test phone number against production. Those numbers may belong to real people.
 
-Available in test: Access Token, ePayment, Recurring, Login, Userinfo, Webhooks, QR, eCom, ePayment PSP API,
-Recurring PSP API, PSP Merchant API. MobilePay Online has its own separate sandbox with separate credentials and endpoints; the Vipps PSP
-API is in maintenance mode but is also available in test.
+Available in test: Access Token, ePayment, Recurring, Login, Userinfo, Webhooks, QR, Order Management, eCom,
+ePayment PSP API, Recurring PSP API, PSP Merchant API. MobilePay Online has its own separate sandbox with separate
+credentials and endpoints; the Vipps PSP API is in maintenance mode but is also available in test.
+
+**Not in test:** the Donations, Management, Report, and Sales APIs run on the production server only. Test that
+functionality in production.
 
 ## Skipping the app: force approve
 
@@ -86,7 +103,9 @@ Design your test plan around these gaps rather than debugging them:
 - **Freestanding card payments** (`paymentMethod: CARD`) are not available.
 - **No settlements**, so no settlement data from the Report API. Only production shows the money flow.
 - **Email addresses cannot be verified** the normal way, and **gender** is not available through profile sharing or
-  Login.
+  Login. A real email address can be added in the test app under *Profile*, *Personal information*, *Email*.
+  Verification is sent only from a Login flow that asks for the `email` scope, or with *send email* on the profile
+  page after reopening the app; saving the address alone sends nothing.
 - **Partner keys do not work.** Partners use test sales unit keys.
 - **There is no test business portal.**
 - Push notifications are unstable. In the test app, tap *Payments* and pull to refresh to find a pending request. The
@@ -126,7 +145,10 @@ production unit.
 
 Partners have extra steps: submit the filled-in checklist to developer@vippsmobilepay.com with a video of the flow and a
 short description, and fill in the production sign-up form. Request examples in a submitted checklist must be less than
-a month old.
+a month old. Include examples of `reference` or `orderId` from the test environment, and details of a pilot customer.
+After approval, merchants can choose the partner when they sign up in the business portal. A partner only needs the
+test environment to finish an integration, since its merchants are the ones who go to production, and can also develop
+against a pilot merchant's test keys.
 
 ## The checklists are the requirement specification
 
@@ -150,9 +172,23 @@ The recurring themes across all of them:
 8. Handle redirects that come back to a different browser or session, and never depend on the redirect happening.
 9. Capture before the deadline, and cancel reservations you will not capture.
 10. Handle customers from other Nordic countries.
-11. Follow the design guidelines for buttons and branding.
+11. Show only the approved Vipps MobilePay buttons. The Widget SDK is recommended for ePayment and Recurring, and the
+    button generator for Login.
 12. Build support tooling into **your** system. The business portal is not a customer support tool, and support staff
     cannot inspect individual charges for you.
+13. Send a useful `reference` or `orderId`: unique, descriptive, and recognizable to the customer. See
+    `../payment-lifecycle/SKILL.md`.
+
+Product-specific items are in each checklist.
+
+- **Recurring:** the right `transactionType` for the use case, at least two `retryDays`, a `due` date at least one
+  day and at most two years ahead, and a page behind `merchantAgreementUrl` where customers manage and stop their
+  subscription, which updates the agreement promptly.
+- **Login:** a unique `state` per request; only the scopes you need, with approval for national identity number;
+  every `redirect_uri` registered in the portal over HTTPS or a native scheme, matching exactly with no query or
+  trailing slash; the company name and logo set; works in non-default mobile browsers; users linked to your own
+  registry; native apps on the app flows; no iframes; and, only if you collect consents, marketing consent terms
+  configured.
 
 Canonical pages: <https://developer.vippsmobilepay.com/docs/knowledge-base/test-environment.md>,
 <https://developer.vippsmobilepay.com/docs/getting-started.md>

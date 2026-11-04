@@ -33,7 +33,13 @@ curl -X POST https://apitest.vipps.no/webhooks/v1/webhooks \
 ```
 
 **Store the `secret` now.** It is shown once, and it is the only way to verify that a delivery is genuine. If it is
-lost, delete the registration and create a new one.
+lost, delete the registration and create a new one. Each delivery carries a `Webhook-Id` header with the registration
+`id`, so when several registrations share a URL, store the secrets by `id` and look up the right one per request.
+
+A registration's event list cannot be changed. To add or remove events, register again and delete the old one.
+
+A Donations organization with merchant-level keys registers with a token from the specialized flow and sends no
+`Ocp-Apim-Subscription-Key`; see `../donations/SKILL.md`.
 
 Registration is a one-off setup step, not something to do per payment. Do it from a deployment script or an admin
 action, and keep the `id` so you can delete it later.
@@ -109,6 +115,8 @@ What happens otherwise:
   `AUTHORIZED` event and the `CAPTURED` event will not arrive until a retry of `AUTHORIZED` succeeds. Slow or flaky
   handlers therefore stall your own pipeline.
 - A registration whose endpoint is unresponsive for **2 weeks** is deleted automatically. Re-register after an outage.
+- Deleting a registration ends the retries for its undelivered events for good. Events cannot be resent manually.
+- After an outage on our side, affected events are replayed, possibly with some delay.
 
 Handlers must be **idempotent**. Retries and overlapping registrations mean the same event can arrive more than once.
 Key on `reference` plus `name` for payments, or on the charge and agreement identifiers, and make repeats no-ops.
@@ -148,10 +156,19 @@ Treat the payload as a signal, not as the truth. For anything that moves money, 
 `recurring.charge-reserved.v1`, `-captured.v1`, `-canceled.v1`, `-refunded.v1`, `-failed.v1`,
 `-creation-failed.v1`. Note the single "l" in `charge-canceled`.
 
-**Login**: `login.merchant-initiated.ping.v1`, carrying `auth_req_id`. Plus revoke consent webhooks, which report a
-`sub` whose consent was withdrawn.
+**Login**: `login.merchant-initiated.ping.v1`, carrying `auth_req_id`.
 
 **QR**: `user.checked-in.v1`, one registration only.
+
+**Donations**: `donations.agreement.started.v1`, `.stopped.v1`, `.withdrawal-day-changed.v1`, `.amount-changed.v1`.
+Payloads are in `../donations/SKILL.md`.
+
+Login's revoke consent webhook (`CONSENT_REVOKED`, carrying the `sub`) is **not** part of this API: it is not
+registered here, has no HMAC signature, and arrives as a `text/plain` unsigned JWT (`alg: none`), so treat its content
+as unauthenticated. See `../login/SKILL.md`.
+
+Manual changes in the business portal, such as a refund, trigger the same webhooks as the API for ePayment and eCom
+payments, but not for Recurring.
 
 Full list: <https://developer.vippsmobilepay.com/docs/APIs/webhooks-api/events.md>
 
@@ -166,8 +183,8 @@ Minimum useful sets:
 
 ## Practical requirements for the endpoint
 
-- Public HTTPS, reachable from the internet. `localhost` will not work. In development, use a tunnel or a request
-  inspection service.
+- Public HTTPS with TLS 1.2 or higher, reachable from the internet. `localhost` will not work. In development, use a
+  tunnel or a request inspection service.
 - Allow the source hosts in your firewall: `callback-1.vipps.no` through `callback-4.vipps.no`,
   `callback-dr-1.vipps.no` through `callback-dr-4.vipps.no` (disaster recovery, as important as production), and
   `callback-mt-1.vipps.no` and `callback-mt-2.vipps.no` for test. Use the hostnames, not IP addresses.
@@ -178,7 +195,8 @@ Minimum useful sets:
 
 1. `GET /webhooks/v1/webhooks` — is the registration still there, or was it auto-deleted after an outage?
 2. The business portal, *For developers* then *Webhooks* and *Webhook errors*, shows the status codes we got from your
-   endpoint. That is the fastest answer to "did it even try?".
+   endpoint. That is the fastest answer to "did it even try?". Partners use the partner portal's *Errors* tab; PSPs
+   have no portal view.
 3. Is an earlier event for the same payment stuck failing and blocking the queue?
 4. Is your handler returning 200 within 10 seconds?
 5. Are you verifying against the raw body, and against the right secret for that registration?
@@ -187,7 +205,8 @@ Minimum useful sets:
 ## Switching endpoints without losing events
 
 Register the new webhook, verify it in production traffic, then delete the old one. Keep the overlap short and be ready
-for duplicates during it. There is no way to pause deliveries.
+for duplicates during it. There is no way to pause deliveries. Do not leave an obsolete endpoint answering with an
+error such as HTTP 404: that looks like an incident on our side. Delete the registration instead.
 
 Canonical pages: <https://developer.vippsmobilepay.com/docs/APIs/webhooks-api/api-guide.md>,
 <https://developer.vippsmobilepay.com/docs/APIs/webhooks-api/request-authentication.md>, spec at `/api/webhooks`.
