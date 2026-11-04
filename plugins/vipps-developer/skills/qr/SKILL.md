@@ -88,6 +88,9 @@ curl -X POST https://apitest.vipps.no/qr/v1/merchant-redirect \
 You choose the `id`, and it is how you reach the code later: `GET`, `PUT`, and `DELETE` on
 `/qr/v1/merchant-redirect/{id}`.
 
+The code never expires, but the image URL carries a token that does. Call `GET /qr/v1/merchant-redirect/{id}` again for a
+fresh image URL.
+
 **The destination is editable after printing.** A `PUT` with a new `redirectUrl` takes effect immediately and the
 printed image is unchanged, which is what makes these worth using on anything expensive to reprint. A `ttl` in seconds
 on the original `POST` deletes the code automatically.
