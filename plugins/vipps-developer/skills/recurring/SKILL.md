@@ -215,6 +215,9 @@ the customer's `maxAmount` on a `VARIABLE` agreement), `non_technical_error`, `t
   bill and the customer keeps access.
 - Stopping cancels `PENDING`, `DUE`, and `RESERVED` charges. If the customer stops the agreement in the app instead,
   `RESERVED` charges survive and you must capture or cancel them yourself. Capture the initial charge before stopping.
+- When a customer cancels the subscription on your website or app, stop the agreement yourself. Otherwise it still
+  appears as active in the Vipps or MobilePay app. This is also required for merchants on the opt-out list, where the
+  customer stops through your `merchantAgreementUrl`.
 - When stopping, send only `status`. Any other field in the same `PATCH` gives HTTP 400.
 - Stopping is idempotent: `PATCH` with `{"status": "STOPPED"}` on an already-`STOPPED` agreement returns `204 No
   Content` and has no further effect, so a stop can safely be retried if you never saw the response.
