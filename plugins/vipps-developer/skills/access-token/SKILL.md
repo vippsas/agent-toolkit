@@ -29,7 +29,7 @@ Start from the keys you were given, not from the API you are calling.
 | You have | Use | Gets you |
 | -------- | --- | -------- |
 | Sales unit keys from the business portal | Standard | ePayment, Recurring, Login, Webhooks, QR, Userinfo, Order Management, Management, Report |
-| Partner keys | Standard | The same, plus Management and Donations, on behalf of the merchants you manage |
+| Partner keys | Standard | The same except Report, plus Donations, on behalf of the merchants you manage. Report needs accounting keys |
 | Accounting keys | Specialized | Report API, Sales API |
 | Donations merchant-level keys | Specialized | Donations API, and the Report and Webhooks APIs for Donations |
 

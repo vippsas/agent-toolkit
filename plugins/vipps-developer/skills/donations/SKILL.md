@@ -38,9 +38,14 @@ client, switch your system to it, then delete the old one. Deleting a client sto
 The same merchant-level keys also reach the Report API, which is where settlement data lives. See
 `../report/SKILL.md`.
 
+Donations API requests need only `Authorization: Bearer`. There is no `Ocp-Apim-Subscription-Key` or
+`Merchant-Serial-Number` header on these endpoints.
+
 ## Payment reports
 
-`GET /donations/v1/reports/payments?from=...&to=...`, ISO 8601 timestamps.
+`GET /donations/v1/reports/payments?from=...&to=...`, ISO 8601 timestamps. `from` is inclusive. Optional:
+`recipientHandles` to filter to some sales units, and `includeGDPRSensitiveData=true` to add the donor's own `message`
+to single donation payments (legacy).
 
 ```json
 {
@@ -98,7 +103,7 @@ cannot see.
 | Call | Behavior |
 | ---- | -------- |
 | `GET /donations/v1/agreements/{agreementId}` | `200` with the agreement, `404` if it does not exist |
-| `POST /donations/v1/agreements/{agreementId}/stop` | `200` when stopped, `200` again if already stopped, so it is idempotent |
+| `POST /donations/v1/agreements/{agreementId}/stop` | `200` when stopped, `200` again if already stopped, so it is idempotent; `404` if it does not exist |
 | `POST /donations/v1/agreements/{agreementId}/request-amount-change` | `202` with no body when the request is recorded or is a retry; `400` invalid `requestId`, amount not above zero, or currency mismatch; `403` token is not a merchant or partner; `404` no such agreement; `409` agreement not active, or `requestId` reused with a different amount |
 | `GET /donations/v1/agreements/{agreementId}/change-requests/{requestId}` | `200` with the request and its `status`; `403` as above; `404` if the agreement or request does not exist |
 
@@ -134,6 +139,8 @@ notification and approves or declines the exact amount in the app, and has **1 h
 - An agreement has one open request. A new one with a different `requestId` replaces it, and the old one expires.
 - `status` is `Requested`, `Approved`, `Declined`, or `Expired`. A request also expires when the agreement is stopped
   or the donor changes the amount themselves. Status updates lag slightly, so poll rather than expect it instantly.
+- The status response always has `agreementId`, `requestId`, `status`, `type` (`CHANGE_AMOUNT`), `amount`,
+  `requestedAt`, and `expiresAt`, plus `decidedAt` once approved or declined, or `expiredAt` once expired.
 - After `Approved`, confirm the new amount with the `amount-changed` webhook or `GET` on the agreement. There are no
   webhooks for declined or expired requests; use the status endpoint.
 
@@ -153,6 +160,10 @@ signature verification, which are identical here.
 cancel in the app, and nothing else tells you.
 
 The `amount-changed` payload includes an optional `requestId` when the change came from an approved request.
+
+Every payload has `agreementId` and a timestamp (`startedAt`, `stoppedAt`, or `changedAt`).
+`withdrawal-day-changed` adds `withdrawalDay` (1 to 28) and an optional `nextPeriodKey` (`YYYY-MM`, the next billing
+period, omitted or `null` when not yet known). `amount-changed` adds `amount` (`value` in minor units, `currency`).
 
 The payload is a notification. Follow it with `GET /donations/v1/agreements/{agreementId}` for the current state.
 
