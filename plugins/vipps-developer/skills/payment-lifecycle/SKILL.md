@@ -2,8 +2,9 @@
 name: payment-lifecycle
 description: >-
   Capture, cancel, refund, timeout, and transaction-ID rules shared by every Vipps MobilePay payment API. Use when
-  work involves capture deadlines, reservation windows, cancelling a payment or charge, refunding, payment or
-  agreement timeouts, or designing an orderId or reference value. Read together with epayment or recurring.
+  work involves capture deadlines, reservation windows, reserve or direct capture, partial capture, cancelling a
+  payment or charge, refunding, payment or agreement timeouts, polling, or designing an orderId or reference value.
+  Read together with epayment or recurring.
 ---
 
 # Payment lifecycle: capture, cancel, refund, timeouts, IDs
@@ -49,6 +50,34 @@ webhook, giving the exact date a successful capture is guaranteed for that payme
 Capture must never happen before the product or service is delivered. That is a regulatory requirement, not a style
 choice.
 
+If a capture keeps failing more than 30 days after the reservation, stop retrying and contact the customer to arrange
+another way to pay. Some banks show both the reservation and the capture, which customers can mistake for being
+charged twice; it is one payment at two stages.
+
+## Reserve capture and direct capture
+
+*Reserve capture* is the default: the payment is reserved until you capture it. *Direct capture* captures at once and
+exists only in the Recurring API and the legacy eCom API; ePayment is always reserve capture.
+
+- **Recurring:** choose per charge with `transactionType`. `DIRECT_CAPTURE` works only on a sales unit that Vipps
+  MobilePay has configured for it. Use `RESERVE_CAPTURE` for physical goods, or whenever access is granted later.
+- **eCom:** a sales unit has one capture type, which Vipps MobilePay configures; a merchant cannot switch it. Direct
+  capture needs extra compliance checks and is offered only to merchants with a partner or a key account manager, who
+  request it. Merchants see the capture type in the business portal's *Developer* section, partners through the
+  Management API.
+
+With reserve capture a reservation can be released at once with a cancel. After a capture, money goes back only through
+a refund, which takes days. If in doubt, use reserve capture and capture right after the reservation: the customer
+sees no difference.
+
+## Partial capture
+
+You can capture part of the reserved amount, and capture again while some remains. Merchants in Denmark and Finland
+must request partial capture from customer service first. Partial captures **do not** extend the reservation, so the
+deadlines above still count from the reservation. When the order is complete, cancel whatever you will not capture. A
+typical case is an EV charger, taxi, or vending machine: reserve a reasonable upper amount, capture the real cost, and
+cancel the rest.
+
 ## Capture amount versus reserved amount
 
 You can never capture more than was reserved. If shipping is added at capture time, the reserved amount must already
@@ -64,6 +93,11 @@ contacts. It is also a compliance point, see [Payment rules](#terms-and-conditio
 Cancel is subject to the same [capture deadlines](#capture-attempt-deadlines): a cancel attempt on a payment or charge past
 its deadline returns HTTP 400, because the reservation is already gone.
 
+- A payment can be cancelled through the API, or in the business portal, until it is fully captured.
+- Cancelling before the customer has approved is possible, but not guaranteed, because it races the customer's action
+  in the app. It is not possible while the customer is in a 3-D Secure session.
+- Released funds usually reach the customer's account in 2-3 bank days, and up to 10, depending on the bank.
+
 ## Refund
 
 Refund reverses a captured amount, up to 365 days after the capture, and never more than was captured. It typically
@@ -77,6 +111,12 @@ the market:
 
 Partial refunds are allowed, repeated, until the captured amount is used up.
 
+- A refund past 365 days returns HTTP 400. Some refunds can also be made in the business portal.
+- The refunded amount is deducted from the merchant's settlement account after two business days.
+- A refund can also fail because the card is no longer valid or the customer no longer has an active account. To check
+  a refund, read the payment or charge in the same API that created it. If it succeeded and the customer still has not
+  seen the money, check where refunds go in their market, above.
+
 ## Timeouts
 
 By default a customer has 10 minutes to act on a payment or agreement request. After that it expires (`EXPIRED` on a
@@ -86,11 +126,24 @@ payment, `EXPIRED` on an agreement still `PENDING`).
 or poll result.** Cancelling early creates a race: the customer approves in the app moments after your system already
 told them the order was cancelled. Wait for the full timeout, or for the terminal status, whichever comes first.
 
+`EXPIRED` is final: the payment cannot be recovered. Tell the customer, and create a new payment, with a new
+`reference`, if they still want to pay.
+
+## Polling
+
+Poll alongside webhooks, never instead of them, because a webhook can be delayed. Start 5 seconds after the request,
+then check every 2 seconds, and adapt the interval to the use case. On HTTP 429, slow down: the APIs rate-limit
+polling, and each API's skill gives its limits.
+
 ## Terms and conditions acceptance
 
 The customer must actively accept your terms and conditions before a payment is initiated. Sending them straight to a
 payment deeplink, with no acceptance step in between, does not satisfy this and makes the integration non-compliant.
 Build the acceptance step into whatever triggers payment creation, not as an afterthought on a confirmation screen.
+
+Vipps MobilePay runs compliance checks and assigns the merchant category code (MCC) per sales unit. A business that
+takes payments in different contexts, such as online and in person, or across different product categories, may need
+a separate sales unit for each. Plan the sales units before building.
 
 ## `orderId` / `reference`
 

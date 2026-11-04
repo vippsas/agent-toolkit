@@ -20,8 +20,9 @@ API is production only. Write reconciliation logic defensively; its first real r
 
 ## When the money arrives
 
-Frequency is a per-sales-unit setting. Vipps merchants choose `daily`, `weekly`, or `monthly` in the business portal
-themselves, with no approval needed unless the account carries risk factors. MobilePay is daily only.
+Frequency is a per-sales-unit setting. In the Norwegian market, merchants choose `daily`, `weekly`, or `monthly` in the
+business portal themselves (the sales unit's *Settlement* section, then *Edit*), with no approval needed unless the
+account carries risk factors. In the Danish and Finnish markets, settlement is daily.
 
 | Frequency | Calculated |
 | --------- | ---------- |
@@ -29,15 +30,17 @@ themselves, with no approval needed unless the account carries risk factors. Mob
 | Weekly | Every Monday |
 | Monthly | First day of the month |
 
-The lag from capture to money in the bank differs by brand:
+The lag from capture to money in the bank differs by market:
 
 | | Capture | Settlement calculated | Data available | Sent to the bank |
 | --- | --- | --- | --- | --- |
-| **Vipps** | Day 1 | Day 1, midnight | Day 2 | Day 3 |
-| **MobilePay** | Day 1 | Day 1, midnight | Day 2 | Day 2 |
+| **Norway** | Day 1 | Day 1, midnight | Day 2 | Day 3 |
+| **Denmark, Finland** | Day 1 | Day 1, midnight | Day 2 | Day 2 |
 
-So a Monday capture is a Wednesday payment on Vipps and a Tuesday payment on MobilePay. The bank may not book it until
-the next banking day, and money is normally available before noon.
+So in Norway a Monday capture is paid on Wednesday and a Friday capture on Tuesday; in Denmark and Finland a Monday
+capture is paid on Tuesday and a Friday capture on Monday. The bank may not book it until the next banking day, and
+money is normally available before noon. With daily settlement, Friday, Saturday, and Sunday are three separate
+payouts, each with its own settlement file. The exact payout delay is part of the merchant's agreement.
 
 **Do not promise the merchant a date computed from capture time alone.** Weekends, bank holidays, and the bank's own
 booking delay all move it.
@@ -54,6 +57,11 @@ A missing report is therefore normal and not an error condition. Code that alarm
 This is the same fact the Report API expresses as `tryLater: true`, which can stay true for a month on monthly
 settlement or for 60 days on a negative balance.
 
+A scheduled payout is not always a paid one. A payout can be blocked, for example while the merchant proves they own a
+new bank account; it is still recorded as scheduled, and all blocked payouts are sent once the problem is solved. If
+money does not arrive within the agreed delay, the merchant should contact customer service. Fees can also arrive a
+ledger date late without holding up the payout; see `../report/references/entry-types.md`.
+
 ## Net and gross
 
 **Net settlement is the default.** Fees are deducted before the transfer, so the merchant receives payments minus fees
@@ -61,7 +69,11 @@ and there is no fee invoice to match.
 
 **Gross settlement is rare and requires approval**, because it means extending credit to the merchant while fees are
 outstanding. The merchant receives the full amount and is invoiced for fees monthly, by EHF if their organization
-number is registered as an EHF recipient and by email otherwise.
+number is registered as an EHF recipient and by email otherwise. To change who receives the invoice, contact customer
+service.
+
+For bookkeeping, mirror this in the accounting system: one account for funds held at Vipps MobilePay, where sales are
+booked, and one for fees owed. A payout is then just a transfer between two of the merchant's own accounts.
 
 Which one is in force changes what the ledger looks like: on net settlement the fees show up as `fees-retained`
 entries against the funds ledger. See `../report/references/entry-types.md`. Refunds are deducted from the next payout
@@ -88,6 +100,21 @@ From there:
 - **Without it.** Download the settlement report from the business portal under *Reports*. `Payout scheduled` rows
   carry a *Payout number* column, and the payment rows around such a row belong to that payout.
 
+## Settlement reports from the business portal
+
+The default report comes as `xlsx` or `csv`:
+
+- `xlsx` has a *Summary* sheet, one row per sales unit and booking date with captures, refunds, fees, payout, remaining
+  balance, fee status, and payout reference, and a *Details* sheet, one chronological row per entry with a running
+  balance. `csv` is the *Details* sheet alone, for imports.
+- One report can cover several sales units, and it includes all activity for the chosen days, even where no payout has
+  been scheduled yet. It can be limited to payouts only, which is much faster for high-volume sales units.
+- *Details* entry types are the Report API's `funds` entry types. New types can appear without notice, so do not fail
+  on an unknown one. *PSP reference* equals the API's `pspReference`, and *Order ID/Reference* equals `reference`.
+
+Legacy reports, Norway only, are still available as PDF, XML (schema v3.0), CSV, and XLSX. Example files and the XML
+schema are linked from the settlements page below.
+
 ## The identifiers, and which one to design around
 
 Three different IDs turn up in a reconciliation conversation and only one of them is yours:
@@ -100,7 +127,8 @@ Three different IDs turn up in a reconciliation conversation and only one of the
 
 **The merchant's own `reference` is the one that makes reconciliation work**, because it is the only one that already
 means something in their order system. Design it before writing payment code, not afterwards. See
-`../payment-lifecycle/SKILL.md`.
+`../payment-lifecycle/SKILL.md`. Only API payments, such as ePayment, carry the merchant's own ID; a merchant who
+needs to identify payments by their own ID must take them through an API.
 
 **Multiple stores on one MSN: prefix the reference per store**, for example `oslo-654321-123abc-11` and
 `bergen-654321-345def-11`. Settlement data has no store dimension of its own, so a prefix is the only way to split a

@@ -47,7 +47,9 @@ curl -X POST https://apitest.vipps.no/qr/v1/exchange \
 ```
 
 Send the **full** scanned content as `qrCode`, URL and all, not a fragment of it. `version` `2.0` is the current
-tokenized code; `1.0` is a deprecated clear-text one, and only `2.0` carries `timestamp`.
+tokenized code; `1.0` is a deprecated clear-text one, and only `2.0` carries `timestamp`, the UTC time in seconds when
+the code was generated. An optional `requestedData` array supports only `["MSISDN"]`, which is the default. The scanner
+can be customer-facing for self-service or handheld by staff.
 
 Simpler still, ePayment takes the scanned content directly: create the payment with `userFlow: PUSH_MESSAGE` and the
 `personalQr` field, and skip the exchange call. Use the exchange endpoint when you genuinely need the phone number for
@@ -64,7 +66,8 @@ the whole integration, and it is what new work should use. See
 The standalone `POST /qr/v1/` endpoint exists for eCom and Recurring: initiate the payment, then post the returned
 deep-link `url` to it and get back a `url` to the QR image plus `expiresIn` in seconds.
 
-**These expire in 10 minutes, so they cannot be printed.** They are also the one flow that uses **polling rather than
+**These expire in 10 minutes, so they cannot be printed.** After that, the image URL returns HTTP 404. When the
+customer has paid, the app shows them the order details. They are also the one flow that uses **polling rather than
 webhooks**, because the payment starts inside the app at scan time. Poll about once a second in a physical setting.
 The appearance of `transactionId` in the transaction log is your signal that the code was actually scanned, and the
 right moment to put "waiting for customer" on the screen.
@@ -114,6 +117,11 @@ curl -X PUT https://apitest.vipps.no/qr/v1/merchant-callback/{merchantQrId} \
   code for the MSN with `GET /qr/v1/merchant-callback`, which is the convenient way to print a batch.
 - `qrImageUrl` can change over time for security reasons even though the code itself does not. Re-fetch rather than
   caching it forever. `qrContent` is the text embedded in the code.
+- **Already-printed MobilePay point-of-sale codes** are not recreated. Map each one to the MSN with
+  `PUT /qr/v1/merchant-callback/mobilepay/{beaconId}`, not the normal `PUT`, so the printed code keeps working. Its
+  callbacks carry the `beaconId` as `merchantQrId`.
+- In the test environment only, the customer has to go back to the app's home screen after scanning to see the
+  payment request. Production does not do this.
 
 **Register the `user.checked-in.v1` webhook before deploying any of this.** Without it, or if your endpoint does not
 answer successfully, the customer gets the app error *Can't connect to store. Try scanning again or pay in another
@@ -145,8 +153,9 @@ Set `Accept: image/png` or `Accept: image/svg+xml` on the request. Merchant call
 
 - `size`: 100 to 2000 pixels, default 1024. PNG only.
 - `whiteBorder`: 0 to 100 pixels, default 8. The quiet zone scanners need, so do not set it to 0 on anything printed.
-- The returned image URL needs no authentication and can be embedded anywhere. Re-`GET` the same `id` with a different
-  `Accept` header to get another format of the same code.
+- The returned image URL needs no authentication, but it carries its own token that expires. Download the image when
+  you need it, or `GET` the code again for a fresh URL; the printed code itself keeps working. Re-`GET` the same `id`
+  with a different `Accept` header to get another format of the same code.
 
 Canonical pages: <https://developer.vippsmobilepay.com/docs/APIs/qr-api/api-guide/README.md>,
 <https://developer.vippsmobilepay.com/docs/APIs/qr-api/api-guide/choosing-qr-type.md>,
