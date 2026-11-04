@@ -112,7 +112,7 @@ The type cannot be changed later. Pick it correctly the first time. `VARIABLE` i
 billing: the customer sees a ceiling. `FLEXIBLE` gives you no limit and the customer no context, so use it only when
 the amount genuinely cannot be bounded, such as electricity.
 
-Maximum amounts: NOK 20 000, DKK 300 000, EUR 2 000.
+Maximum amounts: NOK 20 000, DKK 300 000, EUR 2 000. Minimum amounts: NOK 100 øre, DKK 1 øre, EUR 1 cent.
 
 ## 2. Wait for activation
 
@@ -244,8 +244,10 @@ Full requirement list:
 
 ## Deeper reference
 
-- `references/agreements.md` — pricing types, initial charge, campaigns, intervals, updating, user cancellation
-- `references/charges.md` — charge fields, states, retries, batches, webhooks, test-environment force accept
+- `references/agreements.md` — pricing types, initial charge, campaigns, intervals, updating, user cancellation,
+  duplicate drafts, landing page
+- `references/charges.md` — charge fields, states, retries, batches, webhooks, test-environment force accept, errors,
+  rate limits
 
 Canonical pages: <https://developer.vippsmobilepay.com/docs/APIs/recurring-api/recurring-api-quick-start.md>,
 <https://developer.vippsmobilepay.com/docs/APIs/recurring-api/recurring-api-guide.md>, spec at `/api/recurring`.

@@ -124,7 +124,8 @@ controls notifications for successful charges.
 
 - Capture applies to `RESERVED` charges, in full or in part (Danish and Finnish sales units must have partial capture enabled first). Cancel any reserved remainder you will not take, so the
   customer gets their money back immediately instead of waiting for a refund.
-- Cancel with `DELETE` before the money moves.
+- Cancel with `DELETE` before the money moves. Cancelling a `PARTIALLY_CAPTURED` charge releases the remaining reserved
+  amount to the customer, and the charge becomes `CHARGED`.
 - Refund with `POST .../refund` and `{ "amount": ..., "description": ... }`, up to 365 days after capture, in parts if
   needed.
 - Stopping the agreement cancels `PENDING`, `DUE`, and `RESERVED` charges, except that a customer-initiated stop leaves
@@ -163,6 +164,27 @@ RFC 7807 bodies with a `traceId`. Idempotency specifics:
 - Reusing a key on a different request gives HTTP 409 Conflict.
 - A 4xx response is cached against the key: the same key returns the same error, and the operation is not retried.
 - Retry only true failures (network, 5xx), and always with the same key.
+
+`GET /charges/{chargeId}` returns HTTP 409 with the `ambiguous-charge-id` problem type when the `chargeId` matches more
+than one charge. Use `GET /agreements/{agreementId}/charges/{chargeId}` instead.
+
+## Rate limits
+
+HTTP 429 when exceeded. The ones most likely to matter:
+
+| Operation | Limit |
+| --------- | ----- |
+| Get an agreement | 120 per minute per `agreementId` |
+| Draft an agreement | 300 per minute per MSN |
+| List agreements | 5 per minute per MSN |
+| Update or stop an agreement | 5 per minute per `agreementId` |
+| Create a charge | 500 per minute per MSN |
+| Create multiple charges | 100 calls per minute per MSN |
+| Get a charge, list charges | 10 per minute per charge, per agreement |
+| Get a charge by ID alone | 100 per minute per MSN |
+| Capture, cancel, refund | 5 per minute per charge |
+
+Poll an agreement or charge at a modest interval, not in a tight loop.
 
 Full pages: <https://developer.vippsmobilepay.com/docs/APIs/recurring-api/recurring-api-guide.md> and
 <https://developer.vippsmobilepay.com/docs/APIs/recurring-api/recurring-api-problems.md>

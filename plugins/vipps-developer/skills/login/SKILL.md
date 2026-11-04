@@ -188,9 +188,10 @@ For a till or call center. Full detail in `references/merchant-initiated.md`.
 ## Before calling it done
 
 `state` is verified on return. The `id_token` is validated. Only necessary scopes are requested. `sub` is stored and
-used for linking. Cancellation and error redirects are handled. Buttons follow the brand guidelines at
-<https://brand.vippsmobilepay.com/document/61#/branding/online/buttons>, or use the button generator at
-<https://developer.vippsmobilepay.com/docs/buttons-and-widgets/buttons.md>.
+used for linking. Cancellation and error redirects are handled. Only the approved buttons are shown, preferably from the
+button generator at <https://developer.vippsmobilepay.com/docs/buttons-and-widgets/buttons.md>. If you can't use the
+generator, use the static button images from the brand book at
+<https://brand.vippsmobilepay.com/document/61#/branding/online/buttons>.
 
 Full requirement list: <https://developer.vippsmobilepay.com/docs/APIs/login-api/login-api-checklist.md>
 
