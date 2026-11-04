@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.47.0 - 2026-11-04
+
+- Best-practices skill and AI tools page reflect all markets and everything the plugin covers
+
 ## 1.46.0 - 2026-11-04
 
 - Plugin skills cover PSP merchant onboarding, card callback errors, and Donations details
