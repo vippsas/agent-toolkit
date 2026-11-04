@@ -145,9 +145,10 @@ Pick the one that matches what actually happens, so the consent screen is honest
 
 ## Marketing consents
 
-Add the `delegatedConsents` scope (see also `customFlow`) to the backchannel authentication request to collect the
-merchant's configured consents in the same approval. The userinfo response then carries what the customer accepted or
-declined. Configure the texts in the portal first.
+Add the `customFlow` scope to the backchannel authentication request to collect the merchant's configured consents in
+the same approval. Unlike the browser flow, the customer is asked **every time** they log in. The userinfo response
+carries the result in `flowResult` (see `browser-flow.md`). Build the flow in the portal first. The legacy
+`delegatedConsents` scope still works the same way and also covers redirect to browser.
 
 Full pages:
 <https://developer.vippsmobilepay.com/docs/APIs/login-api/api-guide/merchant-initiated-login-integration.md>,

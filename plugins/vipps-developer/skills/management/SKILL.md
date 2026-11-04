@@ -54,7 +54,6 @@ work before I make it":
   "msn": "123456",
   "name": "ACME Fantastic Fitness",
   "businessIdentifier": { "scheme": "business:NO:ORG", "id": "9876543221" },
-  "settlementBankAccount": { "scheme": "BBAN:NO", "id": "86011117947" },
   "configuration": {
     "paymentAllowed": true,
     "captureType": "ReserveCapture",
@@ -126,8 +125,9 @@ complete and only needs checking and submitting. Prefilled orders are processed 
   Correcting a wrong `pricePackageId` means the partner submits a new prefill.
 - `merchantCategoryCode` is the four-digit MCC and feeds our risk assessment. Only MCCs in the form's own selector get
   pre-selected; anything else is silently ignored and the merchant picks one.
-- Get `pricePackageId` values from `GET /management/v1/partners/price-packages`. If the partner has only one package,
-  or you supply one, the price is hidden from the merchant's form.
+- Get `pricePackageId` values from `GET /management/v1/partners/price-packages`. Each package also has `name`,
+  `description`, `productType`, `visibleInSignupForm`, and the partner's `commission`. If the partner has only one
+  package, or you supply one, the price is hidden from the merchant's form.
 
 **A merchant with no Merchant Agreement is sent to sign one first**, with BankID, by a person with signing rights for
 the company. That is not something a partner can fill in on their behalf, and it is why the link sometimes appears to
@@ -141,7 +141,8 @@ payload rather than the portal.
 
 `GET /management/v2/product-orders/{productOrderId}/details` and `GET /management/v2/product-orders` cover every order
 naming the partner, whether it came from a prefill, from a product order template, or from the merchant filling in the
-form themselves. Only prefilled ones carry the full detail.
+form themselves. `productOrderType` tells them apart: `PREFILL`, `TEMPLATE`, or `MANUAL`. Only prefilled ones carry
+the full detail, and only they can reach every status. Each order also has `productType`.
 The list returns orders created in the last year, newest first.
 
 | Status | Means |

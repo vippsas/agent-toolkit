@@ -83,6 +83,10 @@ Two endpoints, one `{topic}` that is `funds` or `fees`:
 | `GET /report/v2/ledgers/{ledgerId}/{topic}/dates/{ledgerDate}` | A complete report for one ledger date |
 | `GET /report/v2/ledgers/{ledgerId}/{topic}/feed` | A continuous stream, to mirror into your own database |
 
+The old `GET /report/v1/ledgertransactions` returns `HTTP 410 Gone`. When porting v1 code: `transactionId` is now
+`pspReference`, `orderId` is `reference`, `ledgerAmount` is `amount`, `transactionType` is `entryType`, `payout` is
+`payout-scheduled`, and fees moved to the `fees` topic.
+
 **Prefer the feed** for a new integration. It needs slightly more logic but never leaves you guessing which dates you
 have already taken. Use the date endpoint when the accounting system genuinely thinks in daily reports.
 
@@ -145,6 +149,10 @@ forward from `lastLedgerDate + 1` to today each run, and shrug at every `tryLate
 
 If you use `includeGDPRSensitiveData=true`, repeat it on every paged request.
 
+Every successful response also repeats the paging state in headers: `Vipps-Feed-Cursor`, `Vipps-Feed-Has-More` (date
+endpoint only), `Vipps-Feed-Try-Later`, `Vipps-Feed-Count`, `Vipps-Feed-Page-Size`, and `Vipps-Feed-Meta-Version`.
+Where a header matches a body field, the values are always the same.
+
 ## Scheduling the job
 
 **Run hourly, every hour of every day, and fetch whatever is new.** Not once at 08:00. An hourly job that asks for
@@ -184,6 +192,7 @@ than fetching only when a payout arrives.
   charge endpoint on Recurring.
 - **No payouts topic.** Only `funds` and `fees` exist today.
 - **Nothing for a sales unit that cannot move money.** A Login-only sales unit has no settlements and no ledger.
+- **Nothing for PSP API payments.** The PSP settles those, so get the data from the PSP.
 - VM number shopping basket contents and per-product VAT rates come from the Sales API; see `../sales/SKILL.md`. Donor tax deductions are portal-only.
 
 Near real time on the feed is 5 to 30 seconds in the good case, but can stretch to hours under load. This is an

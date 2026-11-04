@@ -20,8 +20,11 @@ renders the same button and connects it to a payment, and both
 <https://developer.vippsmobilepay.com/docs/knowledge-base/initiate-payment.md> and
 <https://developer.vippsmobilepay.com/docs/knowledge-base/app-flow.md> point at it instead of their manual guides.
 
-The resolver is handed the payment URL from the create call, which for the ePayment API is the `redirectUrl` from
-`POST /epayment/v1/payments`. See `../epayment/SKILL.md`.
+It works on a website, or in an app that uses a WebView.
+
+The resolver is handed the URL from the create call: for the ePayment API, the `redirectUrl` from
+`POST /epayment/v1/payments` with `userFlow: "WEB_REDIRECT"`; for the Recurring API, the `vippsConfirmationUrl` from
+`POST /recurring/v3/agreements`. Each URL works only once. See `../epayment/SKILL.md` and `../recurring/SKILL.md`.
 
 ## Installation
 
@@ -77,6 +80,10 @@ The builder accepts a resolver function that returns, or resolves to, the paymen
 
 The top-level host renders a modal `<dialog>` with an embedded `<iframe>` pointing at the payment URL. The dialog has a
 close button in the top-right corner and resizes dynamically to messages from the iframe content.
+
+**The return URL can be opened twice, at the same time**: once by the payment iframe and once by the parent page.
+Opening it must have no side effects, such as updating the order or sending a confirmation email. Check the payment
+status and process the order on your server, guarded against repeated and concurrent processing.
 
 ### Mobile behavior
 
@@ -208,16 +215,31 @@ vipps
 
 ## Content security policy and cookie consent
 
-If the embedding page uses a Content Security Policy, allowlist `https://cdn.vippsmobilepay.com` for `script-src` and
-the market's payment domain (for example `https://pay.vipps.no`) for `frame-src`, and `https://designsystem.vippsmobilepay.com` for `font-src`. Do not pin the script with a hashed
-CSP source or Subresource Integrity, since the CDN script changes without notice. If CSP blocks framing, the SDK
-degrades gracefully: the dialog closes and redirects to the payment URL, or the button falls back to an on-page
+If the embedding page uses a Content Security Policy, allowlist by host:
+
+```http
+Content-Security-Policy:
+  script-src https://cdn.vippsmobilepay.com;
+  frame-src https://pay.vipps.no https://api.vipps.no https://pay.mobilepay.dk https://pay.mobilepay.fi;
+  font-src https://designsystem.vippsmobilepay.com;
+```
+
+`api.vipps.no` is for agreements. Only the payment domains for the markets you sell in are needed. In the test
+environment, use `https://pay-mt.vipps.no https://apitest.vipps.no https://pay-mt.mobilepay.dk
+https://pay-mt.mobilepay.fi` in `frame-src` instead.
+
+Do not pin the script with a hashed CSP source or Subresource Integrity, since the CDN script changes without notice.
+With a nonce-based policy, put the same fresh per-request nonce in the header and on the SDK's `<script>` tag. The SDK
+reuses it for the inline `<style>` and scripts it adds, so `style-src` needs only the nonce. If CSP blocks framing, the
+SDK degrades gracefully: the dialog closes and redirects to the payment URL, or the button falls back to an on-page
 web component.
 
 The SDK itself stores nothing on the visitor's device. Cross-site "remember me" personalization and analytics are
 consent-relevant behaviors on the Vipps origin; call `vipps.consent({ rememberMe, analytics })` to reflect the
 visitor's cookie consent choice. `rememberMe` defaults to off until explicitly enabled; `analytics` and on-page
-personalization default to on until consent is set, to preserve historic behavior.
+personalization default to on until consent is set, to preserve historic behavior. For a compliant flow, call
+`vipps.consent({ rememberMe: false, analytics: false })` **before** mounting the button, then call it again from the
+cookie banner whenever consent changes. The call is reactive: mounted buttons re-render without a page reload.
 
 See <https://developer.vippsmobilepay.com/docs/buttons-and-widgets/widget.md#content-security-policy> and
 <https://developer.vippsmobilepay.com/docs/buttons-and-widgets/widget.md#cookie-consent-and-gdpr> for full details.
@@ -229,6 +251,8 @@ See <https://developer.vippsmobilepay.com/docs/buttons-and-widgets/widget.md#con
 - The order is updated from webhooks and polling, never from the `success` event.
 - Both paths work: the desktop dialog, and the full-page redirect it falls back to when no host is running.
 - Nothing on mobile depends on an `.on()` callback.
+- Opening the return URL twice, or twice at once, changes nothing.
+- Vipps MobilePay is shown as visibly as the other payment methods in the checkout.
 
 Everything in this skill comes from the canonical page,
 <https://developer.vippsmobilepay.com/docs/buttons-and-widgets/widget.md>. Fetch it for anything not covered here rather than
