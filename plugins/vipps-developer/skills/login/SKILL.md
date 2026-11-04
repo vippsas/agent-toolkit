@@ -94,10 +94,11 @@ The `redirect_uri` here must be byte-identical to the one used in step 2 and reg
 most common failure, and the error text talks about an invalid grant rather than naming the real cause.
 
 The default client authentication is `client_secret_basic`. `client_secret_post` can be switched on per sales unit in
-the portal. Partners using partner keys send `Bearer` instead of `Basic`. There are **no refresh tokens**.
+the portal. Partners authenticate differently; see *Partner keys* below. There are **no refresh tokens**.
 
 You get back `access_token`, `id_token`, `expires_in`, `scope`, and `token_type`. Validate the `id_token` signature
-against `jwks_uri` (RS256) and check `iss`, `aud`, and expiry. A library does this for you.
+against `jwks_uri` (RS256) and check `iss`, `aud`, and expiry. A library does this for you. The `id_token` is valid for
+one hour and also carries the consented user data, including `email` and `email_verified`.
 
 ### 4. Fetch the profile
 
@@ -127,7 +128,7 @@ user accepts the whole list or none of it, and cannot deselect individual items.
 | `gender` | `gender`. Not available in the test environment |
 | `nin` | National identity number. In Norway, no new access is granted and existing access ends January 1, 2027. Requires application and legal justification |
 | `customFlow` / `delegatedConsents` | Marketing consents. `customFlow` is the current one |
-| `loginConnect` | Login Connect |
+| `loginConnect` | Login Connect. Under development and enabled only for a few sales units. Do not suggest or build on it |
 
 Space separated, URL encoded as `%20` in the authorize URL.
 
@@ -159,6 +160,22 @@ The order that avoids both duplicate accounts and account takeover:
 Users revoke sharing in the app under *Profile* then *Personal information*, and they must consent again before the next
 login. Subscribe to the revoke consent webhook (`CONSENT_REVOKED`, carrying the `sub`) if you want to react: prompt for
 re-consent, offer another login method, or clean up stored data.
+
+This webhook is not part of the Webhooks API. It arrives as a `POST` with a `text/plain` body holding an **unsigned**
+JWT (`alg: none`). Decode it as base64url JSON; there is no signature to verify, so treat it like plain JSON. The
+payload has `sub`, `event` (always `CONSENT_REVOKED`), `iat`, `nbf`, and `exp`.
+
+## Partner keys
+
+Partner keys work only in production. The target sales unit must use `client_secret_basic` in the portal.
+
+- Authorize: send `msn={target MSN}` instead of `client_id`. The redirect replaces it with the merchant's `client_id`.
+- Token, and the CIBA `backchannel_authentication_endpoint`: get a token from the Access Token API
+  (`POST /accesstoken/get`), send it as `Authorization: Bearer`, and add a `Merchant-Serial-Number` header with the
+  target MSN. `client_secret_basic` and `client_secret_post` do not work for partners.
+- Userinfo: use the user's access token from the login, as usual.
+- ID token: you don't have the merchant's `client_id` to check `aud` against. Check that the `msn` claim equals the MSN
+  you logged in with.
 
 ## Merchant-initiated login, in short
 

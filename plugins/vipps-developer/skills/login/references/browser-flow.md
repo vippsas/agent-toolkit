@@ -165,8 +165,18 @@ validate the `acr` claim in the returned ID token.
 
 ## Marketing consents
 
-Add the `customFlow` scope (`delegatedConsents` is the legacy equivalent) to collect marketing consents alongside login. `customFlow` returns its result in a `flowResult` object in userinfo; the details below describe the legacy `delegatedConsents` object.
-Configure the texts in the business portal.
+Add the `customFlow` scope to collect consents alongside login. Build and publish the screens in the business portal's
+Custom Flow Builder first. The user approves once; after that, the screens are not shown again.
+
+Userinfo returns a `flowResult` object: `language`, `timeOfConsent`, and `screens[]`. Each screen has `title`,
+`description`, optional `terms.links[]`, and `elements[]` of
+`{ type: "checkbox", id, title, checked, required, readMore }`. The `id` values are the ones you set in the builder,
+such as `cf_marketing`.
+
+### Legacy: `delegatedConsents`
+
+The older scope with fixed consent types (`email`, `sms`, `digital`, `personal`). To migrate, publish a custom flow,
+parse `flowResult` instead of `delegatedConsents`, then swap the scope.
 
 - The consent screen appears on the **first** login only, and the `delegatedConsents` object is present in userinfo only
   that first time. Persist it when you get it.
