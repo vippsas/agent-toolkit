@@ -9,8 +9,9 @@ description: >-
 
 # Vipps MobilePay integrations
 
-Vipps MobilePay is the wallet used by Vipps in Norway and MobilePay in Denmark and Finland. One API platform serves
-both brands: same keys, same authentication, same error format.
+Vipps MobilePay is one wallet with two apps: the Vipps app in the Norwegian and Swedish regions, and the MobilePay app
+in the Danish and Finnish regions, where Greenland is part of the Danish region. One API platform serves both brands:
+same keys, same authentication, same error format.
 
 This skill is the entry point. It answers "which API?" and gives the platform facts every integration needs. Then go
 to the skill for the API you picked.
@@ -80,6 +81,7 @@ Start from what the user wants to happen, not from the product name.
 | Staff enrolls a customer in a club from a till or call center | **Login API**, merchant-initiated (CIBA) | Not allowed in browsers or apps |
 | The system needs status updates without polling hard | **Webhooks API** | Always in addition to polling, never instead |
 | I am a PSP integrating card passthrough for my merchants | **ePayment PSP API** or **Recurring PSP API** | See the `psp` skill |
+| I am a PSP and need to create or update the merchants I process for | **PSP Merchant API** | See the `psp` skill |
 | Customer scans, or is scanned, at a physical point of sale | **ePayment API** | One-time payment QR and personal QR are built in. See the `qr` skill |
 | A printed QR code: poster, sticker, vending machine | **QR API** | Merchant redirect and merchant callback codes. See the `qr` skill |
 | A payment needs the customer's profile in more detail than `userDetails` carries | **Userinfo API** | See the `userinfo` skill. Profile sharing on the payment, not a login |
@@ -92,7 +94,7 @@ Start from what the user wants to happen, not from the product name.
 
 Rules that decide the answer for you:
 
-- **Check for a ready-made plugin first.** If the system is Shopify, WooCommerce, Magento, Shopware,
+- **Check for a ready-made plugin first.** If the system is Shopify, WooCommerce, Magento, Shopware, PrestaShop,
   Drupal, Wix, or WordPress, an official plugin exists and no API code should be written. See
   <https://developer.vippsmobilepay.com/docs/plugins/README.md>.
 - **Recurring is not ePayment repeated.** Do not build subscriptions by storing a token and re-charging through
@@ -194,8 +196,12 @@ Vipps-System-Plugin-Version: 4.5.6
   capped at 30 characters each. They are how support traces a failing request.
 
 **Amounts.** Always integers in minor units: øre for NOK and DKK, cents for EUR. `49900` is 499.00 NOK. Decimals are
-rejected. Minimum per payment is NOK 100 øre, DKK 1 øre, EUR 1 cent. The currency must match the sales unit's market;
-a Danish sales unit charges DKK.
+rejected. Minimum per payment is NOK 100 øre, DKK 1 øre, EUR 1 cent. The currency must match the sales unit's market:
+NOK in Norway, DKK in Denmark (including Greenland), and EUR in Finland. Swedish users pay Norwegian merchants in NOK.
+PSPs doing card passthrough are the exception; see the `psp` skill.
+
+**Markets.** A merchant needs a separate merchant agreement for each country it sells in, and its sales units, test
+ones included, have the merchant's country.
 
 **Phone numbers.** MSISDN format, country code plus subscriber number, no `+` and no spaces: `4712345678`.
 
@@ -236,7 +242,9 @@ Every documentation page ships as raw Markdown for agents. Fetch these instead o
   <https://developer.vippsmobilepay.com/llms.txt>.
 - Rendered API specifications: `/api/epayment`, `/api/recurring`, `/api/login`, `/api/access-token`, `/api/webhooks`,
   `/api/qr`, `/api/userinfo`, `/api/order-management`, `/api/management`, `/api/report`, `/api/sales`,
-  `/api/donations`
+  `/api/donations`, `/api/psp-merchant`
+- End-to-end flows with diagrams, by use case: online, in person, recurring, and login:
+  <https://developer.vippsmobilepay.com/docs/recommended-flows/README.md>
 - Full list of APIs, including ones not covered by these skills (Agentic commerce, which is still under development,
   and the legacy eCom API): <https://developer.vippsmobilepay.com/docs/APIs/README.md>
 - Becoming a partner, partner keys, and partner onboarding questions, which these skills do not cover:
