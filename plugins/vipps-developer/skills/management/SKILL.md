@@ -76,6 +76,10 @@ capture. This is cheaper than discovering the answer from a rejected payment.
 the sales unit is inactive, and, for a partner, when the merchant has no active sales unit connected to that partner.
 Do not report it to a user as a typo in the MSN.
 
+**Denmark and Finland: payment sales units need a verified payout bank account.** Until the account is verified, the
+sales unit is left out of the lists and cannot be retrieved by MSN; an account awaiting verification is not enough.
+Login products and sales units with payments disabled are exempt, and Norway and Sweden are unaffected.
+
 ## Prefilling a product order
 
 A partner fills in what they know about the merchant, and the merchant gets a link to a signup form that is already
@@ -144,7 +148,7 @@ The list returns orders created in the last year, newest first.
 | ------ | ----- |
 | `RECEIVED` | Created, merchant has not opened it |
 | `MERCHANT_VIEWED` | Merchant has opened the link |
-| `ORDER_SUBMITTED` | Submitted, waiting for us to process |
+| `ORDER_SUBMITTED` | Submitted, waiting for us to process. If it stays here, the merchant may still need to verify their payout bank account |
 | `COMPLETED` | Approved. The response now also carries `salesUnit` with the new MSN |
 | `REJECTED` | Declined. **We may not tell a partner why**, for legal reasons; ask the merchant |
 | `EXPIRED` | 14 days elapsed before submission |

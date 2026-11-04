@@ -81,6 +81,7 @@ Same as direct Express (`../epayment/references/features.md`), delivered through
 `name email phoneNumber address`) and `shipping` to the `CARD_PASSTHROUGH` create request above.
 The merchant's sales unit must be approved for Express first. Retrieve `shippingDetails` and `userDetails` from
 `GET /epayment/v1/payments/{reference}` (with `Psp-Id`) or the webhook, same shape as direct Express.
+The `amount` in the card callback includes the shipping cost the customer selected. Authorize that amount.
 
 ## Recurring PSP: agreement sign-up
 
@@ -140,7 +141,10 @@ Card data delivery differs by charge type:
 - **`RECURRING`**: created `DUE` with no card data. Call `payment-info` on or after the `due` date to fetch it,
   before reporting a result — reporting first returns `409 Conflict`.
 
-Process the payment yourself with the returned `networkToken` or `encryptedPan`, then always report the result:
+Process the payment yourself with the returned `networkToken` or `encryptedPan`, using `cardInfo.citReference`
+(`networkTransactionReference`, and `transactionLinkId` for Mastercard, both the values you returned in the card
+callback when the card was added to the agreement) to mark it as a merchant-initiated transaction (MIT) linked to
+the agreement's customer-initiated transaction (CIT). Then always report the result:
 
 ```json
 { "status": "SUCCESS" }
@@ -184,11 +188,16 @@ Respond with:
 or `{ "status": "FAIL", "errorCode": 300, "errorMessage": "Refused by Issuer" }`, or `{ "status": "SOFT_DECLINE",
 "softDeclineUrl": "https://example.com" }` when the issuer needs a 3-D Secure step-up.
 
+`networkTransactionReference` is optional on `RESERVE`: include it when you have one. For ePayment, it is passed on
+to the merchant in `GET /epayment/v1/payments/{reference}` and the `epayments.payment.authorized.v1` webhook.
+
 For Recurring PSP callbacks on Mastercard cards, also include the Mastercard Transaction Link ID as
 `transactionLinkId` in the `RESERVE` response.
 
 On `SOFT_DECLINE`: host the 3-D Secure session yourself, redirect the user to
-`softDeclineCompletedRedirectUrl` from the original callback once it completes, and expect a **second** card
+`softDeclineCompletedRedirectUrl` from the original callback, unchanged, once it completes. Don't redirect to the
+merchant's `returnUrl` or anywhere else: that page opens in the app's web view, no second callback is sent, and the
+payment can stay `CREATED`. Then expect a **second** card
 callback with the same `authorizationAttemptId` and a fresh cryptogram. Respond to that one with `RESERVE` or
 `FAIL` to finish.
 

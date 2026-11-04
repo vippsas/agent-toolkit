@@ -119,14 +119,33 @@ QR, see the QR API instead.
 
 ## Long-living payments
 
-`expiresAt` extends the 10-minute default, up to 60 days ahead, with a 10-minute minimum. `receipt` is then mandatory
-(error 6130). The sales unit must be approved for this (error 5050). Useful for invoices and payment links.
+`expiresAt` extends the 10-minute default, up to 60 days ahead, with a 10-minute minimum. `receipt` is then mandatory,
+or `receiptUrl` instead in Denmark and Finland, but not both (error 6130). The sales unit must be approved for this
+(error 5050). Useful for invoices and payment links.
 
 ## Order details in the app
 
 `receipt` on the create request puts order lines into the customer's payment history in the app. Recommended for every
 integration, mandatory for merchants using content monitoring. The Order Management API can add or update details, and
 a tracking link, after the payment.
+
+Instead of order lines, `receiptUrl` links to a web page or PDF with the order details. On an iPhone it opens inside the
+app; on Android the behavior varies by device. Send `receipt` or `receiptUrl`, not both.
+
+## Merchant terms
+
+`merchantLegalLinks` shows your terms of sale and privacy policy in the app before the payment. The customer must
+select **I accept** to continue; cancelling ends that payment flow. Works in app-based flows, including Express.
+
+```json
+"merchantLegalLinks": {
+  "termsOfSaleUrl": "https://example.com/terms-of-sale",
+  "privacyPolicyUrl": "https://example.com/privacy-policy"
+}
+```
+
+Send at least one of the two. Each must be a public HTTPS URL of at most 2 500 characters. Combine it with `receipt` or
+`receiptUrl` so the customer sees the order next to the terms. The merchant is responsible for the documents' content.
 
 ## Minimum user age
 

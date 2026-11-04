@@ -86,6 +86,10 @@ the reservation early; the same field is also included in the `epayments.payment
 With Express or profile sharing and customer consent, the response also carries `userDetails`, `shippingDetails`, and
 `profile.sub`. With `metadata` on the create request, it comes back here too.
 
+When a card network transaction reference exists, the response also has `networkTransactionReference`, which is also
+in the `epayments.payment.authorized.v1` webhook. For `CARD_PASSTHROUGH` it is the value the PSP returned in its card
+callback.
+
 ## Get event log
 
 Returns an array of events, each with its own `pspReference`, a `name` such as `CREATED`, `AUTHORIZED`, `CAPTURED`,

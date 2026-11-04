@@ -113,8 +113,9 @@ Add these to the create request when asked for. Details in `references/features.
 | ----- | ------- |
 | `shipping` plus `profile.scope` | **Express**: address and delivery options chosen inside the app |
 | `profile.scope` | **Profile sharing**: get name, address, email, phone with consent |
-| `receipt` | Order details shown in the app's payment history |
-| `expiresAt` | **Long-living payment**: up to 60 days. Requires `receipt` |
+| `receipt` or `receiptUrl` | Order details in the app's payment history: order lines, or a web page or PDF |
+| `expiresAt` | **Long-living payment**: up to 60 days. Requires `receipt`, or `receiptUrl` in Denmark and Finland |
+| `merchantLegalLinks` | **Merchant terms**: the customer accepts your terms of sale and privacy policy in the app |
 | `minimumUserAge` | Age-restricted goods |
 | `metadata` | Your own key-value data on the payment |
 | `paymentMethod.blockedSources` | Block payment sources. Danish and Finnish sales units only |
@@ -212,9 +213,9 @@ See `../test-and-go-live/SKILL.md`.
 - `Vipps-System-*` headers are sent.
 - On the web, the button and the redirect go through the Widget SDK, with `vipps.host().start()` on the top-level page.
 - Order details are added to the payment so the customer recognizes it in the app.
-- Branding follows the design guidelines at
-  <https://developer.vippsmobilepay.com/docs/knowledge-base/design-guidelines.md>. The Widget SDK button follows them
-  without any work from you, and keeps following them when they change.
+- Only the approved Vipps MobilePay buttons are shown, as described in the design guidelines at
+  <https://developer.vippsmobilepay.com/docs/knowledge-base/design-guidelines.md>. The Widget SDK button is approved
+  without any work from you, and stays up to date when the brand changes.
 
 The full requirement list is the ePayment checklist:
 <https://developer.vippsmobilepay.com/docs/APIs/epayment-api/checklist.md>.
@@ -222,7 +223,8 @@ The full requirement list is the ePayment checklist:
 ## Deeper reference
 
 - `references/operations.md` — every endpoint with request and response shapes
-- `references/features.md` — Express, profile sharing, QR, long-living payments, metadata, age limit
+- `references/features.md` — Express, profile sharing, QR, long-living payments, order details, merchant terms,
+  metadata, age limit
 - `references/errors.md` — full error code table and what to do about each
 
 Canonical pages: <https://developer.vippsmobilepay.com/docs/APIs/epayment-api/quick-start.md>,

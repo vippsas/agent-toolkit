@@ -88,7 +88,7 @@ These are account or product problems. No amount of code changes them; the merch
 | 6100 | Capture period expired | The reservation is gone. The money cannot be collected |
 | 6110 | Expiration date is too late | `expiresAt` maximum is 60 days ahead |
 | 6120 | Expiration date is too soon | Minimum is 10 minutes ahead |
-| 6130 | Long living payments require a receipt | Send `receipt` with `expiresAt` |
+| 6130 | Long living payments require a receipt | Send `receipt` or `receiptUrl` (not both) with `expiresAt` |
 | 6140 | Must capture full amount | Partial capture is not allowed on this payment |
 | 6150 | Not enough refundable | Cannot refund more than the captured amount that is not already refunded |
 | 6160 | Order processing | Another operation holds the payment. Retry shortly |

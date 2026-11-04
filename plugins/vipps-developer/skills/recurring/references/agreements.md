@@ -181,7 +181,26 @@ sentence.
   it. Also `recurring.agreement-activated.v1`, `-rejected.v1`, `-expired.v1`.
 - There is no pause. Stop creating charges and describe the pause in the agreement description.
 - Customers manage agreements in the app by default. Key-account merchants can apply to opt out of in-app cancellation,
-  which raises the bar on `merchantAgreementUrl` and is discouraged.
+  which raises the bar on `merchantAgreementUrl` and is discouraged. A merchant that opts out must stop the agreement
+  with `PATCH` and `{"status": "STOPPED"}` when the customer cancels on its website or app. Otherwise the agreement
+  still shows as active in the app.
+
+## Before drafting: avoid duplicate drafts
+
+You may draft several agreements for the same customer, for example for several services or for family members, but
+tracking those drafts is your job. If you don't want duplicates, check with `GET /agreements` whether the customer
+already has a `PENDING` agreement, and if so, ask them to finish activating it in the app or on the landing page. Track
+abandoned drafts so you can stop them later, or refund them if they were activated by mistake.
+
+## Landing page
+
+- If the customer selects *cancel* on the landing page before confirming in the app, the agreement becomes `STOPPED`.
+- If they have already confirmed in the app and then select *cancel* while the spinner is still showing, the agreement
+  can end up `ACTIVE`. Check the status after the redirect, then stop the agreement or ask the customer to check the
+  app.
+- Two options need configuration by Vipps MobilePay. To lock the phone number on the landing page, send `phoneNumber`
+  and ask the key account manager to enable `no_edit_landingpage`. `skipLandingPage: true` sends a push straight to
+  `phoneNumber` without the landing page, and fails unless the sales unit is allow-listed.
 
 ## Getting profile data with the agreement
 
