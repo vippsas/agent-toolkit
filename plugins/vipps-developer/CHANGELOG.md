@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.54.0 - 2026-11-05
+
+- Recurring refund deadline counts from the reservation date
+
 ## 1.53.0 - 2026-11-05
 
 - ePayment error messages match the API, and error codes and messages show as code
