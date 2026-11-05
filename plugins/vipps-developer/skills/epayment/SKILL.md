@@ -179,18 +179,18 @@ RFC 7807 bodies with a `traceId`, plus a numeric code in `extraDetails` for doma
 
 | Code | Meaning | Fix |
 | ---- | ------- | --- |
-| 4040 | Invalid amount | Send integers in minor units. No decimals |
-| 4070 | Invalid phone number | MSISDN, no `+`, no spaces |
-| 4020 / 4150 | Idempotency conflict, or reference already exists | New reference for a new payment, same key only for a true retry |
-| 6010 | Amount too small | Below the market minimum |
-| 6080 | Cannot capture before reservation | The customer has not approved yet. Check the state |
-| 6090 | Capture amount too high | Total captures exceed the authorized amount |
-| 6100 | Capture period expired | Reservation is gone. Nothing to do |
-| 6260 | Funds unavailable | Bank released the reservation early. Retry later or contact the customer |
-| 6280 | Capture failed, please try again later | Retry the capture with the same idempotency key |
-| 5040 | Invalid currency for merchant | Currency must match the sales unit's market |
-| 5060 | Bank account not verified | Merchant setup, not code |
-| 7010 | Customer not found | The phone number has no eligible user, or fails `minimumUserAge` |
+| `4040` | `Invalid amount` | Send integers in minor units. No decimals |
+| `4070` | `Invalid Phone number` | MSISDN, no `+`, no spaces |
+| `4020` / `4150` | `Idempotency error` or `Refund idempotency conflict` | New reference for a new payment, same key only for a true retry |
+| `6010` | `Amount too small` | Below the market minimum |
+| `6080` | `Cannot capture before reservation` | The customer has not approved yet. Check the state |
+| `6090` | `Capture amount too high` | Total captures exceed the authorized amount |
+| `6100` | `Capture period expired` | Reservation is gone. Nothing to do |
+| `6260` | `Funds unavailable` | Bank released the reservation early. Retry later or contact the customer |
+| `6280` | `Capture failed, please try again later` | Retry the capture with the same idempotency key |
+| `5040` | `Invalid currency for merchant` | Currency must match the sales unit's market |
+| `5060` | `Merchant bank account not verified` | Merchant setup, not code |
+| `7010` | `Customer not found` | The phone number has no eligible user, or fails `minimumUserAge` |
 | HTTP 423 | Resource locked | Concurrent operation on the same payment. Retry shortly |
 | HTTP 429 | Too many requests | Slow the polling. Check you send `reference` in lower case |
 

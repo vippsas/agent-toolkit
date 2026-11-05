@@ -33,27 +33,27 @@ misspelled, every payment counts as the same one and you will hit HTTP 429 immed
 
 | Code | Title | What to do |
 | ---- | ----- | ---------- |
-| 3010 | Internal error | Often a malformed request. Check the request, then the status page |
+| `3010` | `Internal error` | Often a malformed request. Check the request, then the status page |
 
 ## Invalid request
 
 | Code | Title | What to do |
 | ---- | ----- | ---------- |
-| 4010 | Capture idempotency conflict | An idempotent retry must repeat the body exactly |
-| 4020 | Idempotency error | That `Idempotency-Key` already exists. Generate a new one for a new operation |
-| 4040 | Invalid amount | Integers only, minor units. Usually a rounding or decimal bug |
-| 4050 | Invalid CustomerToken | The token from a personal QR scan is not valid |
-| 4060 | Invalid PersonalQr | |
-| 4070 | Invalid phone number | MSISDN: country code plus number, no prefix, no spaces |
-| 4080 | Invalid scope | Check the `profile.scope` spelling |
-| 4090 | Invalid URL | `returnUrl` and callback URLs must be valid and `https://` |
-| 4100 | Metadata capacity exceeded | |
-| 4110 | Metadata duplicate keys not allowed | |
-| 4120 | Metadata key length exceeded | |
-| 4130 | Metadata value length exceeded | |
-| 4140 | Missing required parameter | The named field is required for this flow |
-| 4150 | Reference exists, or refund idempotency conflict | Either the `reference` is taken, or a retry body changed |
-| 4160 | Invalid payment method type | `paymentMethod.type` is not valid for `CardPassthrough` |
+| `4010` | `Capture idempotency conflict` | An idempotent retry must repeat the body exactly |
+| `4020` | `Idempotency error` | That `Idempotency-Key` already exists. Generate a new one for a new operation |
+| `4040` | `Invalid amount` | Integers only, minor units. Usually a rounding or decimal bug |
+| `4050` | `Invalid CustomerToken` | The token from a personal QR scan is not valid |
+| `4060` | `Invalid PersonalQr` | |
+| `4070` | `Invalid Phone number` | MSISDN: country code plus number, no prefix, no spaces |
+| `4080` | `Invalid scope` | Check the `profile.scope` spelling |
+| `4090` | `Invalid URL` | `returnUrl` and callback URLs must be valid and `https://` |
+| `4100` | `Metadata capacity exceeded` | |
+| `4110` | `Metadata duplicate keys not allowed` | |
+| `4120` | `Metadata key length exceeded` | |
+| `4130` | `Metadata value length exceeded` | |
+| `4140` | `Missing required parameter` | The named field is required for this flow |
+| `4150` | `Idempotency error` or `Refund idempotency conflict` | Either the `reference` is taken, or a retry body changed |
+| `4160` | `Invalid payment method type` | `paymentMethod.type` is not valid for `CardPassthrough` |
 
 ## Merchant configuration
 
@@ -61,65 +61,65 @@ These are account or product problems. No amount of code changes them; the merch
 
 | Code | Title | What to do |
 | ---- | ----- | ---------- |
-| 5010 | Blocking sources not applicable | `paymentMethod.blockedSources` is Danish and Finnish sales units only |
-| 5020 | Express payment not allowed | The sales unit is not enabled for Express |
-| 5030 | Illegal scope | Asking for national identity number or account number without permission |
-| 5040 | Invalid currency for merchant | Currency must match the sales unit's registered market |
-| 5050 | Long-living payment not allowed | The sales unit is not approved for `expiresAt` |
-| 5060 | Merchant bank account not verified | The merchant must verify the account before receiving payments |
-| 5070 | Payment cannot be created | Invalid state, missing precondition, or incorrect setup |
-| 5080 | PUSH_MESSAGE not allowed | The sales unit needs approval to skip the landing page |
-| 5090 | Reference not found | Wrong `reference`, or the right one against the wrong MSN |
-| 5100 | Refund not possible | Configuration problem on the sales unit |
+| `5010` | `Blocking sources not applicable` | `paymentMethod.blockedSources` is Danish and Finnish sales units only |
+| `5020` | `Express payment not allowed` | The sales unit is not enabled for Express |
+| `5030` | `Illegal scope` | Asking for national identity number or account number without permission |
+| `5040` | `Invalid currency for merchant` | Currency must match the sales unit's registered market |
+| `5050` | `Long-living payment not allowed` | The sales unit is not approved for `expiresAt` |
+| `5060` | `Merchant bank account not verified` | The merchant must verify the account before receiving payments |
+| `5070` | `Payment cannot be created` | Invalid state, missing precondition, or incorrect setup |
+| `5080` | `PUSH_MESSAGE not allowed` | The sales unit needs approval to skip the landing page |
+| `5090` | `Reference not found` | Wrong `reference`, or the right one against the wrong MSN |
+| `5100` | `Refund not possible` | Configuration problem on the sales unit |
 
 ## Payment
 
 | Code | Title | What to do |
 | ---- | ----- | ---------- |
-| 6010 | Amount too small | Minimum is NOK 100 øre, DKK 1 øre, EUR 1 cent |
-| 6020 | Attempted refund before reservation | Check the event log |
-| 6030 | Cancel period expired | Cancel is possible within 180 days of reservation, and inside the capture deadline |
-| 6040 | Cannot cancel a captured payment | Refund instead |
-| 6050 | Cannot cancel a non-reserved payment | |
-| 6060 | Cannot cancel authorized payment | Sent with `cancelTransactionOnly: true` after the customer authorized |
-| 6070 | Cannot capture a cancelled payment | |
-| 6080 | Cannot capture before reservation | The customer has not approved. Wait for `AUTHORIZED` |
-| 6090 | Capture amount too high | Total captures cannot exceed `authorizedAmount` |
-| 6100 | Capture period expired | The reservation is gone. The money cannot be collected |
-| 6110 | Expiration date is too late | `expiresAt` maximum is 60 days ahead |
-| 6120 | Expiration date is too soon | Minimum is 10 minutes ahead |
-| 6130 | Long living payments require a receipt | Send `receipt` or `receiptUrl` (not both) with `expiresAt` |
-| 6140 | Must capture full amount | Partial capture is not allowed on this payment |
-| 6150 | Not enough refundable | Cannot refund more than the captured amount that is not already refunded |
-| 6160 | Order processing | Another operation holds the payment. Retry shortly |
-| 6170 | Payment already captured | |
-| 6180 | Payment already refunded | |
-| 6190 | Payment cannot be cancelled | Wrong state |
-| 6200 | Payment cannot be captured | Wrong state |
-| 6210 | Payment cannot be refunded | Wrong state |
-| 6220 | Refund period expired | Refund is possible within 365 days of reservation |
-| 6230 | Payment is already reserved | The reference has already been authorized |
-| 6250 | Cannot cancel processing payment | The payment is being processed. Retry the cancel later |
-| 6260 | Funds unavailable | The bank or card network released the reservation early. Funds may become available later, or contact the customer to retry |
-| 6280 | Capture failed, please try again later | Retry the capture with the same idempotency key after a short wait |
+| `6010` | `Amount too small` | Minimum is NOK 100 øre, DKK 1 øre, EUR 1 cent |
+| `6020` | `Attempted refund before reservation` | Check the event log |
+| `6030` | `Cancel period expired` | Cancel is possible within 180 days of reservation, and inside the capture deadline |
+| `6040` | `Cannot cancel a captured payment` | Refund instead |
+| `6050` | `Cannot cancel a non-reserved payment` | |
+| `6060` | `Cannot cancel authorized payment` | Sent with `cancelTransactionOnly: true` after the customer authorized |
+| `6070` | `Cannot capture a cancelled payment` | |
+| `6080` | `Cannot capture before reservation` | The customer has not approved. Wait for `AUTHORIZED` |
+| `6090` | `Capture amount too high` | Total captures cannot exceed `authorizedAmount` |
+| `6100` | `Capture period expired` | The reservation is gone. The money cannot be collected |
+| `6110` | `Expiration date is too late` | `expiresAt` maximum is 60 days ahead |
+| `6120` | `Expiration date is too soon` | Minimum is 10 minutes ahead |
+| `6130` | `Long living payments require a receipt` | Send `receipt` or `receiptUrl` (not both) with `expiresAt` |
+| `6140` | `Must capture full amount` | Partial capture is not allowed on this payment |
+| `6150` | `Not enough refundable` | Cannot refund more than the captured amount that is not already refunded |
+| `6160` | `Order processing` | Another operation holds the payment. Retry shortly |
+| `6170` | `Payment already captured` | |
+| `6180` | `Payment already refunded` | |
+| `6190` | `Payment cannot be cancelled` | Wrong state |
+| `6200` | `Payment cannot be captured` | Wrong state |
+| `6210` | `Payment cannot be refunded` | Wrong state |
+| `6220` | `Refund period expired` | Refund is possible within 365 days of reservation |
+| `6230` | `Payment is already reserved` | The reference has already been authorized |
+| `6250` | `Cannot cancel processing payment` | The payment is being processed. Retry the cancel later |
+| `6260` | `Funds unavailable` | The bank or card network released the reservation early. Funds may become available later, or contact the customer to retry |
+| `6280` | `Capture failed, please try again later` | Retry the capture with the same idempotency key after a short wait |
 
 ## Users
 
 | Code | Title | What to do |
 | ---- | ----- | ---------- |
-| 7010 | Customer not found | No user for that number, the user cannot pay this business, or `minimumUserAge` blocks them. Do not tell the customer their number is wrong |
+| `7010` | `Customer not found` | No user for that number, the user cannot pay this business, or `minimumUserAge` blocks them. Do not tell the customer their number is wrong |
 
 ## Test environment only
 
 | Code | Title |
 | ---- | ----- |
-| 10010 | Approve failed |
-| 10020 | Approve not allowed |
-| 10030 | Identification required |
-| 10040 | Invalid payment source |
-| 10050 | No cards: the test user must add a card in the app |
-| 10060 | Operation not supported |
-| 10070 | Payment limit exceeded |
+| `10010` | `Approve failed` |
+| `10020` | `Approve not allowed` |
+| `10030` | `Identification required` |
+| `10040` | `Invalid payment source` |
+| `10050` | `No cards`. The test user must add a card in the app |
+| `10060` | `Operation not supported` |
+| `10070` | `Payment limit exceeded` |
 
 ## HTTP statuses worth handling explicitly
 
