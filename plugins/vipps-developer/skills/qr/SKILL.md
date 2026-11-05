@@ -47,8 +47,9 @@ curl -X POST https://apitest.vipps.no/qr/v1/exchange \
 ```
 
 Send the **full** scanned content as `qrCode`, URL and all, not a fragment of it. `version` `2.0` is the current
-tokenized code; `1.0` is a deprecated clear-text one, and only `2.0` carries `timestamp`, the UTC time in seconds when
-the code was generated. An optional `requestedData` array supports only `["MSISDN"]`, which is the default. The scanner
+tokenized code, used in Denmark and Finland; `1.0` is a deprecated clear-text one that Norway still uses. Call the
+exchange endpoint for both rather than reading the number from a `1.0` URL. Only `2.0` carries `timestamp`, the UTC
+time in seconds when the code was generated. An optional `requestedData` array supports only `["MSISDN"]`, which is the default. The scanner
 can be customer-facing for self-service or handheld by staff.
 
 Simpler still, ePayment takes the scanned content directly: create the payment with `userFlow: PUSH_MESSAGE` and the
