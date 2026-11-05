@@ -31,7 +31,16 @@ home-made code will not work, quite apart from losing the branding that makes pe
 
 ## Personal QR
 
-Every customer has one in their app. Scan it, exchange it for a phone number, then create a normal push payment.
+Every customer has one in their app. Scan it, then create the payment with ePayment: `userFlow: PUSH_MESSAGE`,
+`customerInteraction: CUSTOMER_PRESENT`, and `customer.personalQr` set to the scanned text. No call to this API is
+needed. The scanner can be customer-facing for self-service or handheld by staff, and it returns the code's content as
+text: a URL starting with `https://qr.vipps.no/`. Send that URL unchanged, not a fragment of it.
+
+```json
+{ "customer": { "personalQr": "https://qr.vipps.no/p/qwjhewqhueheuqwhuqwhe" } }
+```
+
+Only when you need the phone number for something else, such as a loyalty lookup, exchange the code with this API:
 
 ```bash
 curl -X POST https://apitest.vipps.no/qr/v1/exchange \
@@ -46,15 +55,10 @@ curl -X POST https://apitest.vipps.no/qr/v1/exchange \
 { "msisdn": "4712345678", "timestamp": 1634025600, "version": "2.0" }
 ```
 
-Send the **full** scanned content as `qrCode`, URL and all, not a fragment of it. `version` `2.0` is the current
-tokenized code, used in Denmark and Finland; `1.0` is a deprecated clear-text one that Norway still uses. Call the
-exchange endpoint for both rather than reading the number from a `1.0` URL. Only `2.0` carries `timestamp`, the UTC
-time in seconds when the code was generated. An optional `requestedData` array supports only `["MSISDN"]`, which is the default. The scanner
-can be customer-facing for self-service or handheld by staff.
-
-Simpler still, ePayment takes the scanned content directly: create the payment with `userFlow: PUSH_MESSAGE` and the
-`personalQr` field, and skip the exchange call. Use the exchange endpoint when you genuinely need the phone number for
-something else.
+`qrCode` takes the same unchanged URL. `version` `2.0` is the current tokenized code, used in Denmark and Finland;
+`1.0` is a deprecated clear-text one that Norway still uses. Call the exchange endpoint for both rather than reading
+the number from a `1.0` URL. Only `2.0` carries `timestamp`, the UTC time in seconds when the code was generated. An
+optional `requestedData` array supports only `["MSISDN"]`, which is the default.
 
 ## One-time payment QR
 
