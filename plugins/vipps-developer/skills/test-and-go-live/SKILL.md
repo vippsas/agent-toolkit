@@ -143,9 +143,10 @@ production unit.
 6. Verify one real end-to-end payment: authorized, captured, refunded, and cancelled, checked through the API.
 7. Subscribe to <https://status.vippsmobilepay.com/> for incidents and maintenance.
 
-Partners have extra steps: submit the filled-in checklist to developer@vippsmobilepay.com with a video of the flow and a
-short description, and fill in the production sign-up form. Request examples in a submitted checklist must be less than
-a month old. Include examples of `reference` or `orderId` from the test environment, and details of a pilot customer.
+Partners have extra steps: submit the filled-in checklist to developer@vippsmobilepay.com and fill in the production
+sign-up form. Include examples of `reference` or `orderId` from the test environment, details of a pilot customer, and a
+description of the solution. The Login checklist additionally requires a video of a successful and a failed login flow,
+and request examples no more than a month old.
 After approval, merchants can choose the partner when they sign up in the business portal. A partner only needs the
 test environment to finish an integration, since its merchants are the ones who go to production, and can also develop
 against a pilot merchant's test keys.
