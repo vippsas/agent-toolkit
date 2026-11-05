@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.52.0 - 2026-11-05
+
+- epayment: Refund deadline counts from the reservation date
+
 ## 1.51.0 - 2026-11-05
 
 - Update partner go-live steps in test-and-go-live skill

@@ -100,7 +100,7 @@ its deadline returns HTTP 400, because the reservation is already gone.
 
 ## Refund
 
-Refund reverses a captured amount, up to 365 days after the capture, and never more than was captured. It typically
+Refund reverses a captured amount, up to 365 days after the reservation, and never more than was captured. It typically
 reaches the customer in 2-3 bank days, but can take up to 10 depending on the bank. Where the money goes depends on
 the market:
 
