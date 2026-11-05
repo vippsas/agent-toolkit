@@ -75,7 +75,7 @@ sends `recurring.charge-failed.v1` and notifies the customer in the app.
 | `RESERVED` | Reserved, ready to capture |
 | `PARTIALLY_CAPTURED` | Part captured. Cancel the rest to release it |
 | `FAILED` | Insufficient funds, no valid card, or amount above the customer's max |
-| `REFUNDED` | Fully refunded. Refunds allowed up to 365 days after capture |
+| `REFUNDED` | Fully refunded. Refunds allowed up to 365 days after reservation |
 | `PARTIALLY_REFUNDED` | |
 | `CANCELLED` | |
 
@@ -126,8 +126,8 @@ controls notifications for successful charges.
   customer gets their money back immediately instead of waiting for a refund.
 - Cancel with `DELETE` before the money moves. Cancelling a `PARTIALLY_CAPTURED` charge releases the remaining reserved
   amount to the customer, and the charge becomes `CHARGED`.
-- Refund with `POST .../refund` and `{ "amount": ..., "description": ... }`, up to 365 days after capture, in parts if
-  needed.
+- Refund with `POST .../refund` and `{ "amount": ..., "description": ... }`, up to 365 days after reservation, in parts
+  if needed.
 - Stopping the agreement cancels `PENDING`, `DUE`, and `RESERVED` charges, except that a customer-initiated stop leaves
   `RESERVED` charges for you to capture or cancel.
 
