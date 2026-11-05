@@ -109,6 +109,12 @@ These are account or product problems. No amount of code changes them; the merch
 | ---- | ----- | ---------- |
 | `7010` | `Customer not found` | No user for that number, the user cannot pay this business, or `minimumUserAge` blocks them. Do not tell the customer their number is wrong |
 
+## QR
+
+| Code | Title | What to do |
+| ---- | ----- | ---------- |
+| `8020` | `QR Generation Failed` | HTTP 503 when creating a payment with `userFlow` `QR` and the QR code can't be generated. Try again later |
+
 ## Test environment only
 
 | Code | Title |

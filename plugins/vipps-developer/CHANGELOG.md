@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.56.0 - 2026-11-05
+
+- Add ePayment error 8020 (QR generation failed) to the epayment skill
+
 ## 1.55.0 - 2026-11-05
 
 - llms.txt, raw Markdown pages, and the AI plugin announce the move to developer.vipps.no
