@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.51.0 - 2026-11-05
+
+- Update partner go-live steps in test-and-go-live skill
+
 ## 1.50.0 - 2026-11-04
 
 - Update QR image URL expiry and recurring stop guidance
