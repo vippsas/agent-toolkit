@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.59.0 - 2026-11-06
+
+- Update skills for personal QR, Login webhook setup, and optional companyEmail
+
 ## 1.58.0 - 2026-11-05
 
 - QR type guide helps you choose by hardware, and personal QR pages create the payment from the scanned URL

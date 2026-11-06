@@ -40,7 +40,7 @@ Notes on individual fields:
 - `paymentMethod.type` is `WALLET` (the app, with delegated strong customer authentication and card-retry built in),
   `CARD` (freestanding card entry plus 3-D Secure, `WEB_REDIRECT` only, not available in test), or
   `CARD_PASSTHROUGH` (payment service providers only).
-- `customer` can hold `phoneNumber` in MSISDN format, or a customer token from a scanned personal QR.
+- `customer` can hold `phoneNumber` in MSISDN format, or `personalQr`, the URL scanned from the customer's personal QR, sent unchanged (see the `qr` skill).
 - `paymentDescription` is shown to the customer.
 - `customerInteraction: "CUSTOMER_PRESENT"` is required when the customer is physically at the point of sale.
 - `qrFormat` accompanies `userFlow: QR`, for example `{ "format": "IMAGE/SVG+XML", "size": 1024 }`.
