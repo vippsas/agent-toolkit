@@ -161,7 +161,8 @@ Users revoke sharing in the app under *Profile* then *Personal information*, and
 login. Subscribe to the revoke consent webhook (`CONSENT_REVOKED`, carrying the `sub`) if you want to react: prompt for
 re-consent, offer another login method, or clean up stored data.
 
-This webhook is not part of the Webhooks API. It arrives as a `POST` with a `text/plain` body holding an **unsigned**
+This webhook is not part of the Webhooks API. Add its URL in the Login settings for your sales unit in the business
+portal, next to the redirect URIs. It arrives as a `POST` with a `text/plain` body holding an **unsigned**
 JWT (`alg: none`). Decode it as base64url JSON; there is no signature to verify, so treat it like plain JSON. The
 payload has `sub`, `event` (always `CONSENT_REVOKED`), `iat`, `nbf`, and `exp`.
 

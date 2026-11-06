@@ -26,8 +26,9 @@ Errors are RFC 7807 bodies with `type`, `title`, `status`, `detail`, and `instan
 
 ## Creating a merchant
 
-Required fields: `name`, `companyName`, `companyEmail`, `organizationNumber`, `mccCode`, `address`, and `logo`.
-Optional: `email`, `website`, `termsOfServiceAccepted`, and `marketPlaceId`. The response carries the new
+Required fields: `name`, `companyName`, `organizationNumber`, `mccCode`, `address`, and `logo`.
+Optional: `companyEmail` (a valid nonempty email when sent, never `""`; omit it rather than invent one, and expect
+`null` back in GET responses), `email`, `website`, `termsOfServiceAccepted`, and `marketPlaceId`. The response carries the new
 `merchantSerialNumber`; store it. Retry a failed or timed-out create with the same `Idempotency-Key` to avoid a
 duplicate merchant.
 
