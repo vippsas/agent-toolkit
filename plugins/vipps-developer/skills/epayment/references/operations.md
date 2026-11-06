@@ -95,7 +95,8 @@ callback.
 Returns an array of events, each with its own `pspReference`, a `name` such as `CREATED`, `AUTHORIZED`, `CAPTURED`,
 `REFUNDED`, `CANCELLED`, `TERMINATED`, plus amount and timestamp. Use it for support and reconciliation.
 
-The `pspReference` in an API response matches the `CREATED` event, while a webhook carries the `pspReference` of the
+The `pspReference` in a get payment response is the PSP-supplied reference when available, and otherwise the payment
+creation reference (the `CREATED` event's), while a webhook carries the `pspReference` of the
 event that fired. They intentionally differ.
 
 ## Capture
