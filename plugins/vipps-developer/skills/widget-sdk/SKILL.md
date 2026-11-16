@@ -213,7 +213,7 @@ vipps
   });
 ```
 
-## Content security policy and cookie consent
+## Content security policy
 
 If the embedding page uses a Content Security Policy, allowlist by host:
 
@@ -234,15 +234,7 @@ reuses it for the inline `<style>` and scripts it adds, so `style-src` needs onl
 SDK degrades gracefully: the dialog closes and redirects to the payment URL, or the button falls back to an on-page
 web component.
 
-The SDK itself stores nothing on the visitor's device. Cross-site "remember me" personalization and analytics are
-consent-relevant behaviors on the Vipps origin; call `vipps.consent({ rememberMe, analytics })` to reflect the
-visitor's cookie consent choice. `rememberMe` defaults to off until explicitly enabled; `analytics` and on-page
-personalization default to on until consent is set, to preserve historic behavior. For a compliant flow, call
-`vipps.consent({ rememberMe: false, analytics: false })` **before** mounting the button, then call it again from the
-cookie banner whenever consent changes. The call is reactive: mounted buttons re-render without a page reload.
-
-See <https://developer.vippsmobilepay.com/docs/buttons-and-widgets/widget.md#content-security-policy> and
-<https://developer.vippsmobilepay.com/docs/buttons-and-widgets/widget.md#cookie-consent-and-gdpr> for full details.
+See <https://developer.vippsmobilepay.com/docs/buttons-and-widgets/widget.md#content-security-policy> for full details.
 
 ## Before calling it done
 
