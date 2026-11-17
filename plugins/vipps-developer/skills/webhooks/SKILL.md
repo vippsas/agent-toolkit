@@ -8,7 +8,8 @@ description: >-
 
 # Webhooks API
 
-One registration endpoint for events from ePayment, Recurring, Login, QR, and Donations. Base path `/webhooks/v1`.
+One registration endpoint for events from ePayment, Recurring, Login, QR, Donations, and Wallet.
+Base path `/webhooks/v1`.
 
 Read `../best-practices/SKILL.md` first for servers, keys, and access tokens.
 
@@ -162,6 +163,14 @@ Treat the payload as a signal, not as the truth. For anything that moves money, 
 
 **Donations**: `donations.agreement.started.v1`, `.stopped.v1`, `.withdrawal-day-changed.v1`, `.amount-changed.v1`.
 Payloads are in `../donations/SKILL.md`.
+
+**Wallet**: `wallet.item.added.v1` and `wallet.item.removed.v1`, when a user adds or removes a loyalty item. Subscribe
+to both in one registration. Events are routed by the `Merchant-Serial-Number` stored when the Wallet class was
+created; classes without a stored MSN emit nothing, and a class that appears only in a signed Wallet JWT has none. The
+payload is `classId`, `objectId`, `expTimeMillis`, `eventType` (`Added` or `Removed`), `eventId`, and `occurredAt`.
+Deduplicate on `eventId` and discard messages after `expTimeMillis` (seven days after `occurredAt`; retries last up to
+seven days and keep both values). Delivery order is not guaranteed, so compare `occurredAt`. If enqueueing fails the
+event can be lost, and re-adding an item already in the wallet emits no second event.
 
 Login's revoke consent webhook (`CONSENT_REVOKED`, carrying the `sub`) is **not** part of this API: it is not
 registered here, has no HMAC signature, and arrives as a `text/plain` unsigned JWT (`alg: none`), so treat its content
