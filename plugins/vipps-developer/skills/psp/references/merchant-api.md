@@ -26,8 +26,8 @@ Errors are RFC 7807 bodies with `type`, `title`, `status`, `detail`, and `instan
 
 ## Creating a merchant
 
-Required fields: `name`, `companyName`, `organizationNumber`, `mccCode`, `address`, and `logo`.
-Optional: `companyEmail` (a valid nonempty email when sent, never `""`; omit it rather than invent one, and expect
+Required fields: `name`, `companyName`, `organizationNumber`, `mccCode`, and `address`.
+Optional: `logo` (when omitted or empty, the merchant is created without one; add it later with `PATCH`), `companyEmail` (a valid nonempty email when sent, never `""`; omit it rather than invent one, and expect
 `null` back in GET responses), `email`, `website`, `termsOfServiceAccepted`, and `marketPlaceId`. The response carries the new
 `merchantSerialNumber`; store it. Retry a failed or timed-out create with the same `Idempotency-Key` to avoid a
 duplicate merchant.
@@ -38,7 +38,7 @@ duplicate merchant.
 - `organizationNumber` is validated against the national registry in NO, SE, DK, and FI. In Norway: 9 digits, no
   spaces, an active main entity ("hovedenhet"), not a sub-entity.
 - `mccCode` is the four-digit ISO 18245 merchant category code, leading zeros included.
-- `logo` is a base64-encoded PNG, at least 100 × 100 pixels, at most 1000 pixels on the longest side, ideally square.
+- `logo`, when sent, is a base64-encoded PNG, at least 100 × 100 pixels, at most 1000 pixels on the longest side, ideally square.
   It is shown on the landing page, payment screen, and receipt.
 - `address.country` accepts any ISO 3166 country code.
 - `termsOfServiceAccepted: true` records that the merchant accepted the terms for sharing user information. It is
