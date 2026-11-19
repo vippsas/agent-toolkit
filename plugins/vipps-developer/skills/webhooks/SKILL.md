@@ -111,7 +111,8 @@ What happens otherwise:
 
 - Any 4xx or 5xx response, or no response within **10 seconds**, counts as a failure and is retried.
 - Retries back off for up to 7 days: about every 2 seconds for the first four attempts, then 60 seconds, then 120
-  seconds, then hourly through attempt 29, then daily. Do not build logic that depends on this timing.
+  seconds, then hourly through attempt 29, then daily. Do not build logic that depends on this timing. In the test
+  environment, failed deliveries are retried only up to three times; the full scheme applies only in production.
 - **Delivery order is preserved per registration.** A failure blocks later events for the same payment. Reject the
   `AUTHORIZED` event and the `CAPTURED` event will not arrive until a retry of `AUTHORIZED` succeeds. Slow or flaky
   handlers therefore stall your own pipeline.
