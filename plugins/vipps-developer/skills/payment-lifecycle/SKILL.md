@@ -126,6 +126,8 @@ payment, `EXPIRED` on an agreement still `PENDING`).
 or poll result.** Cancelling early creates a race: the customer approves in the app moments after your system already
 told them the order was cancelled. Wait for the full timeout, or for the terminal status, whichever comes first.
 
+With the PSP API, expiry also triggers a POST to the `makePaymentUrl` with status `timeout`.
+
 `EXPIRED` is final: the payment cannot be recovered. Tell the customer, and create a new payment, with a new
 `reference`, if they still want to pay.
 
