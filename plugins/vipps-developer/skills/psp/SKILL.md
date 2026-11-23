@@ -259,6 +259,23 @@ Cards can't be added in the test app. Whatever card the user picks, the card cal
 a Visa token by default. Specific payment amounts select other tokens, for example `3100` emulates a card that is
 not eligible. The table is in `references/card-callback.md`. For encrypted PAN in test, see the same file.
 
+## Go live
+
+Finish testing, then email the filled-in PSP checklist to developer@vippsmobilepay.com, with request examples no more
+than 1 month old, a video of the payment flow, and a short description of the solution. Integrate all endpoints
+listed in the checklist. Requirements that are easy to miss:
+
+- Onboard every merchant as an individual merchant, never a super merchant, with a valid `mccCode` and the merchant's
+  own name and logo (see `references/merchant-api.md`).
+- Update Vipps MobilePay with capture or cancel for every payment or charge, and with refund when you refund.
+- Send `"customerInteraction": "CUSTOMER_PRESENT"` for in-store payments.
+- Handle `returnUrl` opening in the phone's default browser, and never rely on the redirect alone.
+
+After approval you get production access. ePayment PSP: complete production transactions, preferably with a pilot
+merchant, and send a `reference` for each of: a card callback answered with `RESERVE`, with `FAIL`, and with
+`SOFT_DECLINE`, plus a capture, a refund, and a cancel. Recurring PSP: ask your PSP Partner Manager to enable your PSP
+in production once the integration is validated.
+
 ## Don't use these unless the PSP specifically asks for it
 
 The Vipps PSP API and MobilePay Online are in maintenance mode: we continue to support and maintain them, and no end

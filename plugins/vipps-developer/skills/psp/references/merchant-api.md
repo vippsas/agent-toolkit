@@ -18,7 +18,7 @@ in the `PSP-ID` header, and should carry the `Vipps-System-*` headers.
 | Operation | Method and path |
 | --------- | --------------- |
 | List your merchants | `GET /merchants` (no logos in the response) |
-| Get one merchant | `GET /merchants/{merchantSerialNumber}` (only your own merchants) |
+| Get one merchant | `GET /merchants/{merchantSerialNumber}` (only your own merchants). Returns `logo` (base64 PNG) and `mccCode` when stored |
 | Create a merchant | `POST /merchants`, with `Idempotency-Key` |
 | Update or deactivate | `PATCH /merchants/{merchantSerialNumber}` |
 
