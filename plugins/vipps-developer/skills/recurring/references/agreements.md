@@ -179,6 +179,8 @@ sentence.
 - When the **customer** stops the agreement in the app, `RESERVED` charges are not cancelled. Capture or cancel them.
 - Subscribe to `recurring.agreement-stopped.v1`. Its `actor` field tells you whether the merchant or the customer did
   it. Also `recurring.agreement-activated.v1`, `-rejected.v1`, `-expired.v1`.
+- Agreement webhook payloads omit fields with null values: `agreementExternalId` is there only if you supplied one, and
+  `actor` only on `recurring.agreement-stopped.v1`. Treat a missing field as absent, not as `null`.
 - There is no pause. Stop creating charges and describe the pause in the agreement description.
 - Customers manage agreements in the app by default. Key-account merchants can apply to opt out of in-app cancellation,
   which raises the bar on `merchantAgreementUrl` and is discouraged. A merchant that opts out must stop the agreement

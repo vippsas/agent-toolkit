@@ -11,6 +11,10 @@ The skills restate the Vipps MobilePay developer documentation at
 Most releases are therefore a minor bump carrying a documentation correction. Entries up to and including 1.13.0
 were reconstructed from git history when this file was added, so they are shorter than later ones will be.
 
+## 1.67.0 - 2026-11-24
+
+- Note omitted null fields in Recurring agreement webhooks in the recurring skill
+
 ## 1.66.0 - 2026-11-23
 
 - Add PSP go-live requirements to the psp skill
