@@ -248,7 +248,7 @@ Full requirement list:
 ## Deeper reference
 
 - `references/agreements.md` — pricing types, initial charge, campaigns, intervals, updating, user cancellation,
-  duplicate drafts, landing page
+  duplicate drafts, landing page, users under 18
 - `references/charges.md` — charge fields, states, retries, batches, webhooks, test-environment force accept, errors,
   rate limits
 

@@ -204,6 +204,14 @@ abandoned drafts so you can stop them later, or refund them if they were activat
   and ask the key account manager to enable `no_edit_landingpage`. `skipLandingPage: true` sends a push straight to
   `phoneNumber` without the landing page, and fails unless the sales unit is allow-listed.
 
+## Users under 18
+
+Users must be 18 to enter an agreement. Vipps MobilePay rejects agreements for younger users, and you may only see a
+`recurring.agreement-expired.v1` webhook, with no reason given. You must check age yourself. For a minor, ask for a
+guardian's phone number and draft the agreement with `skipLandingPage: true` and that number, so the guardian approves
+and becomes the payer. `skipLandingPage` needs approval; see
+<https://developer.vippsmobilepay.com/docs/APIs/recurring-api/how-it-works/payment-agreement/recurring-api-under-18-users-howitworks.md>.
+
 ## Getting profile data with the agreement
 
 Add `scope` to the draft so sign-up and consent happen in one approval instead of a separate login flow.
