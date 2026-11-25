@@ -162,7 +162,7 @@ Treat the payload as a signal, not as the truth. For anything that moves money, 
 
 **QR**: `user.checked-in.v1`, one registration only.
 
-**Donations**: `donations.agreement.started.v1`, `.stopped.v1`, `.withdrawal-day-changed.v1`, `.amount-changed.v1`.
+**Donations**: `donations.agreement.started.v1`, `.stopped.v1`, `.withdrawal-day-changed.v1`, `.amount-changed.v1`, and `donations.tax-deduction-consent.approved.v1`.
 Payloads are in `../donations/SKILL.md`.
 
 **Wallet**: `wallet.item.added.v1` and `wallet.item.removed.v1`, when a user adds or removes a loyalty item. Subscribe
