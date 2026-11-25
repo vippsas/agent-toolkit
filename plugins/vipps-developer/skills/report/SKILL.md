@@ -193,7 +193,7 @@ than fetching only when a payout arrives.
 - **No payouts topic.** Only `funds` and `fees` exist today.
 - **Nothing for a sales unit that cannot move money.** A Login-only sales unit has no settlements and no ledger.
 - **Nothing for PSP API payments.** The PSP settles those, so get the data from the PSP.
-- VM number shopping basket contents and per-product VAT rates come from the Sales API; see `../sales/SKILL.md`. Donor tax deductions are portal-only.
+- VM number shopping basket contents and per-product VAT rates come from the Sales API; see `../sales/SKILL.md`. Donor tax deduction consents are not in the Report API: download them in the business portal or use the Donations API (`../donations/SKILL.md`).
 
 Near real time on the feed is 5 to 30 seconds in the good case, but can stretch to hours under load. This is an
 accounting API; do not put it behind a live fundraising display.

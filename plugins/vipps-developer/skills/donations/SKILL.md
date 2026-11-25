@@ -146,7 +146,7 @@ notification and approves or declines the exact amount in the app, and has **1 h
 
 ## Webhooks
 
-Four events, registered through the Webhooks API in the normal way. See `../webhooks/SKILL.md` for registration and
+Five events, registered through the Webhooks API in the normal way. See `../webhooks/SKILL.md` for registration and
 signature verification, which are identical here.
 
 | Event | Fires when |
@@ -155,6 +155,7 @@ signature verification, which are identical here.
 | `donations.agreement.stopped.v1` | An agreement stops |
 | `donations.agreement.withdrawal-day-changed.v1` | The donor moved the withdrawal day |
 | `donations.agreement.amount-changed.v1` | The donor changed the amount, or approved your amount change request |
+| `donations.tax-deduction-consent.approved.v1` | A donor approved a tax deduction consent that includes your organization. See Tax deduction consents |
 
 **Subscribe to `stopped`, `amount-changed`, and `withdrawal-day-changed`, not just `started`.** Donors adjust and
 cancel in the app, and nothing else tells you.
@@ -169,6 +170,24 @@ The payload is a notification. Follow it with `GET /donations/v1/agreements/{agr
 
 A partner registers `donations.*` webhooks with partner keys. Omitting the `Merchant-Serial-Number` covers every
 connected sales unit, including ones added later.
+
+## Tax deduction consents
+
+Only for organizations approved for tax deductions and opted in to tax deduction reporting for the tax year. Donors
+are asked in the app, after the tax year ends, to share their name, phone number, and national identity number. The API
+covers only the current tax year being reported.
+
+- Webhook `donations.tax-deduction-consent.approved.v1`: payload is `consentId` and `approvedAt` only, no personal
+  data. Partners also get `businessIdentifiers` (`scheme`: `business:NO:ORG` or `business:DK:CVR`, and `id`),
+  which can be empty. There is no webhook when a donor declines.
+- `GET /donations/v1/tax-deduction-consents/{consentId}`: `consentId`, `taxYear`, `approvedAt`, `firstName`,
+  `lastName`, `phoneNumber`, and `nationalIdentityNumber` (`scheme` `nin:NO` or `nin:DK`, and `id`). Partners also get
+  `businessIdentifiers`. `403` token is not a merchant or partner; `404` unknown consent, earlier tax year, or not
+  your organization.
+- `GET /donations/v1/tax-deduction-consents`: all consents for the current tax year in one `consents` array, no paging,
+  ordered by `consentId`. Partners must pass both `businessIdentifierScheme` and `businessIdentifier` (`400` if
+  missing); merchants ignore them. `404` if not opted in, or a partner has no access to that merchant.
+- Partners use their partner keys. Access is through the partner being on one of the merchant's donations sales units.
 
 ## Donation links and QR codes
 
@@ -198,4 +217,5 @@ portal.
 Canonical pages: <https://developer.vippsmobilepay.com/docs/APIs/donations-api/api-guide.md>,
 <https://developer.vippsmobilepay.com/docs/APIs/donations-api/quick-start.md>,
 <https://developer.vippsmobilepay.com/docs/APIs/donations-api/donation-links-and-qr.md>,
-<https://developer.vippsmobilepay.com/docs/APIs/donations-api/faq.md>, spec at `/api/donations`.
+<https://developer.vippsmobilepay.com/docs/APIs/donations-api/faq.md>,
+<https://developer.vippsmobilepay.com/docs/APIs/donations-api/tax-deduction-consents.md>, spec at `/api/donations`.
