@@ -29,6 +29,11 @@ not the platform Access Token API.
 
 Merchant-initiated login is **not allowed** on web pages or inside apps. Use the browser flow there.
 
+For testing **Remember me**, phone-entry fallback, and email verification, see
+[reproducing browser Login states](references/browser-flow.md#reproduce-browser-login-states). For testing
+customer-club wording, the binding code, and first-time profile consent, see
+[texts shown to the customer](references/merchant-initiated.md#texts-shown-to-the-customer).
+
 **Login's userinfo endpoint is not the Userinfo API.** Here it is `GET /vipps-userinfo-api/userinfo/` with no `sub`,
 authorized with the *user's* access token. The Userinfo API's `GET /vipps-userinfo-api/userinfo/{sub}` takes a `sub`
 and your merchant token, and is for consent given during a payment or agreement. Same path prefix, different endpoint.
@@ -205,8 +210,9 @@ For a till or call center. Full detail in `references/merchant-initiated.md`.
 
 ## Before calling it done
 
-`state` is verified on return. The `id_token` is validated. Only necessary scopes are requested. `sub` is stored and
-used for linking. Cancellation and error redirects are handled. Only the approved buttons are shown, preferably from the
+Browser Login verifies `state` on return. Merchant-initiated Login with a browser redirect matches the validated
+ID token's `auth_req_id` to the pending request. Validate the `id_token` in both flows. Request only necessary scopes,
+store `sub` for account linking, and handle cancellation and error redirects. Use approved buttons, preferably from the
 button generator at <https://developer.vippsmobilepay.com/docs/buttons-and-widgets/buttons.md>. If you can't use the
 generator, use the static button images from the brand book at
 <https://brand.vippsmobilepay.com/document/61#/branding/online/buttons>.

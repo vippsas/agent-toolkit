@@ -163,6 +163,24 @@ The user can tick "Remember me in browser". Later logins then skip the app entir
 consent was already given. To force app confirmation regardless, use `acr_values=urn:vipps:acr:app_auth` and
 validate the `acr` claim in the returned ID token.
 
+## Reproduce browser Login states
+
+- For **Remember me** on mobile, start standard website Login in a fresh mobile browser session. Leave
+  `requested_flow` unset and omit `acr_values=urn:vipps:acr:app_auth`. The latter disables browser remembering.
+  `app_to_app_v2` exercises the simple merchant-app flow.
+- Test manual phone entry using the website flow when automatic app switching is unavailable. The public guide
+  describes this fallback but gives no request parameter that forces the single-number screen. Keep the hosted
+  reference and the app's challenge from the same request when documenting number matching.
+- A fresh browser session resets browser memory. Profile-sharing consent is remembered per user and sales unit
+  across Login flows. To see it again, use a test user who has yet to consent on the unit or revoke the existing
+  test consent under **Profile → Personal information**. Request a scope that requires consent, such as `name`.
+- For email verification, request `email` for a first-time Login user or a test user whose email changed. Use
+  a test profile with an inbox you control. In MT you can also reopen the app, then select **Send email** under
+  **Profile → Personal information → Email**.
+
+[Mobile Login walkthrough](https://developer.vippsmobilepay.com/docs/APIs/login-api/how-it-works/login-from-mobile/) ·
+[MT test user setup](https://developer.vippsmobilepay.com/docs/knowledge-base/test-environment/#test-users)
+
 ## Marketing consents
 
 Add the `customFlow` scope to collect consents alongside login. Build and publish the screens in the business portal's
@@ -175,8 +193,10 @@ such as `cf_marketing`.
 
 ### Legacy: `delegatedConsents`
 
-The older scope with fixed consent types (`email`, `sms`, `digital`, `personal`). To migrate, publish a custom flow,
-parse `flowResult` instead of `delegatedConsents`, then swap the scope.
+The older scope has fixed consent types (`email`, `sms`, `digital`, `personal`). To reproduce the legacy Email
+and SMS screen, use a sales unit with both legacy consent types enabled and request `delegatedConsents`.
+Custom Flow has its own configured screens. When migrating, publish a custom flow, update your integration to
+read `flowResult`, then switch the requested scope to `customFlow`.
 
 - The consent screen appears on the **first** login only, and the `delegatedConsents` object is present in userinfo only
   that first time. Persist it when you get it.
