@@ -69,6 +69,8 @@ store it in configuration next to the MSN.
 Go the other way with `GET /settlement/v1/ledgers?settlesForRecipientHandles=DK:123456`. Handles are prefixed `api:`
 for API sales units and by country for VM numbers: `NO:`, `DK:`, `FI:`.
 
+The ledger list is paged: pass the returned `cursor` as a query parameter, and stop when it is an empty string.
+
 An accounting partner should **re-poll this endpoint regularly**, not once at setup. New ledgers appear as merchants
 grant access.
 
@@ -119,7 +121,7 @@ See `references/entry-types.md` for what each `entryType` means.
 ## Paging, `hasMore`, and `tryLater`
 
 The page size is not a fixed number: 1000 items is the default, but the value resolved for your ledger is returned
-in the `Vipps-Feed-Page-Size` response header. Read the page size from that header rather than assuming 1000. The
+in the `Vipps-Feed-Page-Size` response header. Read the page size from that header rather than assuming 1000. Larger pages are available on request to Vipps MobilePay. The
 two endpoints signal continuation **differently**. Getting this wrong is the classic Report API bug.
 
 **Date endpoint.** `hasMore` is always present. Continue only while `hasMore` is `true`, passing the returned
@@ -134,7 +136,7 @@ cursor.
 
 `tryLater: true` means "not yet, ask again with the same request". On the date endpoint it means the ledger date is
 still open, *even when the response already contains entries* — late entries can still land on an open date, so a
-response is not complete until the date closes. An empty response for a date that has already closed returns
+response is not complete until the date closes. Retry an open date after roughly 30 minutes; that is a rule of thumb, not a guarantee that it has closed. An empty response for a date that has already closed returns
 `tryLater: false`; that is how you tell "genuinely no entries" from "not ready yet". On the feed it means you have
 caught up.
 
