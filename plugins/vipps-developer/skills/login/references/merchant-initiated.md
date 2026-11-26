@@ -74,8 +74,9 @@ requested_flow=login_to_webpage&scope=openid name address&login_hint=urn:msisdn:
 &redirect_uri=https://merchant.example.com/callback
 ```
 
-`redirect_uri` must be `https` in production. The customer's browser lands on `{redirect_uri}?code={code}`. Exchange it
-with a **different grant type**:
+`redirect_uri` must be `https` in production. The customer's browser lands on `{redirect_uri}?code={code}`.
+The documented CIBA callback contract uses the code. Regular browser Login documents a separate `state` check.
+Keep the initiation response's `auth_req_id` with the pending login and exchange the code with this grant type:
 
 ```text
 POST {token_endpoint}
@@ -85,9 +86,9 @@ Content-Type: application/x-www-form-urlencoded
 code=some-valid-code&grant_type=urn:vipps:params:grant-type:ciba-redirect
 ```
 
-You **must** validate that the returned `id_token` carries the same `auth_req_id` you got in step 1. That is what ties
-the browser session to the login you started, and skipping it is a security hole. Validate the JWS as usual; this token
-may be signed with ES256.
+Validate the ID token's JWS, issuer, audience, and expiry. The token may be signed with ES256. Before accepting
+the login, verify that the token's `auth_req_id` matches the saved value from the initiation response. Use this
+match to correlate the callback with the pending CIBA login.
 
 The token endpoint may be called only **once** per authentication. So do not combine this variant with the webhook: an
 exchange triggered by the webhook consumes the one exchange the browser redirect needed.
@@ -141,14 +142,26 @@ The wording in the app is configured per sales unit in the business portal, not 
 - *Share information*
 - *Confirm information*
 
-Pick the one that matches what actually happens, so the consent screen is honest.
+To test the variants, use a Login-enabled test sales unit you can edit. An existing MT unit works if it exposes
+the setting and you can sign in to the MT app with the intended test user. Save one text type at a time. For
+**Join customer club**, run once with the optional `binding_message` and once without it. Let the flow finish in
+the app to see the completion screen.
+
+Profile-sharing consent can be skipped if the test user already granted it to the same sales unit, including in a
+browser Login. Use a fresh consent state when you need to see that screen. For the reset, see
+[reproducing browser Login states](browser-flow.md#reproduce-browser-login-states).
 
 ## Marketing consents
 
 Add the `customFlow` scope to the backchannel authentication request to collect the merchant's configured consents in
-the same approval. Unlike the browser flow, the customer is asked **every time** they log in. The userinfo response
-carries the result in `flowResult` (see `browser-flow.md`). Build the flow in the portal first. The legacy
-`delegatedConsents` scope still works the same way and also covers redirect to browser.
+the same approval. The customer is asked every time they log in through CIBA. Publish the flow in the portal,
+then verify the relevant translation in the app. Userinfo carries the result in `flowResult`.
+
+Use `delegatedConsents` with a sales unit that already has the legacy Marketing Consent screen configured.
+It also works with CIBA redirect to browser. The portal disables editing when legacy Marketing Consent is
+deactivated. See [portal consent configuration][portal-consent].
+
+[portal-consent]: https://developer.vippsmobilepay.com/docs/knowledge-base/portal/#how-to-configure-marketing-consents-for-login
 
 Full pages:
 <https://developer.vippsmobilepay.com/docs/APIs/login-api/api-guide/merchant-initiated-login-integration.md>,
